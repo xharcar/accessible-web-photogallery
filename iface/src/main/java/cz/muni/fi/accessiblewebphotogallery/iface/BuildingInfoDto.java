@@ -1,48 +1,30 @@
-package cz.muni.fi.accessiblewebphotogallery.persistence.entity;
+package cz.muni.fi.accessiblewebphotogallery.iface;
 
-
-import javax.persistence.*;
 import java.util.Objects;
 
-// Information about a building in a picture
-@Entity
-@Table(name = "BUILDINGINFO")
-public class BuildingInfo {
+public class BuildingInfoDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "photo_id"))
     private Long photoId;
 
-    @Column(nullable = true)
     private int distance;
 
-    @Column(nullable = true)
     private String buildingName;
 
-    @Column(nullable = true, precision = 10)
     private double latitude;
 
-    @Column(nullable = true, precision = 10)
     private double longitude;
 
-    //minX, minY, maxX, maxY - approximate bounds of a building in the photo
-    @Column(nullable = false)
-    private int photoMinX;
+    private int minX;
 
-    @Column(nullable = false)
-    private int photoMaxX;
+    private int maxX;
 
-    @Column(nullable = false)
-    private int photoMinY;
+    private int minY;
 
-    @Column(nullable = false)
-    private int photoMaxY;
+    private int maxY;
 
-    public BuildingInfo() {}
+    public BuildingInfoDto() {}
 
     public Long getId() {
         return id;
@@ -92,43 +74,43 @@ public class BuildingInfo {
         this.longitude = longitude;
     }
 
-    public int getPhotoMinX() {
-        return photoMinX;
+    public int getMinX() {
+        return minX;
     }
 
-    public void setPhotoMinX(int photoMinX) {
-        this.photoMinX = photoMinX;
+    public void setMinX(int minX) {
+        this.minX = minX;
     }
 
-    public int getPhotoMaxX() {
-        return photoMaxX;
+    public int getMaxX() {
+        return maxX;
     }
 
-    public void setPhotoMaxX(int photoMaxX) {
-        this.photoMaxX = photoMaxX;
+    public void setMaxX(int maxX) {
+        this.maxX = maxX;
     }
 
-    public int getPhotoMinY() {
-        return photoMinY;
+    public int getMinY() {
+        return minY;
     }
 
-    public void setPhotoMinY(int photoMinY) {
-        this.photoMinY = photoMinY;
+    public void setMinY(int minY) {
+        this.minY = minY;
     }
 
-    public int getPhotoMaxY() {
-        return photoMaxY;
+    public int getMaxY() {
+        return maxY;
     }
 
-    public void setPhotoMaxY(int photoMaxY) {
-        this.photoMaxY = photoMaxY;
+    public void setMaxY(int maxY) {
+        this.maxY = maxY;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BuildingInfo)) return false;
-        BuildingInfo that = (BuildingInfo) o;
+        if (!(o instanceof BuildingInfoDto)) return false;
+        BuildingInfoDto that = (BuildingInfoDto) o;
         return distance == that.distance &&
                 Double.compare(that.latitude, latitude) == 0 &&
                 Double.compare(that.longitude, longitude) == 0 &&
@@ -143,17 +125,17 @@ public class BuildingInfo {
 
     @Override
     public String toString() {
-        return "BuildingInfo{" +
+        return "BuildingInfoDto{" +
                 "id=" + id +
                 ", photoId=" + photoId +
                 ", distance=" + distance +
                 ", buildingName='" + buildingName + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", photoMinX=" + photoMinX +
-                ", photoMaxX=" + photoMaxX +
-                ", photoMinY=" + photoMinY +
-                ", photoMaxY=" + photoMaxY +
+                ", minX=" + minX +
+                ", maxX=" + maxX +
+                ", minY=" + minY +
+                ", maxY=" + maxY +
                 '}';
     }
 }

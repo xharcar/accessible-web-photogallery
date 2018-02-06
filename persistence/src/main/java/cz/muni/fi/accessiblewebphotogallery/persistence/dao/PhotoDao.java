@@ -31,6 +31,4 @@ public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
     // same as findByDescriptionContaining(), searches titles instead
     List<PhotoEntity> findByTitleContaining(String searchString);
 
-    // find by camera model(eg. to help decide on a new camera) Y/n?
-
 }

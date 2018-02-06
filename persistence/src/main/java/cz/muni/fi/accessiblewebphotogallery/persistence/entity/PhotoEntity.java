@@ -1,7 +1,9 @@
 package cz.muni.fi.accessiblewebphotogallery.persistence.entity;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.time.Instant;
+
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -18,7 +20,7 @@ public class PhotoEntity {
     private UserEntity uploader;
 
     @Column(nullable = false)
-    private Date dateUploaded;
+    private Instant timeUploaded;
 
     @Column(nullable = false, length = 128) // 128 characters should be enough for a title (YouTube has 100)
     private String title;
@@ -46,8 +48,8 @@ public class PhotoEntity {
 
     // Some basic EXIF metadata- all non-mandatory- will be considered null for storage purposes if not present
     @Column(nullable = true)
-    private Date dateTaken;
-
+    private LocalDateTime datetimeTaken; // EXIF has up to minute precision, but this doesn't seem necessary here
+    // to be changed for another more suitable type if one is found
     @Column(nullable = true)
     private String cameraModel;
 
@@ -85,12 +87,12 @@ public class PhotoEntity {
         this.uploader = uploader;
     }
 
-    public Date getDateUploaded() {
-        return dateUploaded;
+    public Instant getTimeUploaded() {
+        return timeUploaded;
     }
 
-    public void setDateUploaded(Date dateUploaded) {
-        this.dateUploaded = dateUploaded;
+    public void setTimeUploaded(Instant timeUploaded) {
+        this.timeUploaded = timeUploaded;
     }
 
     public byte[] getImageHash() {
@@ -141,12 +143,12 @@ public class PhotoEntity {
         this.cameraHorizontalFOV = cameraHorizontalFOV;
     }
 
-    public Date getDateTaken() {
-        return dateTaken;
+    public LocalDateTime getDatetimeTaken() {
+        return datetimeTaken;
     }
 
-    public void setDateTaken(Date dateTaken) {
-        this.dateTaken = dateTaken;
+    public void setDatetimeTaken(LocalDateTime datetimeTaken) {
+        this.datetimeTaken = datetimeTaken;
     }
 
     public String getCameraModel() {
@@ -204,13 +206,13 @@ public class PhotoEntity {
         if (!(o instanceof PhotoEntity)) return false;
         PhotoEntity that = (PhotoEntity) o;
         return Objects.equals(uploader, that.uploader) &&
-                Objects.equals(dateUploaded, that.dateUploaded) &&
+                Objects.equals(timeUploaded, that.timeUploaded) &&
                 Arrays.equals(imageHash, that.imageHash);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uploader, dateUploaded, imageHash);
+        return Objects.hash(uploader, timeUploaded, imageHash);
     }
 
     @Override
@@ -218,14 +220,14 @@ public class PhotoEntity {
         return "PhotoEntity{" +
                 "id=" + id +
                 ", uploader=" + uploader +
-                ", dateUploaded=" + dateUploaded +
+                ", timeUploaded=" + timeUploaded +
                 ", imageHash=" + Arrays.toString(imageHash) +
                 ", cameraLatitude=" + cameraLatitude +
                 ", cameraLongitude=" + cameraLongitude +
                 ", cameraAzimuth=" + cameraAzimuth +
                 ", positionAccuracy=" + positionAccuracy +
                 ", cameraHorizontalFOV=" + cameraHorizontalFOV +
-                ", dateTaken=" + dateTaken +
+                ", datetimeTaken=" + datetimeTaken +
                 ", cameraModel='" + cameraModel + '\'' +
                 ", imageWidth=" + imageWidth +
                 ", imageHeight=" + imageHeight +

@@ -7,24 +7,25 @@ import java.util.Objects;
 @Entity
 @Table(name = "USERS")
 public class UserEntity {
-// TBD: record user DoB to filter NSFW/otherwise unwanted pictures Y/N
-    // login name and screen name- allow changing screen name and keep login name static?
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true,nullable = false) // nickname should be a unique handle
-    private String nickname;
+    @Column(unique = true,nullable = false, length = 64)
+    private String loginName; // name used to log in
 
-    @Column(unique = true,nullable = false) // no multiple accounts
+    @Column(unique = false, nullable = true, length = 128)
+    private String screenName; // name displayed to other users
+
+    @Column(unique = true,nullable = false, length = 128) // no multiple accounts (with same email)
     private String email;
 
     @Column(nullable = false)
-    private byte[] hash;
+    private byte[] passwordHash;
 
     @Column(nullable = false)
-    private byte[] salt;
+    private byte[] passwordSalt;
 
     @Column(nullable = false)
     private AccountState accountState;
@@ -39,12 +40,20 @@ public class UserEntity {
         this.id = id;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getLoginName() {
+        return loginName;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+
+    public String getScreenName() {
+        return screenName;
+    }
+
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
     }
 
     public String getEmail() {
@@ -55,20 +64,20 @@ public class UserEntity {
         this.email = email;
     }
 
-    public byte[] getHash() {
-        return hash;
+    public byte[] getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setHash(byte[] hash) {
-        this.hash = hash;
+    public void setPasswordHash(byte[] passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
-    public byte[] getSalt() {
-        return salt;
+    public byte[] getPasswordSalt() {
+        return passwordSalt;
     }
 
-    public void setSalt(byte[] salt) {
-        this.salt = salt;
+    public void setPasswordSalt(byte[] passwordSalt) {
+        this.passwordSalt = passwordSalt;
     }
 
     public AccountState getAccountState() {
@@ -87,13 +96,13 @@ public class UserEntity {
 
         UserEntity that = (UserEntity) o;
 
-        if (!Objects.equals(nickname,that.nickname)) return false;
+        if (!Objects.equals(loginName,that.loginName)) return false;
         return Objects.equals(email,that.email);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(nickname);
+        int result = Objects.hashCode(loginName);
         result = 31 * result + Objects.hashCode(email);
         return result;
     }
@@ -102,10 +111,10 @@ public class UserEntity {
     public String toString() {
         return "UserEntity{" +
                 "id=" + id +
-                ", nickname='" + nickname + '\'' +
+                ", loginName='" + loginName + '\'' +
                 ", email='" + email + '\'' +
-                ", hash=" + Arrays.toString(hash) +
-                ", salt=" + Arrays.toString(salt) +
+                ", passwordHash=" + Arrays.toString(passwordHash) +
+                ", passwordSalt=" + Arrays.toString(passwordSalt) +
                 ", accountState=" + accountState +
                 '}';
     }
