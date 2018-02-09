@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.time.Instant;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -28,8 +27,19 @@ public class PhotoEntity {
     @Column(nullable = false, length = 2048) // 2048 characters should be plenty for a nice description
     private String description;
 
-    @Column(nullable = false)
-    private byte[] imageHash; // SHA1(/MD5) of the photo for identification purposes, similar to GitHub commit hashes
+    @Column(nullable = false, length = 86)
+    private String base64Identifier;
+    /* identifier idea(for unique links):
+       register the instant where the user chose to finalise the upload, convert it to an ISO8601 string;
+       SHA1 the photo and its metadata file, if one was uploaded, convert both to hex strings;
+       hashCode the uploader entity and convert to a hex string;
+       concatenate in order: uploader entity hex-upload instant ISO8601-photo hash hex-metadata hash hex to a single string;
+       SHA512 the long string and convert to base64 (512 bits of SHA512/6 bits per B64 character = 85.33~86 B64 characters needed);
+       the B64 string is the final unique identifier and should be usable in links; if that already exists,
+       (unlikely, but _could_ happen), concatenate a random number* to the final string and SHA512-B64 that; repeat until unused ID string is found
+       *needn't be secure random- the purpose of this whole part is identification, not security (same as in GitHub commit hashes)
+       (subject to change, but there should be enough unique data present)
+     */
 
     @Column(nullable = false, precision = 10)
     private double cameraLatitude;
@@ -95,12 +105,28 @@ public class PhotoEntity {
         this.timeUploaded = timeUploaded;
     }
 
-    public byte[] getImageHash() {
-        return imageHash;
+    public String getTitle() {
+        return title;
     }
 
-    public void setImageHash(byte[] imageHash) {
-        this.imageHash = imageHash;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getBase64Identifier() {
+        return base64Identifier;
+    }
+
+    public void setBase64Identifier(String base64Identifier) {
+        this.base64Identifier = base64Identifier;
     }
 
     public double getCameraLatitude() {
@@ -205,14 +231,13 @@ public class PhotoEntity {
         if (o == null) return false;
         if (!(o instanceof PhotoEntity)) return false;
         PhotoEntity that = (PhotoEntity) o;
-        return Objects.equals(uploader, that.uploader) &&
-                Objects.equals(timeUploaded, that.timeUploaded) &&
-                Arrays.equals(imageHash, that.imageHash);
+        return Objects.equals(base64Identifier, that.base64Identifier);
+        // no other element needed due to aforementioned b64ID generation strategy
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uploader, timeUploaded, imageHash);
+        return Objects.hash(base64Identifier);
     }
 
     @Override
@@ -221,7 +246,7 @@ public class PhotoEntity {
                 "id=" + id +
                 ", uploader=" + uploader +
                 ", timeUploaded=" + timeUploaded +
-                ", imageHash=" + Arrays.toString(imageHash) +
+                ", imageHash=" + Objects.toString(base64Identifier) +
                 ", cameraLatitude=" + cameraLatitude +
                 ", cameraLongitude=" + cameraLongitude +
                 ", cameraAzimuth=" + cameraAzimuth +

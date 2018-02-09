@@ -1,4 +1,4 @@
-package cz.muni.fi.accessiblewebphotogallery.iface;
+package cz.muni.fi.accessiblewebphotogallery.iface.dto;
 
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 
@@ -20,6 +20,8 @@ public class UserDto {
     private byte[] passSalt;
 
     private AccountState accState;
+
+    private String bio;
 
     public UserDto() {}
 
@@ -77,6 +79,14 @@ public class UserDto {
 
     public void setAccState(AccountState accState) {
         this.accState = accState;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     @Override

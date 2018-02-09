@@ -1,8 +1,7 @@
-package cz.muni.fi.accessiblewebphotogallery.iface;
+package cz.muni.fi.accessiblewebphotogallery.iface.dto;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class PhotoDto {
@@ -17,7 +16,7 @@ public class PhotoDto {
 
     private String description;
 
-    private byte[] imageHash;
+    private String base64Id;
 
     private double camLatitude;
 
@@ -85,12 +84,12 @@ public class PhotoDto {
         this.description = description;
     }
 
-    public byte[] getImageHash() {
-        return imageHash;
+    public String getBase64Id() {
+        return base64Id;
     }
 
-    public void setImageHash(byte[] imageHash) {
-        this.imageHash = imageHash;
+    public void setBase64Id(String base64Id) {
+        this.base64Id = base64Id;
     }
 
     public double getCamLatitude() {
@@ -194,14 +193,12 @@ public class PhotoDto {
         if (this == o) return true;
         if (!(o instanceof PhotoDto)) return false;
         PhotoDto photoDto = (PhotoDto) o;
-        return Objects.equals(uploader, photoDto.uploader) &&
-                Objects.equals(timeUploaded, photoDto.timeUploaded) &&
-                Arrays.equals(imageHash, photoDto.imageHash);
+        return Objects.equals(base64Id, photoDto.base64Id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uploader, timeUploaded, imageHash);
+        return Objects.hash(base64Id);
     }
 
     @Override
@@ -212,7 +209,7 @@ public class PhotoDto {
                 ", timeUploaded=" + timeUploaded +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", imageHash=" + Arrays.toString(imageHash) +
+                ", imageHash=" + Objects.toString(base64Id) +
                 ", camLatitude=" + camLatitude +
                 ", camLongitude=" + camLongitude +
                 ", camAzimuth=" + camAzimuth +

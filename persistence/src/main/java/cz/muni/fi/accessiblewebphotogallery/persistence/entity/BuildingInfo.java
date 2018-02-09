@@ -42,6 +42,10 @@ public class BuildingInfo {
     @Column(nullable = false)
     private int photoMaxY;
 
+    // text to be displayed on mouseover/focus
+    @Column(nullable = true, length = 384)
+    private String focusText;
+
     public BuildingInfo() {}
 
     public Long getId() {
@@ -122,6 +126,14 @@ public class BuildingInfo {
 
     public void setPhotoMaxY(int photoMaxY) {
         this.photoMaxY = photoMaxY;
+    }
+
+    public String getFocusText() {
+        return focusText;
+    }
+
+    public void setFocusText(String focusText) {
+        this.focusText = focusText;
     }
 
     @Override

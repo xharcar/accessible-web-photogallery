@@ -15,10 +15,10 @@ public interface UserDao extends JpaRepository<UserEntity,Long> {
     Optional<UserEntity> findByEmail(String email);
 
     /**
-     * Finds user by nickname
-     * @param nickname nickname to look for
+     * Finds user by screenName
+     * @param screenName screenName to look for
      * @return See findByEmail
      */
-    Optional<UserEntity> findByNickname(String nickname);
+    Optional<UserEntity> findByScreenName(String screenName);
 
 }

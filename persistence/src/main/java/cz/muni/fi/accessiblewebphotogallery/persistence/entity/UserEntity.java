@@ -13,7 +13,7 @@ public class UserEntity {
     private Long id;
 
     @Column(unique = true,nullable = false, length = 64)
-    private String loginName; // name used to log in
+    private String loginName; // name used to log in (alternatively, allow login by email or send username to email)
 
     @Column(unique = false, nullable = true, length = 128)
     private String screenName; // name displayed to other users
@@ -29,6 +29,9 @@ public class UserEntity {
 
     @Column(nullable = false)
     private AccountState accountState;
+
+    @Column(nullable = true, length = 1536)
+    private String bio;
 
     public UserEntity() {}
 
@@ -88,6 +91,14 @@ public class UserEntity {
         this.accountState = accountState;
     }
 
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -112,10 +123,12 @@ public class UserEntity {
         return "UserEntity{" +
                 "id=" + id +
                 ", loginName='" + loginName + '\'' +
+                ", screenName='" + screenName + '\'' +
                 ", email='" + email + '\'' +
                 ", passwordHash=" + Arrays.toString(passwordHash) +
                 ", passwordSalt=" + Arrays.toString(passwordSalt) +
                 ", accountState=" + accountState +
+                ", bio='" + bio + '\'' +
                 '}';
     }
 }

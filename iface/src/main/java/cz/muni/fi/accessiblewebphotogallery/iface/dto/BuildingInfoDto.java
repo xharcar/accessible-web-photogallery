@@ -1,4 +1,4 @@
-package cz.muni.fi.accessiblewebphotogallery.iface;
+package cz.muni.fi.accessiblewebphotogallery.iface.dto;
 
 import java.util.Objects;
 
@@ -23,6 +23,8 @@ public class BuildingInfoDto {
     private int minY;
 
     private int maxY;
+
+    private String focusText;
 
     public BuildingInfoDto() {}
 
@@ -104,6 +106,14 @@ public class BuildingInfoDto {
 
     public void setMaxY(int maxY) {
         this.maxY = maxY;
+    }
+
+    public String getFocusText() {
+        return focusText;
+    }
+
+    public void setFocusText(String focusText) {
+        this.focusText = focusText;
     }
 
     @Override
