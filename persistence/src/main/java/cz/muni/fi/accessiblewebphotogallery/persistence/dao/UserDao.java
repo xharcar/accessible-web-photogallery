@@ -2,6 +2,7 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.dao;
 
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.Optional;
 
 public interface UserDao extends JpaRepository<UserEntity,Long> {

@@ -2,7 +2,6 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.entity;
 
 import javax.persistence.*;
 import java.time.Instant;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -27,18 +26,16 @@ public class PhotoEntity {
     @Column(nullable = false, length = 2048) // 2048 characters should be plenty for a nice description
     private String description;
 
-    @Column(nullable = false, length = 86)
+    @Column(nullable = false, length = 16)
     private String base64Identifier;
-    /* identifier idea(for unique links):
-       register the instant where the user chose to finalise the upload, convert it to an ISO8601 string;
-       SHA1 the photo and its metadata file, if one was uploaded, convert both to hex strings;
-       hashCode the uploader entity and convert to a hex string;
-       concatenate in order: uploader entity hex-upload instant ISO8601-photo hash hex-metadata hash hex to a single string;
-       SHA512 the long string and convert to base64 (512 bits of SHA512/6 bits per B64 character = 85.33~86 B64 characters needed);
-       the B64 string is the final unique identifier and should be usable in links; if that already exists,
-       (unlikely, but _could_ happen), concatenate a random number* to the final string and SHA512-B64 that; repeat until unused ID string is found
-       *needn't be secure random- the purpose of this whole part is identification, not security (same as in GitHub commit hashes)
-       (subject to change, but there should be enough unique data present)
+    /* Identifier Mk.2
+        1) register upload instant as ISO8601 string
+        2) MD5 the photo, and if given, its metadata file; convert both to hex strings
+        3) hashCode uploader entity, toHex
+        4) concatenate in order: uploader hex-upload instant-photo hex-metadata hex; take raw bytes
+        5) MD5 raw bytes, take the 96 least-significant bits(12 B); convert to Base64 (yields 16 bytes)
+        5.1) if such an ID already exists, add 4 pseudorandom bytes to raw and goto 5; else goto 6
+        6) save as B64ID
      */
 
     @Column(nullable = false, precision = 10)
