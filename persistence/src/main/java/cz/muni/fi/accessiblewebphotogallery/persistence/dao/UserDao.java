@@ -16,6 +16,13 @@ public interface UserDao extends JpaRepository<UserEntity,Long> {
     Optional<UserEntity> findByEmail(String email);
 
     /**
+     * Finds user by login name - for checking whether a login name exists at account creation
+     * @param loginName loginName to look for
+     * @return see findByEmail
+     */
+    Optional<UserEntity> findByLoginName(String loginName);
+
+    /**
      * Finds user by screenName
      * @param screenName screenName to look for
      * @return See findByEmail

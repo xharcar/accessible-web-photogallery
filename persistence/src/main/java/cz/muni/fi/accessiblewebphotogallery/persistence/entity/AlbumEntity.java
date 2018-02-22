@@ -15,7 +15,7 @@ public class AlbumEntity {
     @JoinColumn(name = "uploader_id", nullable = false)
     private UserEntity albumOwner;
 
-    @Column(length = 96)
+    @Column(length = 128) // if photos can have 128 characters...
     private String albumName;
 
     public AlbumEntity() {

@@ -4,8 +4,10 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.sql.Date;
+
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
 
@@ -16,7 +18,8 @@ public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
     @return Optional/List containing(if found) photo(s) with given datapiece
      */
 
-    List<PhotoEntity> findByDateUploaded(Date dateUploaded);
+    // can be used for single-day searches with begin at 23:59:59.999 previous day, end at 00:00:00.001 the next day
+    List<PhotoEntity> findByTimeUploadedBetween(Instant begin, Instant end);
 
     List<PhotoEntity> findByUploader(UserEntity uploader);
 
@@ -30,5 +33,8 @@ public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
 
     // same as findByDescriptionContaining(), searches titles instead
     List<PhotoEntity> findByTitleContaining(String searchString);
+
+    // check whether a base-64 id exists when saving new uploads
+    Optional<PhotoEntity> findByBase64Identifier(String b64id);
 
 }

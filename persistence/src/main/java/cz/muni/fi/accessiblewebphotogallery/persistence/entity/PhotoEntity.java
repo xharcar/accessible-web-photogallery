@@ -26,14 +26,14 @@ public class PhotoEntity {
     @Column(nullable = false, length = 2048) // 2048 characters should be plenty for a nice description
     private String description;
 
-    @Column(nullable = false, length = 16)
+    @Column(nullable = false, length = 12)
     private String base64Identifier;
     /* Identifier Mk.2
         1) register upload instant as ISO8601 string
         2) MD5 the photo, and if given, its metadata file; convert both to hex strings
         3) hashCode uploader entity, toHex
         4) concatenate in order: uploader hex-upload instant-photo hex-metadata hex; take raw bytes
-        5) MD5 raw bytes, take the 96 least-significant bits(12 B); convert to Base64 (yields 16 bytes)
+        5) MD5 raw bytes, take the 72 least-significant bits(9 B); convert to Base64 (yields 12 bytes)
         5.1) if such an ID already exists, add 4 pseudorandom bytes to raw and goto 5; else goto 6
         6) save as B64ID
      */
