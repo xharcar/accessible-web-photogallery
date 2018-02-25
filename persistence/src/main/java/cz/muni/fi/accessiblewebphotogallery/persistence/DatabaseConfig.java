@@ -9,7 +9,6 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.stereotype.Component;
@@ -78,7 +77,7 @@ public class DatabaseConfig {
     public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-        dataSource.setUrl("jdbc:derby:target/database/PhotogalleryDB;create=true");
+        dataSource.setUrl("jdbc:derby:target/database/PhotogalleryDB");
         return dataSource;
     }
 
@@ -96,7 +95,7 @@ public class DatabaseConfig {
 
     private Properties additionalProperties(){
         Properties properties = new Properties();
-        properties.setProperty("spring.jpa.hibernate.ddl-auto","create-drop");
+        properties.setProperty("hibernate.hbm2ddl.auto","create-drop");
         properties.setProperty("hibernate.dialect","org.hibernate.dialect.DerbyTenSevenDialect");
         return properties;
     }

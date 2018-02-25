@@ -6,18 +6,15 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 // UserDao unit tests
 @ContextConfiguration(classes = {DatabaseConfig.class})
@@ -26,12 +23,6 @@ public class UserDaoTest {
 
     @Inject
     private UserDao userDao;
-
-    private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC,0x5A};
-    private byte[] dummyhash2 = new byte[]{0x65,0x7A, (byte) 0xD3};
-    private byte[] dummysalt1 = new byte[]{0x3A, (byte) 0xB8, (byte) 0xE1};
-    private byte[] dummysalt2 = new byte[]{0x21, (byte) 0x8D,0x7F};
-
 
     @BeforeEach
     public void clearDb(){
@@ -150,26 +141,26 @@ public class UserDaoTest {
         assertThrows(DataAccessException.class,()->{userDao.save(user);});
     }
 
-    private UserEntity setupAsdfUser1(){
+    public static UserEntity setupAsdfUser1(){
         UserEntity user1 = new UserEntity();
         user1.setLoginName("asdfuser");
         user1.setAccountState(AccountState.USER);
         user1.setBio("Random user");
         user1.setEmail("user@mail.com");
-        user1.setPasswordHash(dummyhash1);
-        user1.setPasswordSalt(dummysalt1);
+        user1.setPasswordHash(new byte[]{0x32, (byte) 0xFC,0x5A});
+        user1.setPasswordSalt(new byte[]{0x3A, (byte) 0xB8, (byte) 0xE1});
         user1.setScreenName("ASDF User");
         return user1;
     }
 
-    private UserEntity setupFdsaUser2(){
+    public static UserEntity setupFdsaUser2(){
         UserEntity rv = new UserEntity();
         rv.setLoginName("fdsauser");
         rv.setAccountState(AccountState.USER);
         rv.setBio("Not quite random user");
         rv.setEmail("fdsa@email.org");
-        rv.setPasswordHash(dummyhash2);
-        rv.setPasswordSalt(dummysalt2);
+        rv.setPasswordHash(new byte[]{0x65,0x7A, (byte) 0xD3});
+        rv.setPasswordSalt(new byte[]{0x21, (byte) 0x8D,0x7F});
         rv.setScreenName("FDSA User");
         return rv;
     }

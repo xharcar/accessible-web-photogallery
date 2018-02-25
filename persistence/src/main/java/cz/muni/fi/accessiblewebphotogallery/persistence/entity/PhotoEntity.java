@@ -18,7 +18,7 @@ public class PhotoEntity {
     private UserEntity uploader;
 
     @Column(nullable = false)
-    private Instant timeUploaded;
+    private Instant uploadTime;
 
     @Column(nullable = false, length = 128) // 128 characters should be enough for a title (YouTube has 100)
     private String title;
@@ -38,19 +38,20 @@ public class PhotoEntity {
         6) save as B64ID
      */
 
-    @Column(nullable = false, precision = 10)
+    // camera info - nullable for when no JSON metadata file is uploaded
+    @Column(nullable = true, precision = 10)
     private double cameraLatitude;
 
-    @Column(nullable = false, precision = 10)
+    @Column(nullable = true, precision = 10)
     private double cameraLongitude;
 
-    @Column(nullable = false, precision = 1)
+    @Column(nullable = true, precision = 1)
     private double cameraAzimuth;
 
-    @Column(nullable = false, precision = 1)
+    @Column(nullable = true, precision = 1)
     private double positionAccuracy;
 
-    @Column(nullable = false, precision = 2)
+    @Column(nullable = true, precision = 2)
     private double cameraHorizontalFOV;
 
     // Some basic EXIF metadata- all non-mandatory- will be considered null for storage purposes if not present
@@ -94,12 +95,12 @@ public class PhotoEntity {
         this.uploader = uploader;
     }
 
-    public Instant getTimeUploaded() {
-        return timeUploaded;
+    public Instant getUploadTime() {
+        return uploadTime;
     }
 
-    public void setTimeUploaded(Instant timeUploaded) {
-        this.timeUploaded = timeUploaded;
+    public void setUploadTime(Instant uploadTime) {
+        this.uploadTime = uploadTime;
     }
 
     public String getTitle() {
@@ -242,7 +243,7 @@ public class PhotoEntity {
         return "PhotoEntity{" +
                 "id=" + id +
                 ", uploader=" + uploader +
-                ", timeUploaded=" + timeUploaded +
+                ", uploadTime=" + uploadTime +
                 ", imageHash=" + Objects.toString(base64Identifier) +
                 ", cameraLatitude=" + cameraLatitude +
                 ", cameraLongitude=" + cameraLongitude +

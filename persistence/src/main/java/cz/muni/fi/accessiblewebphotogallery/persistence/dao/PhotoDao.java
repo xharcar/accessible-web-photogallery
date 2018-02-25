@@ -18,8 +18,11 @@ public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
     @return Optional/List containing(if found) photo(s) with given datapiece
      */
 
-    // can be used for single-day searches with begin at 23:59:59.999 previous day, end at 00:00:00.001 the next day
-    List<PhotoEntity> findByTimeUploadedBetween(Instant begin, Instant end);
+    // can be used for single-day searches with begin at 23:59:59.999 previous day, end at 00:00:00.001 the next day;
+    // can test "after X" with "between X and now" and "before X" with "between epoch and X"
+    // line of thinking: this doesn't lower the required number of DB accesses when searching,
+    // and one more comparison or two is not a big deal (couple cycles)
+    List<PhotoEntity> findByUploadTimeBetween(Instant begin, Instant end);
 
     List<PhotoEntity> findByUploader(UserEntity uploader);
 

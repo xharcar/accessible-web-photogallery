@@ -10,7 +10,7 @@ public class PhotoDto {
 
     private UserDto uploader;
 
-    private Instant timeUploaded;
+    private Instant uploadTime;
 
     private String title;
 
@@ -60,12 +60,12 @@ public class PhotoDto {
         this.uploader = uploader;
     }
 
-    public Instant getTimeUploaded() {
-        return timeUploaded;
+    public Instant getUploadTime() {
+        return uploadTime;
     }
 
-    public void setTimeUploaded(Instant timeUploaded) {
-        this.timeUploaded = timeUploaded;
+    public void setUploadTime(Instant uploadTime) {
+        this.uploadTime = uploadTime;
     }
 
     public String getTitle() {
@@ -206,7 +206,7 @@ public class PhotoDto {
         return "PhotoDto{" +
                 "id=" + id +
                 ", uploader=" + uploader +
-                ", timeUploaded=" + timeUploaded +
+                ", uploadTime=" + uploadTime +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", imageHash=" + Objects.toString(base64Id) +
@@ -224,4 +224,6 @@ public class PhotoDto {
                 ", expTime=" + expTime +
                 '}';
     }
+
+
 }
