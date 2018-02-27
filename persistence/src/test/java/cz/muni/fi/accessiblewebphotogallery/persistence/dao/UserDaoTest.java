@@ -33,31 +33,29 @@ public class UserDaoTest {
     @Test
     public void findByEmailTest(){
         UserEntity user1 = setupAsdfUser1();
-        userDao.save(user1);
+        user1 = userDao.save(user1);
         UserEntity user2 = setupFdsaUser2();
         userDao.save(user2);
-        UserEntity asdf = setupAsdfUser1();
-        Optional<UserEntity> foundUser = userDao.findByEmail(asdf.getEmail());
+        Optional<UserEntity> foundUser = userDao.findByEmail(user1.getEmail());
         assertTrue(foundUser.isPresent());
-        assertEquals(asdf,foundUser.get());
+        assertEquals(user1,foundUser.get());
     }
 
     @Test
     public void findByLoginNameTest(){
         UserEntity user1 = setupAsdfUser1();
-        userDao.save(user1);
+        user1 = userDao.save(user1);
         UserEntity user2 = setupFdsaUser2();
         userDao.save(user2);
-        UserEntity asdf = setupAsdfUser1();
-        Optional<UserEntity> foundUser = userDao.findByLoginName(asdf.getLoginName());
+        Optional<UserEntity> foundUser = userDao.findByLoginName(user1.getLoginName());
         assertTrue(foundUser.isPresent());
-        assertEquals(asdf,foundUser.get());
+        assertEquals(user1,foundUser.get());
     }
 
     @Test
     public void findByScreenNameTest(){
         UserEntity user1 = setupAsdfUser1();
-        userDao.save(user1);
+        user1 = userDao.save(user1);
         UserEntity user2 = setupFdsaUser2();
         userDao.save(user2);
         Optional<UserEntity> foundUser = userDao.findByScreenName(user1.getScreenName());
@@ -68,7 +66,7 @@ public class UserDaoTest {
     @Test
     public void rejectDuplicitLoginNamesTest(){
         UserEntity user1 = setupAsdfUser1();
-        userDao.save(user1);
+        user1 = userDao.save(user1);
         UserEntity user2 = setupFdsaUser2();
         user2.setLoginName(user1.getLoginName());
         assertThrows(DataAccessException.class,()->{userDao.save(user2);});

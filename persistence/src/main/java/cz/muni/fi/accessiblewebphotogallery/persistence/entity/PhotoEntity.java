@@ -26,7 +26,7 @@ public class PhotoEntity {
     @Column(nullable = false, length = 2048) // 2048 characters should be plenty for a nice description
     private String description;
 
-    @Column(nullable = false, length = 12)
+    @Column(nullable = false, length = 12, unique = true)
     private String base64Identifier;
     /* Identifier Mk.2
         1) register upload instant as ISO8601 string

@@ -3,11 +3,13 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.dao;
 
 import cz.muni.fi.accessiblewebphotogallery.persistence.DatabaseConfig;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
+import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -15,10 +17,11 @@ import javax.inject.Inject;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static cz.muni.fi.accessiblewebphotogallery.persistence.dao.UserDaoTest.setupAsdfUser1;
 import static cz.muni.fi.accessiblewebphotogallery.persistence.dao.UserDaoTest.setupFdsaUser2;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ContextConfiguration(classes = {DatabaseConfig.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -46,13 +49,137 @@ public class PhotoDaoTest {
     }
 
     @Test
+    public void rejectNullUploaderTest(){
+        PhotoEntity photo = createPhoto(null,Instant.now());
+        assertThrows(DataAccessException.class,()->{photoDao.save(photo);});
+    }
+
+    @Test
+    public void rejectNullUploadTimeTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),null);
+        assertThrows(DataAccessException.class,()->{photoDao.save(photo);});
+    }
+
+    @Test
+    public void rejectNullBase64IdTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        photo.setBase64Identifier(null);
+        assertThrows(DataAccessException.class,()->{photoDao.save(photo);});
+    }
+
+    @Test
+    public void rejectDuplicitBase64IdTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
+        photoDao.save(photo);
+        assertThrows(DataAccessException.class,()->{photoDao.save(photo2);});
+    }
+
+    @Test
+    public void rejectNullTitleTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        photo.setTitle(null);
+        assertThrows(DataAccessException.class,()->{photoDao.save(photo);});
+    }
+
+    @Test
+    public void rejectNullDescriptionTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        photo.setDescription(null);
+        assertThrows(DataAccessException.class,()->{photoDao.save(photo);});
+    }
+
+    @Test
+    public void rejectTooLongBase64IdTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        photo.setBase64Identifier("thisbase64identifieristoolong");
+        assertThrows(DataAccessException.class,()->{photoDao.save(photo);});
+    }
+
+    @Test
+    public void doNotRejectNullNullableEXIFInfo(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        photo.setDatetimeTaken(null);
+        photo.setCameraModel(null);
+        photoDao.save(photo);
+    }
+
+    @Test
     public void findByUploadTimeBetweenTest(){
-        PhotoEntity photo = new PhotoEntity();
-        photo.setUploader(userDao.findAll().get(0)); // that will do
+        UserEntity uploader = userDao.findAll().get(0);// that will do
         Instant time0 = Instant.parse("2018-02-25T17:44:00.000Z");
         Instant time1 = Instant.parse("2018-02-25T17:45:01.349Z");
         Instant time2 = Instant.parse("2018-02-25T17:53:20.001Z");
-        photo.setUploadTime(time1);
+        PhotoEntity photo = createPhoto(uploader,time1);
+        PhotoEntity p2 = createPhoto(uploader, Instant.now());
+        p2.setBase64Identifier("anotherb64id");
+        photo = photoDao.save(photo);
+        photoDao.save(p2);
+        List<PhotoEntity> found = photoDao.findByUploadTimeBetween(time0,time2);
+        assertEquals(1,found.size());
+        assertEquals(photo,found.get(0));
+    }
+
+    @Test
+    public void findByUploaderTest(){
+        UserEntity user = userDao.findAll().get(0);
+        PhotoEntity photo = createPhoto(user,Instant.now());
+        photo = photoDao.save(photo);
+        PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
+        photo2.setBase64Identifier("anotherb64id");
+        photoDao.save(photo2);
+        List<PhotoEntity> found = photoDao.findByUploader(user);
+        assertEquals(1,found.size());
+        assertEquals(photo,found.get(0));
+    }
+
+    @Test
+    public void findByDescriptionContainingTest(){
+        UserEntity uploader = userDao.findAll().get(0);
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        photo.setDescription("Lorem ipsum dolor sit amet, consectetuer adipiscing elit.");
+        photo = photoDao.save(photo);
+        PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
+        photo2.setBase64Identifier("anotherb64id");
+        photo2.setDescription("Police police police police police police police police.");
+        photoDao.save(photo2);
+        List<PhotoEntity> found = photoDao.findByDescriptionContaining("adipiscing");
+        assertEquals(1,found.size());
+        assertEquals(photo,found.get(0));
+    }
+
+    @Test
+    public void findByTitleContainingTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        photo.setTitle("Lorem ipsum");
+        photo = photoDao.save(photo);
+        PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
+        photo2.setBase64Identifier("anotherb64id");
+        photo2.setTitle("Photo title");
+        photoDao.save(photo2);
+        List<PhotoEntity> found = photoDao.findByTitleContaining("ipsum");
+        assertEquals(1,found.size());
+        assertEquals(photo,found.get(0));
+    }
+
+    @Test
+    public void findByBase64IdentifierTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
+        photo2.setBase64Identifier("anotherb64id");
+        photo = photoDao.save(photo);
+        photoDao.save(photo2);
+        Optional<PhotoEntity> found = photoDao.findByBase64Identifier("thisisab64id");
+        assertTrue(found.isPresent());
+        assertEquals(photo,found.get());
+    }
+
+
+
+    public static PhotoEntity createPhoto(UserEntity uploader, Instant uploadTime){
+        PhotoEntity photo = new PhotoEntity();
+        photo.setUploader(uploader);
+        photo.setUploadTime(uploadTime);
         photo.setBase64Identifier("thisisab64id");
         photo.setTitle("title");
         photo.setDescription("description");
@@ -61,23 +188,15 @@ public class PhotoDaoTest {
         photo.setCameraAzimuth(110.33);
         photo.setPositionAccuracy(10.35);
         photo.setCameraHorizontalFOV(90.5);
-        photo.setDatetimeTaken(LocalDateTime.parse("2017-02-24T14:30:22"));
+        photo.setDatetimeTaken(LocalDateTime.parse("2010-02-24T14:30:22"));
         photo.setCameraModel("N6070c");
         photo.setImageWidth(1920);
         photo.setImageHeight(1080);
         photo.setIso(400);
         photo.setFlash(true);
         photo.setExposureTime(0.01);
-        photoDao.save(photo);
-        List<PhotoEntity> found = photoDao.findByUploadTimeBetween(time0,time2);
-        assertEquals(1,found.size());
-        assertEquals(photo,found.get(0));
+        return photo;
     }
-
-    // more tests TBD
-
-
-
 
 
 }
