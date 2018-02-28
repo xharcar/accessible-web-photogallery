@@ -17,16 +17,16 @@ public class BuildingInfo {
     @JoinColumn(name = "photo_id", nullable = false)
     private PhotoEntity photo;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private int distance;
 
     @Column(nullable = true)
     private String buildingName;
 
-    @Column(nullable = true, precision = 10)
+    @Column(nullable = false, precision = 10)
     private double latitude;
 
-    @Column(nullable = true, precision = 10)
+    @Column(nullable = false, precision = 10)
     private double longitude;
 
     //minX, minY, maxX, maxY - approximate bounds of a building in the photo

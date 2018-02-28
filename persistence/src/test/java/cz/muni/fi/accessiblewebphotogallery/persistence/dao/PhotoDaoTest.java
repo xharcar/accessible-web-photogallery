@@ -4,10 +4,7 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.dao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.DatabaseConfig;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,6 +43,14 @@ public class PhotoDaoTest {
     public void clearPhotos(){
         photoDao.deleteAll();
         assertEquals(0,photoDao.count());
+    }
+
+    @AfterAll
+    public void clearEverything(){
+        photoDao.deleteAll();
+        assertEquals(0,photoDao.count());
+        userDao.deleteAll();
+        assertEquals(0,userDao.count());
     }
 
     @Test
@@ -173,7 +178,6 @@ public class PhotoDaoTest {
         assertTrue(found.isPresent());
         assertEquals(photo,found.get());
     }
-
 
 
     public static PhotoEntity createPhoto(UserEntity uploader, Instant uploadTime){

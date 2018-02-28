@@ -1,6 +1,7 @@
 package cz.muni.fi.accessiblewebphotogallery.persistence.dao;
 
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.BuildingInfo;
+import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 public interface BuildingInfoDao extends JpaRepository<BuildingInfo,Long> {
 
     // for retrieving building information pertaining to a given photo
-    List<BuildingInfo> findByPhotoId(Long photoId);
+    List<BuildingInfo> findByPhoto(PhotoEntity photo);
 
     /* for looking up photos by building name;
         since there can be multiple buildings in a photo (see ERD), the idea is:
@@ -16,6 +17,6 @@ public interface BuildingInfoDao extends JpaRepository<BuildingInfo,Long> {
         2) retrieve photos to which found BuildingInfos are related by foreign key
         (pseudo-SQL: select * from photos where id in (select * from buildinginfo where buildingname = buildingName))
      */
-    List<BuildingInfo> findByBuildingName(String buildingName);
+    List<BuildingInfo> findByBuildingNameContaining(String buildingName);
 
 }
