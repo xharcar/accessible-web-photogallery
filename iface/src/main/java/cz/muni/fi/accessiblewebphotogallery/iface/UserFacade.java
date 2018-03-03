@@ -12,6 +12,4 @@ public interface UserFacade {
 
     Optional<UserDto> findByScreenName(String screenName);
 
-
-
 }

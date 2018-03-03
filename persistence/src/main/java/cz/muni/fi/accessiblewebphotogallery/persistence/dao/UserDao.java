@@ -3,6 +3,7 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.dao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserDao extends JpaRepository<UserEntity,Long> {
@@ -28,5 +29,12 @@ public interface UserDao extends JpaRepository<UserEntity,Long> {
      * @return See findByEmail
      */
     Optional<UserEntity> findByScreenName(String screenName);
+
+    /**
+     * More generalized screen name search version
+     * @param screenNamePart
+     * @return
+     */
+    List<UserEntity> findByScreenNameContaining(String screenNamePart);
 
 }

@@ -20,7 +20,10 @@ public class BuildingInfo {
     @Column(nullable = false)
     private int distance;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 192)
+    // According to Guinness World Records, the longest place name is the official Thai name for Bangkok,
+    // transcribed into Latin script, at 176~187 incl. spaces - therefore 192 characters should do
+    // (as long as nobody breaks it- to whom it may concern: please don't)
     private String buildingName;
 
     @Column(nullable = false, precision = 10)

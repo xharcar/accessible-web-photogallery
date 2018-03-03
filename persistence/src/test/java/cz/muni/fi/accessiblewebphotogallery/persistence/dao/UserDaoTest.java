@@ -4,14 +4,17 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.dao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.DatabaseConfig;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,12 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
 // UserDao unit tests
 @ContextConfiguration(classes = {DatabaseConfig.class})
 @ExtendWith(SpringExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserDaoTest {
 
     @Inject
     private UserDao userDao;
 
     @BeforeEach
+    @AfterAll
     public void clearDb(){
         userDao.deleteAll();
         assertEquals(0,userDao.count());
@@ -61,6 +66,17 @@ public class UserDaoTest {
         Optional<UserEntity> foundUser = userDao.findByScreenName(user1.getScreenName());
         assertTrue(foundUser.isPresent());
         assertEquals(user1,foundUser.get());
+    }
+
+    @Test
+    public void findByPartialScreenNameTest(){
+        UserEntity user = setupAsdfUser1();
+        user = userDao.save(user);
+        UserEntity user2 = setupFdsaUser2();
+        userDao.save(user2);
+        List<UserEntity> found = userDao.findByScreenNameContaining("ASDF");
+        assertEquals(1,found.size());
+        assertEquals(user,found.get(0));
     }
 
     @Test

@@ -6,7 +6,7 @@ public class BuildingInfoDto {
 
     private Long id;
 
-    private Long photoId;
+    private PhotoDto photo;
 
     private int distance;
 
@@ -36,12 +36,12 @@ public class BuildingInfoDto {
         this.id = id;
     }
 
-    public Long getPhotoId() {
-        return photoId;
+    public PhotoDto getPhoto() {
+        return photo;
     }
 
-    public void setPhotoId(Long photoId) {
-        this.photoId = photoId;
+    public void setPhoto(PhotoDto photo) {
+        this.photo = photo;
     }
 
     public int getDistance() {
@@ -124,20 +124,21 @@ public class BuildingInfoDto {
         return distance == that.distance &&
                 Double.compare(that.latitude, latitude) == 0 &&
                 Double.compare(that.longitude, longitude) == 0 &&
-                Objects.equals(photoId, that.photoId) &&
+                Objects.equals(photo, that.photo) &&
                 Objects.equals(buildingName, that.buildingName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(photoId, distance, buildingName, latitude, longitude);
+
+        return Objects.hash(photo, distance, buildingName, latitude, longitude);
     }
 
     @Override
     public String toString() {
         return "BuildingInfoDto{" +
                 "id=" + id +
-                ", photoId=" + photoId +
+                ", photo=" + photo +
                 ", distance=" + distance +
                 ", buildingName='" + buildingName + '\'' +
                 ", latitude=" + latitude +
@@ -146,6 +147,7 @@ public class BuildingInfoDto {
                 ", maxX=" + maxX +
                 ", minY=" + minY +
                 ", maxY=" + maxY +
+                ", focusText='" + focusText + '\'' +
                 '}';
     }
 }
