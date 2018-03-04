@@ -179,6 +179,18 @@ public class PhotoDaoTest {
         assertEquals(photo,found.get());
     }
 
+    @Test
+    public void findAllOrderedByUploadTimeTest(){
+        PhotoEntity photo1 = createPhoto(userDao.findAll().get(0),Instant.now().minusSeconds(30));
+        PhotoEntity photo2 = createPhoto(userDao.findAll().get(0),Instant.now().minusSeconds(10));
+        photo2.setBase64Identifier("anotherb64id");
+        photo1 = photoDao.save(photo1);
+        photo2 = photoDao.save(photo2);
+        assertEquals(2,photoDao.count());
+        List<PhotoEntity> found = photoDao.findAllByOrderByUploadTimeDesc();
+        assertTrue(found.get(0).getUploadTime().isAfter(found.get(1).getUploadTime()));
+    }
+
 
     public static PhotoEntity createPhoto(UserEntity uploader, Instant uploadTime){
         PhotoEntity photo = new PhotoEntity();

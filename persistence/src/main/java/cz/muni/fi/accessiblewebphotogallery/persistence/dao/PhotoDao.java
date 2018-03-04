@@ -40,4 +40,7 @@ public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
     // check whether a base-64 id exists when saving new uploads
     Optional<PhotoEntity> findByBase64Identifier(String b64id);
 
+    // sorted by upload time so most recent can be displayed first for browsing
+    List<PhotoEntity> findAllByOrderByUploadTimeDesc();
+
 }
