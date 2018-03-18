@@ -90,7 +90,7 @@ public class BuildingInfoDaoTest {
         info2.setLatitude(44.902813745);
         info2.setBuildingName("Empire State Building");
         bidao.save(info2);
-        List<BuildingInfo> found = bidao.findByBuildingNameContaining("Masaryk");
+        List<BuildingInfo> found = bidao.findByBuildingNameContainingIgnoreCase("masaryk");
         assertEquals(1,found.size());
         assertEquals(info,found.get(0));
     }

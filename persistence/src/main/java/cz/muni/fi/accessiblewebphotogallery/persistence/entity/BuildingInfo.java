@@ -141,6 +141,7 @@ public class BuildingInfo {
 
     @Override
     public boolean equals(Object o) {
+        if(o == null) return false;
         if (this == o) return true;
         if (!(o instanceof BuildingInfo)) return false;
         BuildingInfo that = (BuildingInfo) o;

@@ -7,6 +7,7 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -120,7 +121,7 @@ public class PhotoDaoTest {
         p2.setBase64Identifier("anotherb64id");
         photo = photoDao.save(photo);
         photoDao.save(p2);
-        List<PhotoEntity> found = photoDao.findByUploadTimeBetween(time0,time2);
+        List<PhotoEntity> found = photoDao.findByUploadTimeBetween(time0,time2, PageRequest.of(0,5)).getContent();
         assertEquals(1,found.size());
         assertEquals(photo,found.get(0));
     }
@@ -133,13 +134,13 @@ public class PhotoDaoTest {
         PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
         photo2.setBase64Identifier("anotherb64id");
         photoDao.save(photo2);
-        List<PhotoEntity> found = photoDao.findByUploader(user);
+        List<PhotoEntity> found = photoDao.findByUploader(user, PageRequest.of(0,3)).getContent();
         assertEquals(1,found.size());
         assertEquals(photo,found.get(0));
     }
 
     @Test
-    public void findByDescriptionContainingTest(){
+    public void findByDescriptionContainingIgnoreCaseTest(){
         UserEntity uploader = userDao.findAll().get(0);
         PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
         photo.setDescription("Lorem ipsum dolor sit amet, consectetuer adipiscing elit.");
@@ -148,13 +149,13 @@ public class PhotoDaoTest {
         photo2.setBase64Identifier("anotherb64id");
         photo2.setDescription("Police police police police police police police police.");
         photoDao.save(photo2);
-        List<PhotoEntity> found = photoDao.findByDescriptionContaining("adipiscing");
+        List<PhotoEntity> found = photoDao.findByDescriptionContainingIgnoreCase("lorem", PageRequest.of(0,3)).getContent();
         assertEquals(1,found.size());
         assertEquals(photo,found.get(0));
     }
 
     @Test
-    public void findByTitleContainingTest(){
+    public void findByTitleContainingIgnoreCaseTest(){
         PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
         photo.setTitle("Lorem ipsum");
         photo = photoDao.save(photo);
@@ -162,7 +163,7 @@ public class PhotoDaoTest {
         photo2.setBase64Identifier("anotherb64id");
         photo2.setTitle("Photo title");
         photoDao.save(photo2);
-        List<PhotoEntity> found = photoDao.findByTitleContaining("ipsum");
+        List<PhotoEntity> found = photoDao.findByTitleContainingIgnoreCase("ipsum", PageRequest.of(0,10)).getContent();
         assertEquals(1,found.size());
         assertEquals(photo,found.get(0));
     }
@@ -187,7 +188,7 @@ public class PhotoDaoTest {
         photo1 = photoDao.save(photo1);
         photo2 = photoDao.save(photo2);
         assertEquals(2,photoDao.count());
-        List<PhotoEntity> found = photoDao.findAllByOrderByUploadTimeDesc();
+        List<PhotoEntity> found = photoDao.findAllByOrderByUploadTimeDesc(PageRequest.of(0,10)).getContent();
         assertTrue(found.get(0).getUploadTime().isAfter(found.get(1).getUploadTime()));
     }
 

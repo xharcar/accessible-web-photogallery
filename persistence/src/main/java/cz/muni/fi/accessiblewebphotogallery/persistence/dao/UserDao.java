@@ -24,17 +24,11 @@ public interface UserDao extends JpaRepository<UserEntity,Long> {
     Optional<UserEntity> findByLoginName(String loginName);
 
     /**
-     * Finds user by screenName
-     * @param screenName screenName to look for
-     * @return See findByEmail
+     * General lookup by screen name- case insensitive
+     * @param insensitiveScreenNamePart (partial) case-insensitive screen name to look up
+     * @return analogic to findByScreenNameContaning (ignoring case)
      */
-    Optional<UserEntity> findByScreenName(String screenName);
+    List<UserEntity> findByScreenNameContainingIgnoreCase(String insensitiveScreenNamePart);
 
-    /**
-     * More generalized screen name search version
-     * @param screenNamePart
-     * @return
-     */
-    List<UserEntity> findByScreenNameContaining(String screenNamePart);
 
 }

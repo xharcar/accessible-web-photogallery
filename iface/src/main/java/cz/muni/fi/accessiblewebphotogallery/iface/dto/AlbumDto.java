@@ -39,6 +39,7 @@ public class AlbumDto {
 
     @Override
     public boolean equals(Object o) {
+        if(o == null) return false;
         if (this == o) return true;
         if (!(o instanceof AlbumDto)) return false;
         AlbumDto albumDto = (AlbumDto) o;

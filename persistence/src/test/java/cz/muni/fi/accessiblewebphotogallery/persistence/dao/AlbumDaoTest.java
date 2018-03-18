@@ -95,7 +95,7 @@ public class AlbumDaoTest {
         album = albumDao.save(album);
         AlbumEntity album2 = createAlbum(userDao.findAll().get(1),"FDSA Album");
         album2 = albumDao.save(album2);
-        List<AlbumEntity> found = albumDao.findByAlbumNameContaining("ASDF");
+        List<AlbumEntity> found = albumDao.findByAlbumNameContainingIgnoreCase("asdf");
         assertEquals(1,found.size());
         assertEquals(album,found.get(0));
     }

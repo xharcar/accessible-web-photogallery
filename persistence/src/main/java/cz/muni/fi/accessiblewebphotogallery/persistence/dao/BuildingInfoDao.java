@@ -17,6 +17,6 @@ public interface BuildingInfoDao extends JpaRepository<BuildingInfo,Long> {
         2) retrieve photos to which found BuildingInfos are related by foreign key
         (pseudo-SQL: select * from photos where id in (select * from buildinginfo where buildingname = buildingName))
      */
-    List<BuildingInfo> findByBuildingNameContaining(String buildingName);
+    List<BuildingInfo> findByBuildingNameContainingIgnoreCase(String buildingName);
 
 }

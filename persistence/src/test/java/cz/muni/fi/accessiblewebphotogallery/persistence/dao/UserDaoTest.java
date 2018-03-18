@@ -58,25 +58,17 @@ public class UserDaoTest {
     }
 
     @Test
-    public void findByScreenNameTest(){
+    public void findByScreenNameContainingIgnoreCaseTest(){
         UserEntity user1 = setupAsdfUser1();
         user1 = userDao.save(user1);
         UserEntity user2 = setupFdsaUser2();
-        userDao.save(user2);
-        Optional<UserEntity> foundUser = userDao.findByScreenName(user1.getScreenName());
-        assertTrue(foundUser.isPresent());
-        assertEquals(user1,foundUser.get());
-    }
-
-    @Test
-    public void findByPartialScreenNameTest(){
-        UserEntity user = setupAsdfUser1();
-        user = userDao.save(user);
-        UserEntity user2 = setupFdsaUser2();
-        userDao.save(user2);
-        List<UserEntity> found = userDao.findByScreenNameContaining("ASDF");
+        user2 = userDao.save(user2);
+        List<UserEntity> found = userDao.findByScreenNameContainingIgnoreCase(user1.getScreenName());
         assertEquals(1,found.size());
-        assertEquals(user,found.get(0));
+        assertEquals(user1,found.get(0));
+        List<UserEntity> found2 = userDao.findByScreenNameContainingIgnoreCase(user2.getScreenName().toLowerCase().substring(0,2));// looking for "fds"
+        assertEquals(1,found2.size());
+        assertEquals(user2,found2.get(0));
     }
 
     @Test

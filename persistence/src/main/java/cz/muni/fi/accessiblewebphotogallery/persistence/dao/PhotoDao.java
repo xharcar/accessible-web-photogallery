@@ -2,11 +2,11 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.dao;
 
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
@@ -22,9 +22,9 @@ public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
     // can test "after X" with "between X and now" and "before X" with "between epoch and X"
     // line of thinking: this doesn't lower the required number of DB accesses when searching,
     // and one more comparison or two is not a big deal (couple cycles)
-    List<PhotoEntity> findByUploadTimeBetween(Instant begin, Instant end);
+    Page<PhotoEntity> findByUploadTimeBetween(Instant begin, Instant end, Pageable pageable);
 
-    List<PhotoEntity> findByUploader(UserEntity uploader);
+    Page<PhotoEntity> findByUploader(UserEntity uploader, Pageable pageable);
 
     /* Finds all photos whose description contains a given string;
         when searching by description on the website, the idea is:
@@ -32,15 +32,15 @@ public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
         2) search for every token separately (this method)
         3) return the common elements(intersection) of the search result sets from 2)
      */
-    List<PhotoEntity> findByDescriptionContaining(String searchString);
+    Page<PhotoEntity> findByDescriptionContainingIgnoreCase(String searchString, Pageable pageable);
 
-    // same as findByDescriptionContaining(), searches titles instead
-    List<PhotoEntity> findByTitleContaining(String searchString);
+    // same as findByDescriptionContainingIgnoreCase(), searches titles instead
+    Page<PhotoEntity> findByTitleContainingIgnoreCase(String searchString, Pageable pageable);
 
     // check whether a base-64 id exists when saving new uploads
     Optional<PhotoEntity> findByBase64Identifier(String b64id);
 
     // sorted by upload time so most recent can be displayed first for browsing
-    List<PhotoEntity> findAllByOrderByUploadTimeDesc();
+    Page<PhotoEntity> findAllByOrderByUploadTimeDesc(Pageable pageable);
 
 }

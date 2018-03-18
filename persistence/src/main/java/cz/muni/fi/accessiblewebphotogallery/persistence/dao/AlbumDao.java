@@ -12,6 +12,6 @@ public interface AlbumDao extends JpaRepository<AlbumEntity,Long> {
 
     List<AlbumEntity> findByAlbumName(String albumName);
 
-    List<AlbumEntity> findByAlbumNameContaining(String partialAlbumName);
+    List<AlbumEntity> findByAlbumNameContainingIgnoreCase(String partialAlbumName);
 
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserFacade {
 
-    // findBy* methods: map 1:1 to DTO methods
+    // findBy* methods: map 1:1 to DAO methods
 
     Optional<UserDto> findById(Long id);
 
@@ -16,9 +16,7 @@ public interface UserFacade {
 
     Optional<UserDto> findByLoginName(String loginName);
 
-    Optional<UserDto> findByScreenName(String screenName);
-
-    List<UserDto> findByScreenNameContaining(String partialScreenName);
+    List<UserDto> findByScreenNameContainingIgnoreCase(String partialScreenName);
 
     // to be used with both email and login name
     boolean authenticate(String identifier, String password);
