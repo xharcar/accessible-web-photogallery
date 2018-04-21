@@ -1,7 +1,9 @@
 package cz.muni.fi.accessiblewebphotogallery.iface.facade;
 
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
-import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.util.Pair;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,8 @@ public interface UserFacade {
     Optional<UserDto> findByLoginName(String loginName);
 
     List<UserDto> findByScreenNameContainingIgnoreCase(String partialScreenName);
+
+    PageImpl<UserDto> findAll(Pageable pageable);
 
     // to be used with both email and login name
     boolean authenticate(String identifier, String password);

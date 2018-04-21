@@ -10,7 +10,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dozer.Mapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.inject.Inject;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -37,36 +37,34 @@ public class UserServiceImpl implements UserService {
     private SecureRandom csprng;
 
     @Inject
-    public UserServiceImpl(UserDao userDao, Mapper mapper, RegistrationTokenDao regDao) {
+    public UserServiceImpl(UserDao userDao, RegistrationTokenDao regDao) {
         this.userDao = userDao;
         this.registrationDao = regDao;
         try {
             csprng = SecureRandom.getInstance("NativePRNGNonBlocking");
             // Non-blocking is fine, see eg. my Bc. thesis
         } catch (NoSuchAlgorithmException nsae) {
-            log.catching(nsae);
-            log.warn("Native non-blocking PRNG unavailable.");
+            // just so it doesn't propagate further
             if (System.getProperty("os.name").toLowerCase().contains("windows")) {
                 try {
                     csprng = SecureRandom.getInstance("Windows-PRNG");
-                    log.info("Windows-PRNG available, acquired SecureRandom instance.");
-                } catch (NoSuchAlgorithmException nsaeWindows) {
-                    log.catching(nsaeWindows);
-                    log.warn("No Windows PRNG found.");
+                } catch (NoSuchAlgorithmException ignored) {
+                    // same as above
                 }
             }
             if (csprng == null) {
-                log.info("Using default CSPRNG.");
-                csprng = new SecureRandom();
+                csprng = new SecureRandom(); // if all else fails, get a default one
             }
         }
+        log.info("CSPRNG Algorithm: " + csprng.getAlgorithm());
+        // no need to log all the steps that led to this CSPRNG being chosen, we just need to know
+        // which one we got
     }
 
     @Override
     public PageImpl<UserEntity> findAll(Pageable pageable) {
         Page<UserEntity> page = userDao.findAll(pageable);
-        PageImpl rv = new PageImpl<>(page.getContent(), pageable, userDao.count());
-        return rv;
+        return new PageImpl<>(page.getContent(), pageable, userDao.count());
     }
 
     @Override
@@ -145,13 +143,8 @@ public class UserServiceImpl implements UserService {
         byte[] hash;
         try {
             hash = pbkdf2(password.toCharArray(), salt, KDF_IT, HASH_SIZE);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex){
-            log.catching(ex);
-            if(ex instanceof NoSuchAlgorithmException) {
-                log.error("PBKDF2 failed- no such algorithm.");
-            } else{
-                log.error("PBKDF2 failed- invalid key spec");
-            }
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e){
+            handlePBKDF2Fail(e);
             return null;
         }
         return Pair.of(hash,salt);
@@ -165,12 +158,7 @@ public class UserServiceImpl implements UserService {
         try {
             actual = pbkdf2(password.toCharArray(),salt,KDF_IT,HASH_SIZE);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            log.catching(e);
-            if(e instanceof NoSuchAlgorithmException){
-                log.error("PBKDF2 failed- no such algorithm.");
-            } else{
-                log.error("PBKDF2 failed- invalid key spec");
-            }
+            handlePBKDF2Fail(e);
             return false;
         }
         return slowEquals(expected,actual);
@@ -179,7 +167,7 @@ public class UserServiceImpl implements UserService {
     private byte[] pbkdf2(char[] password, byte[] salt, int iterations, int nbytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
         // note: PBEKeySpec takes bits
         PBEKeySpec keySpec = new PBEKeySpec(password,salt,iterations,nbytes*8);
-        return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512").generateSecret(keySpec).getEncoded());
+        return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512").generateSecret(keySpec).getEncoded();
     }
 
     private boolean slowEquals(byte[] a, byte[] b){
@@ -191,6 +179,15 @@ public class UserServiceImpl implements UserService {
             }
         }
         return diff == 0;
+    }
+
+    private void handlePBKDF2Fail(GeneralSecurityException gse){
+        log.catching(gse);
+        if(gse instanceof NoSuchAlgorithmException){
+            log.error("PBKDF2 failed- no such algorithm.");
+        } else{
+            log.error("PBKDF2 failed- invalid key spec");
+        }
     }
 
 }

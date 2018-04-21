@@ -8,21 +8,19 @@ public class BuildingInfoDto {
 
     private PhotoDto photo;
 
-    private int distance;
+    private Long osmId;
+
+    private Integer distance;
 
     private String buildingName;
 
-    private double latitude;
+    private Double latitude;
 
-    private double longitude;
+    private Double longitude;
 
-    private int minX;
+    private Integer minX;
 
-    private int maxX;
-
-    private int minY;
-
-    private int maxY;
+    private Integer maxX;
 
     private String focusText;
 
@@ -44,11 +42,19 @@ public class BuildingInfoDto {
         this.photo = photo;
     }
 
-    public int getDistance() {
+    public Long getOsmId() {
+        return osmId;
+    }
+
+    public void setOsmId(Long osmId) {
+        this.osmId = osmId;
+    }
+
+    public Integer getDistance() {
         return distance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(Integer distance) {
         this.distance = distance;
     }
 
@@ -60,52 +66,36 @@ public class BuildingInfoDto {
         this.buildingName = buildingName;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public int getMinX() {
+    public Integer getMinX() {
         return minX;
     }
 
-    public void setMinX(int minX) {
+    public void setMinX(Integer minX) {
         this.minX = minX;
     }
 
-    public int getMaxX() {
+    public Integer getMaxX() {
         return maxX;
     }
 
-    public void setMaxX(int maxX) {
+    public void setMaxX(Integer maxX) {
         this.maxX = maxX;
-    }
-
-    public int getMinY() {
-        return minY;
-    }
-
-    public void setMinY(int minY) {
-        this.minY = minY;
-    }
-
-    public int getMaxY() {
-        return maxY;
-    }
-
-    public void setMaxY(int maxY) {
-        this.maxY = maxY;
     }
 
     public String getFocusText() {
@@ -132,7 +122,7 @@ public class BuildingInfoDto {
     @Override
     public int hashCode() {
 
-        return Objects.hash(photo, distance, buildingName, latitude, longitude);
+        return Objects.hash(osmId, latitude, longitude);
     }
 
     @Override
@@ -146,8 +136,6 @@ public class BuildingInfoDto {
                 ", longitude=" + longitude +
                 ", minX=" + minX +
                 ", maxX=" + maxX +
-                ", minY=" + minY +
-                ", maxY=" + maxY +
                 ", focusText='" + focusText + '\'' +
                 '}';
     }

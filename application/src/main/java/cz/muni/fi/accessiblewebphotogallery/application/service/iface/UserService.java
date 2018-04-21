@@ -31,5 +31,4 @@ public interface UserService extends PagedService<UserEntity>{
 
     boolean confirmUser(String email, String token);
 
-
 }

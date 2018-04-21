@@ -1,12 +1,11 @@
 package cz.muni.fi.accessiblewebphotogallery.iface.facade;
 
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.BuildingInfoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.io.File;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +24,14 @@ public interface PhotoFacade {
 
     PageImpl<PhotoDto> findAllMostRecentFirst(Pageable pageable);
 
-    PageImpl<PhotoDto> findAllInAlbum(AlbumDto album, Pageable pageable);
+    PageImpl<PhotoDto> findMultipleByBase64(List<String> b64ids, Pageable pageable);
 
-    PageImpl<PhotoDto> findByBuildingInfoList(List<BuildingInfoDto> buildingInfoDtoList, Pageable pageable);
+//    PhotoDto registerPhoto(File photoFile, File metaDataFile, UserDto uploaderDto, String photoTitle, String photoDescription);
+
+    PhotoDto registerPhoto(PhotoDto photo, File photoFile, File metadataFile);
+
+    PhotoDto updatePhoto(PhotoDto photoDto);
+
+    void delete(PhotoDto photo);
 
 }

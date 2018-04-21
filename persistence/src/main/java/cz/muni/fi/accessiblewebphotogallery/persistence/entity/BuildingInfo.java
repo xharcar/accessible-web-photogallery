@@ -8,6 +8,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "BUILDINGINFO")
 public class BuildingInfo {
+    private double EPSILON = 0.0000025;// see BuildingInfoServiceImpl
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +19,10 @@ public class BuildingInfo {
     private PhotoEntity photo;
 
     @Column(nullable = false)
+    private Long osmId = -1L; // -1L serves as "unknown/not found"
+    // OSM uses 64-bit (presumably signed) integers for IDs
+
+    @Column(nullable = false)
     private int distance;
 
     @Column(nullable = true, length = 192)
@@ -26,24 +31,24 @@ public class BuildingInfo {
     // (as long as nobody breaks it- to whom it may concern: please don't)
     private String buildingName;
 
-    @Column(nullable = false, precision = 10)
+    /*
+    It makes no sense for a building not to have its set of GPS coordinates;
+    hence it makes sense for these to be non-nullable.
+    However, if the info is unavailable for whatever reason,
+    Null Island (GPS coordinates {0.0;0.0} will have to do...
+    */
+    @Column(nullable = false, precision = 7)// according to OSM wiki, 7 digits of precision are used
     private double latitude;
 
-    @Column(nullable = false, precision = 10)
+    @Column(nullable = false, precision = 7)
     private double longitude;
 
-    //minX, minY, maxX, maxY - approximate bounds of a building in the photo
+    //minX, maxX - approximate horizontal bounds of a building in the photo
     @Column(nullable = false)
     private int photoMinX;
 
     @Column(nullable = false)
     private int photoMaxX;
-
-    @Column(nullable = false)
-    private int photoMinY;
-
-    @Column(nullable = false)
-    private int photoMaxY;
 
     // text to be displayed on mouseover/focus
     @Column(nullable = true, length = 384)
@@ -65,6 +70,14 @@ public class BuildingInfo {
 
     public void setPhoto(PhotoEntity photo) {
         this.photo = photo;
+    }
+
+    public Long getOsmId() {
+        return osmId;
+    }
+
+    public void setOsmId(Long osmId) {
+        this.osmId = osmId;
     }
 
     public int getDistance() {
@@ -115,22 +128,6 @@ public class BuildingInfo {
         this.photoMaxX = photoMaxX;
     }
 
-    public int getPhotoMinY() {
-        return photoMinY;
-    }
-
-    public void setPhotoMinY(int photoMinY) {
-        this.photoMinY = photoMinY;
-    }
-
-    public int getPhotoMaxY() {
-        return photoMaxY;
-    }
-
-    public void setPhotoMaxY(int photoMaxY) {
-        this.photoMaxY = photoMaxY;
-    }
-
     public String getFocusText() {
         return focusText;
     }
@@ -145,16 +142,18 @@ public class BuildingInfo {
         if (this == o) return true;
         if (!(o instanceof BuildingInfo)) return false;
         BuildingInfo that = (BuildingInfo) o;
-        return distance == that.distance &&
-                Double.compare(that.latitude, latitude) == 0 &&
-                Double.compare(that.longitude, longitude) == 0 &&
-                Objects.equals(photo, that.photo) &&
-                Objects.equals(buildingName, that.buildingName);
+        return  osmId.equals(that.osmId) ||
+                (Math.abs(Double.compare(that.latitude, latitude)) <= EPSILON &&
+                Math.abs(Double.compare(that.longitude, longitude)) <= EPSILON);
+        // a single building can be in multiple photos, known under multiple names, and be photographed from different distances;
+        // if a BuildingInfo instance has the same OSM ID as another, then they're of the same building;
+        // if that fails (eg. OSM doesn't have that building in its DB), it's pretty safe to assume no two buildings are
+        // so small and close enough that their latitude/longitude differ by less than EPSILON
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(photo, distance, buildingName, latitude, longitude);
+        return Objects.hash(osmId, latitude, longitude);
     }
 
     @Override
@@ -162,14 +161,13 @@ public class BuildingInfo {
         return "BuildingInfo{" +
                 "id=" + id +
                 ", photo=" + photo +
+                ", osmId=" + osmId +
                 ", distance=" + distance +
                 ", buildingName='" + buildingName + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", photoMinX=" + photoMinX +
                 ", photoMaxX=" + photoMaxX +
-                ", photoMinY=" + photoMinY +
-                ", photoMaxY=" + photoMaxY +
                 '}';
     }
 }

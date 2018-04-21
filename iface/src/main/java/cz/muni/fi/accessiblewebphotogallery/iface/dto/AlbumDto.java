@@ -10,6 +10,8 @@ public class AlbumDto {
 
     private String albumName;
 
+    private String base64Id;
+
     public AlbumDto() {
     }
 
@@ -37,20 +39,26 @@ public class AlbumDto {
         this.albumName = albumName;
     }
 
+    public String getBase64Id() {
+        return base64Id;
+    }
+
+    public void setBase64Id(String base64Id) {
+        this.base64Id = base64Id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(o == null) return false;
         if (this == o) return true;
         if (!(o instanceof AlbumDto)) return false;
         AlbumDto albumDto = (AlbumDto) o;
-        return Objects.equals(albumOwner, albumDto.albumOwner) &&
-                Objects.equals(albumName, albumDto.albumName);
+        return base64Id.equals(albumDto.getBase64Id());
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(albumOwner, albumName);
+        return Objects.hash(base64Id);
     }
 
     @Override
@@ -59,6 +67,7 @@ public class AlbumDto {
                 "id=" + id +
                 ", albumOwner=" + albumOwner +
                 ", albumName='" + albumName + '\'' +
+                ", base64Id='" + base64Id + '\'' +
                 '}';
     }
 }

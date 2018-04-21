@@ -192,6 +192,18 @@ public class PhotoDaoTest {
         assertTrue(found.get(0).getUploadTime().isAfter(found.get(1).getUploadTime()));
     }
 
+    @Test
+    public void updatePhotoTest(){
+        PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
+        photo = photoDao.save(photo);
+        String newDesc = "Taken atop the Lomnicky Stit in the High Tatra mountains on 2018-01-10";
+        photo.setDescription(newDesc);
+        photo = photoDao.save(photo);
+        Optional<PhotoEntity> found = photoDao.findByBase64Identifier(photo.getBase64Identifier());
+        assertTrue(found.isPresent());
+        assertEquals(newDesc,found.get().getDescription());
+    }
+
 
     public static PhotoEntity createPhoto(UserEntity uploader, Instant uploadTime){
         PhotoEntity photo = new PhotoEntity();

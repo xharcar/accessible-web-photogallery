@@ -1,6 +1,5 @@
 package cz.muni.fi.accessiblewebphotogallery.persistence;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.io.File;
+import java.util.Objects;
 import java.util.Properties;
 
 @Component
@@ -30,40 +29,11 @@ import java.util.Properties;
 @EnableJpaRepositories
 public class DatabaseConfig {
 
+    private final Environment env;
+
     @Inject
-    private Environment env;
-
-    @Value("${rootdir}")
-    private String rootDBDirectorySetting;
-
-    @Value("${photodir}")
-    private String photoDirectorySetting;
-
-    @Value("${albumdir}")
-    private String albumDirectorySetting;
-
-    public String getRootDBDirectory(){
-        if(rootDBDirectorySetting.equalsIgnoreCase("default")
-                || rootDBDirectorySetting.isEmpty()){
-            return System.getProperty("user.home");
-        }
-        else return rootDBDirectorySetting;
-    }
-
-    public String getPhotoDirectory(){
-        if(photoDirectorySetting.equalsIgnoreCase("default")
-                || photoDirectorySetting.isEmpty()){
-            return getRootDBDirectory() + File.separator + "photos";
-        }
-        else return photoDirectorySetting;
-    }
-
-    public String getAlbumDirectory(){
-        if(albumDirectorySetting.equalsIgnoreCase("default")
-                || albumDirectorySetting.isEmpty()){
-            return getRootDBDirectory() + File.separator + "albums";
-        }
-        else return albumDirectorySetting;
+    public DatabaseConfig(Environment env) {
+        this.env = env;
     }
 
     @Bean
@@ -81,7 +51,7 @@ public class DatabaseConfig {
     @Bean
     public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
+        dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("spring.datasource.driver-class-name")));
         dataSource.setUrl(env.getProperty("spring.datasource.url"));
         return dataSource;
     }

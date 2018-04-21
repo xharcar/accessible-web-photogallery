@@ -28,53 +28,57 @@ public class PhotoEntity {
 
     @Column(nullable = false, length = 12, unique = true)
     private String base64Identifier;
-    /* Identifier Mk.2
-        1) register upload instant as ISO8601 string
-        2) MD5 the photo, and if given, its metadata file; convert both to hex strings
-        3) hashCode uploader entity, toHex
-        4) concatenate in order: uploader hex-upload instant-photo hex-metadata hex; take raw bytes
-        5) MD5 raw bytes, take the 72 least-significant bits(9 B); convert to Base64 (yields 12 bytes)
-        5.1) if such an ID already exists, add 4 pseudorandom bytes to raw and goto 5; else goto 6
-        6) save as B64ID
+    /* Identifier Mk.3
+        1) Register upload Instant
+        2) Into a List of ByteBuffers, put:
+            - uploading user's DTO hashCode() result
+            - hashCode() of upload Instant
+        3) Generate 4 pseudo-random bytes, append to ByteBuffer list
+        4) Update a MessageDigest(MD5) with the ByteBuffer arrays
+        5) Update the digest with the photo
+        6) If a metadata file is present, update the digest with it
+        7) Finalise the digest
+        8) Take the 9 least significant bytes and convert them to Base64(URL-safe)
+        9) If the resulting String is already present, goto 3; else assign it as identifier
      */
 
     // camera info - nullable for when no JSON metadata file is uploaded
     @Column(nullable = true, precision = 10)
-    private double cameraLatitude;
+    private Double cameraLatitude;
 
     @Column(nullable = true, precision = 10)
-    private double cameraLongitude;
+    private Double cameraLongitude;
 
     @Column(nullable = true, precision = 1)
-    private double cameraAzimuth;
+    private Double cameraAzimuth;
 
     @Column(nullable = true, precision = 1)
-    private double positionAccuracy;
+    private Double positionAccuracy;
 
     @Column(nullable = true, precision = 2)
-    private double cameraHorizontalFOV;
+    private Double cameraHorizontalFOV;
 
     // Some basic EXIF metadata- all non-mandatory- will be considered null for storage purposes if not present
     @Column(nullable = true)
-    private LocalDateTime datetimeTaken; // EXIF has up to minute precision, but this doesn't seem necessary here
-    // to be changed for another more suitable type if one is found
-    @Column(nullable = true)
+    private LocalDateTime datetimeTaken; // EXIF has up to minute precision
+
+    @Column(nullable = true, length = 96)
     private String cameraModel;
 
     @Column(nullable = true)
-    private int imageWidth;
+    private Integer imageWidth;
 
     @Column(nullable = true)
-    private int imageHeight;
+    private Integer imageHeight;
 
     @Column(nullable = true)
-    private int iso;
+    private Integer iso;
 
     @Column(nullable = true)
-    private boolean flash;
+    private Boolean flash;
 
     @Column(nullable = true)
-    private double exposureTime;
+    private Double exposureTime;
     // </EXIF>
 
     public PhotoEntity() {}
@@ -127,43 +131,43 @@ public class PhotoEntity {
         this.base64Identifier = base64Identifier;
     }
 
-    public double getCameraLatitude() {
+    public Double getCameraLatitude() {
         return cameraLatitude;
     }
 
-    public void setCameraLatitude(double cameraLatitude) {
+    public void setCameraLatitude(Double cameraLatitude) {
         this.cameraLatitude = cameraLatitude;
     }
 
-    public double getCameraLongitude() {
+    public Double getCameraLongitude() {
         return cameraLongitude;
     }
 
-    public void setCameraLongitude(double cameraLongitude) {
+    public void setCameraLongitude(Double cameraLongitude) {
         this.cameraLongitude = cameraLongitude;
     }
 
-    public double getCameraAzimuth() {
+    public Double getCameraAzimuth() {
         return cameraAzimuth;
     }
 
-    public void setCameraAzimuth(double cameraAzimuth) {
+    public void setCameraAzimuth(Double cameraAzimuth) {
         this.cameraAzimuth = cameraAzimuth;
     }
 
-    public double getPositionAccuracy() {
+    public Double getPositionAccuracy() {
         return positionAccuracy;
     }
 
-    public void setPositionAccuracy(double positionAccuracy) {
+    public void setPositionAccuracy(Double positionAccuracy) {
         this.positionAccuracy = positionAccuracy;
     }
 
-    public double getCameraHorizontalFOV() {
+    public Double getCameraHorizontalFOV() {
         return cameraHorizontalFOV;
     }
 
-    public void setCameraHorizontalFOV(double cameraHorizontalFOV) {
+    public void setCameraHorizontalFOV(Double cameraHorizontalFOV) {
         this.cameraHorizontalFOV = cameraHorizontalFOV;
     }
 
@@ -183,43 +187,43 @@ public class PhotoEntity {
         this.cameraModel = cameraModel;
     }
 
-    public int getImageWidth() {
+    public Integer getImageWidth() {
         return imageWidth;
     }
 
-    public void setImageWidth(int imageWidth) {
+    public void setImageWidth(Integer imageWidth) {
         this.imageWidth = imageWidth;
     }
 
-    public int getImageHeight() {
+    public Integer getImageHeight() {
         return imageHeight;
     }
 
-    public void setImageHeight(int imageHeight) {
+    public void setImageHeight(Integer imageHeight) {
         this.imageHeight = imageHeight;
     }
 
-    public int getIso() {
+    public Integer getIso() {
         return iso;
     }
 
-    public void setIso(int iso) {
+    public void setIso(Integer iso) {
         this.iso = iso;
     }
 
-    public boolean isFlash() {
+    public Boolean getFlash() {
         return flash;
     }
 
-    public void setFlash(boolean flash) {
+    public void setFlash(Boolean flash) {
         this.flash = flash;
     }
 
-    public double getExposureTime() {
+    public Double getExposureTime() {
         return exposureTime;
     }
 
-    public void setExposureTime(double exposureTime) {
+    public void setExposureTime(Double exposureTime) {
         this.exposureTime = exposureTime;
     }
 
@@ -251,7 +255,7 @@ public class PhotoEntity {
                 ", positionAccuracy=" + positionAccuracy +
                 ", cameraHorizontalFOV=" + cameraHorizontalFOV +
                 ", datetimeTaken=" + datetimeTaken +
-                ", cameraModel='" + cameraModel + '\'' +
+                ", cameraModel='" + cameraModel +
                 ", imageWidth=" + imageWidth +
                 ", imageHeight=" + imageHeight +
                 ", iso=" + iso +

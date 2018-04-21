@@ -147,6 +147,30 @@ public class UserDaoTest {
         assertThrows(DataAccessException.class,()->{userDao.save(user);});
     }
 
+    @Test
+    public void updateUserTest(){
+        UserEntity user = setupAsdfUser1();
+        user = userDao.save(user);
+        String newScreenName = "Alexander Nevsky";
+        user.setScreenName(newScreenName);
+        user = userDao.save(user);
+        List<UserEntity> found = userDao.findByScreenNameContainingIgnoreCase("alex");
+        assertEquals(1,found.size());
+        assertEquals(user,found.get(0));
+    }
+
+    @Test
+    public void updateUserTest2(){
+        UserEntity user = setupAsdfUser1();
+        user = userDao.save(user);
+        String newEmail = "alexnevsky@vkontakte.ru";
+        user.setEmail(newEmail);
+        user = userDao.save(user);
+        Optional<UserEntity> found = userDao.findByEmail(newEmail);
+        assertTrue(found.isPresent());
+        assertEquals(user,found.get());
+    }
+
     public static UserEntity setupAsdfUser1(){
         UserEntity user1 = new UserEntity();
         user1.setLoginName("asdfuser");

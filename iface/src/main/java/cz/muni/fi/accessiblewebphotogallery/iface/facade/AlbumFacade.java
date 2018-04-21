@@ -2,17 +2,29 @@ package cz.muni.fi.accessiblewebphotogallery.iface.facade;
 
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
-import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
 
 import java.util.List;
 
 public interface AlbumFacade {
 
+    List<AlbumDto> findAll();
+
     List<AlbumDto> findByAlbumOwner(UserDto owner);
 
-    List<AlbumDto> findByAlbumName(String albumName);
+    AlbumDto createAlbum(UserDto user, String albumName);
 
-    List<AlbumEntity> findByAlbumNameContainingIgnoreCase(String partialName);
+    boolean addPhotoToAlbum(AlbumDto albumDto, String photoB64Id);
+
+    boolean removePhotoFromAlbum(AlbumDto albumDto, String photoB64Id);
+
+    List<String> listPhotosInAlbum(AlbumDto albumDto);// returns b64 IDs
+
+    void deleteAlbum(AlbumDto albumDto);
+
+
+//    List<AlbumDto> findByAlbumName(String albumName);
+//
+//    List<AlbumEntity> findByAlbumNameContainingIgnoreCase(String partialName);
 
 
 }
