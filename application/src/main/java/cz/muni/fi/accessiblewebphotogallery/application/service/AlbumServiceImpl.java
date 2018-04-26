@@ -52,7 +52,6 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public AlbumEntity createAlbum(UserEntity user, String albumName) {
-        log.info("AlbumFacade::createAlbum");
         Validate.notNull(user);
         Validate.notNull(albumName);
         Instant creationTime = Instant.now();
@@ -183,7 +182,6 @@ public class AlbumServiceImpl implements AlbumService {
     public Optional<AlbumEntity> findByBase64Identifier(String base64) {
         return albumDao.findByBase64Identifier(base64);
     }
-
 
     private String computeBase64(List<ByteBuffer> data){
         hasher.reset();

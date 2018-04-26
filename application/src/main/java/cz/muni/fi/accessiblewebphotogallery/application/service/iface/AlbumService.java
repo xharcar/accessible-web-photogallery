@@ -24,7 +24,5 @@ public interface AlbumService {
 
     List<String> listPhotosInAlbum(AlbumEntity album);
 
-
-
     Optional<AlbumEntity> findByBase64Identifier(String base64);
 }

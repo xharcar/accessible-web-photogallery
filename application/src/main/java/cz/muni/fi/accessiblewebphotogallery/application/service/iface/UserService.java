@@ -1,17 +1,14 @@
 package cz.muni.fi.accessiblewebphotogallery.application.service.iface;
 
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserService extends PagedService<UserEntity>{
+public interface UserService{
 
-    @Override
-    PageImpl<UserEntity> findAll(Pageable pageable);
+    List<UserEntity> findAll();
 
     Optional<UserEntity> findById(Long id);
 

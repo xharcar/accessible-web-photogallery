@@ -5,10 +5,8 @@ import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.UserFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.apache.commons.lang3.Validate;
-import org.springframework.data.util.Pair;
 import org.dozer.Mapper;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,9 +53,9 @@ public class UserFacadeImpl implements UserFacade{
 
     @Override
     @Transactional(readOnly = true)
-    public PageImpl<UserDto> findAll(Pageable pageable){
-        PageImpl<UserEntity> entityPage = userService.findAll(pageable);
-        return new PageImpl<>(entityPage.getContent().stream().map(this::userEntityToDto).collect(Collectors.toList()),pageable,entityPage.getTotalElements());
+    public List<UserDto> findAll(){
+        List<UserEntity> entityList = userService.findAll();
+        return entityList.stream().map(this::userEntityToDto).collect(Collectors.toList());
     }
 
 

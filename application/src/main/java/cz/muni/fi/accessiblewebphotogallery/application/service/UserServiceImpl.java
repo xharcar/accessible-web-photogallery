@@ -10,9 +10,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
@@ -62,9 +59,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageImpl<UserEntity> findAll(Pageable pageable) {
-        Page<UserEntity> page = userDao.findAll(pageable);
-        return new PageImpl<>(page.getContent(), pageable, userDao.count());
+    public List<UserEntity> findAll() {
+        return userDao.findAll();
     }
 
     @Override
@@ -124,14 +120,14 @@ public class UserServiceImpl implements UserService {
     public boolean confirmUser(String email, String token) {
         Validate.notNull(email);
         Validate.notNull(token);
-        Optional<RegistrationToken> regToken = registrationDao.findByEmail(email);
-        if(regToken.isPresent() && token.equals(regToken.get().getToken())){
+        Optional<RegistrationToken> regTokenOpt = registrationDao.findByEmail(email);
+        if(regTokenOpt.isPresent() && token.equals(regTokenOpt.get().getToken())){
             Optional<UserEntity> userOpt = userDao.findByEmail(email);
             if(!userOpt.isPresent()) {return false;}
             UserEntity user = userOpt.get();
             user.setAccountState(AccountState.USER);
             updateUser(user);
-            registrationDao.delete(regToken.get());
+            registrationDao.delete(regTokenOpt.get());
             return true;
         }
         return false;
