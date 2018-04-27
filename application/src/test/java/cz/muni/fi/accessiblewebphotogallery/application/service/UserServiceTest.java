@@ -16,14 +16,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.util.Pair;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
@@ -41,8 +39,6 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserServiceTest {
 
-    @Inject
-    private ApplicationContext ctx;
     private UserService userService;
     @Mock
     private UserDao userDaoMock;
@@ -196,6 +192,7 @@ public class UserServiceTest {
     @Test
     public void updateUserTest(){
         UserEntity u0 = new UserEntity();
+        u0.setId(1L);
         u0.setEmail("abdc@email.org");
         u0.setScreenName("DKXC");
         u0.setAccountState(AccountState.USER);
@@ -205,6 +202,7 @@ public class UserServiceTest {
         u0.setPasswordSalt(dummysalt1);
 
         UserEntity u1 = new UserEntity();
+        u1.setId(1L);
         u1.setEmail("abdc@email.org");
         u1.setScreenName("CDKX");
         u1.setAccountState(AccountState.USER);
@@ -260,11 +258,8 @@ public class UserServiceTest {
     }
 
 
-
-
     private short HASH_SIZE = 64; // in bytes, the size of password hashes and salts
     private int KDF_IT = 524288; // number of PBKDF2/SHA512 iterations- should do until 2019/2020 at least
-
     private Pair<byte[],byte[]> makeSaltAndHashPass(String password){
         Random random = new Random(); // for testing, not having a real CSPRNG isn't a problem;
         // of course, the actual implementation does use one

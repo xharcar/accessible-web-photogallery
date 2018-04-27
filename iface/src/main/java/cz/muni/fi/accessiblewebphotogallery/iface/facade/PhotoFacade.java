@@ -16,13 +16,13 @@ public interface PhotoFacade {
 
     PageImpl<PhotoDto> findByUploader(UserDto uploader, Pageable pageable);
 
-    PageImpl<PhotoDto> findByDescriptionContaining(String partialDescription, Pageable pageable);
+    PageImpl<PhotoDto> findByDescPartCaseless(String partialDescription, Pageable pageable);
 
-    PageImpl<PhotoDto> findByTitleContaining(String partialTitle, Pageable pageable);
+    PageImpl<PhotoDto> findByTitlePartCaseless(String partialTitle, Pageable pageable);
 
     Optional<PhotoDto> findByBase64Id(String base64Id);
 
-    PageImpl<PhotoDto> findAllMostRecentFirst(Pageable pageable);
+    PageImpl<PhotoDto> findNewestFirst(Pageable pageable);
 
     PageImpl<PhotoDto> findMultipleByBase64(List<String> b64ids, Pageable pageable);
 

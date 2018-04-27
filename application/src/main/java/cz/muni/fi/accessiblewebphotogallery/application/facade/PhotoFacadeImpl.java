@@ -44,25 +44,25 @@ public class PhotoFacadeImpl implements PhotoFacade {
     }
 
     @Override
-    public PageImpl<PhotoDto> findByDescriptionContaining(String partialDescription, Pageable pageable) {
-        PageImpl<PhotoEntity> entityPage = photoService.findByDescriptionContainingIgnoreCase(partialDescription, pageable);
+    public PageImpl<PhotoDto> findByDescPartCaseless(String partialDescription, Pageable pageable) {
+        PageImpl<PhotoEntity> entityPage = photoService.findByDescPartIgnoreCase(partialDescription, pageable);
         return new PageImpl<>(entityPage.getContent().stream().map(this::photoToDto).collect(Collectors.toList()), pageable, entityPage.getTotalElements());
     }
 
     @Override
-    public PageImpl<PhotoDto> findByTitleContaining(String partialTitle, Pageable pageable) {
-        PageImpl<PhotoEntity> entityPage = photoService.findByTitleContainingIgnoreCase(partialTitle, pageable);
+    public PageImpl<PhotoDto> findByTitlePartCaseless(String partialTitle, Pageable pageable) {
+        PageImpl<PhotoEntity> entityPage = photoService.findByTitlePartIgnoreCase(partialTitle, pageable);
         return new PageImpl<>(entityPage.getContent().stream().map(this::photoToDto).collect(Collectors.toList()), pageable, entityPage.getTotalElements());
     }
 
     @Override
     public Optional<PhotoDto> findByBase64Id(String base64Id) {
-        return photoService.findByBase64Identifier(base64Id).map(this::photoToDto);
+        return photoService.findByBase64Id(base64Id).map(this::photoToDto);
     }
 
     @Override
-    public PageImpl<PhotoDto> findAllMostRecentFirst(Pageable pageable) {
-        PageImpl<PhotoEntity> entityPage = photoService.findAllByOrderByUploadTimeDesc(pageable);
+    public PageImpl<PhotoDto> findNewestFirst(Pageable pageable) {
+        PageImpl<PhotoEntity> entityPage = photoService.findNewestFirst(pageable);
         return new PageImpl<>(entityPage.getContent().stream().map(this::photoToDto).collect(Collectors.toList()), pageable, entityPage.getTotalElements());
     }
 

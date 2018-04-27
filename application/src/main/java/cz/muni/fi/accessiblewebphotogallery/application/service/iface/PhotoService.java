@@ -18,13 +18,13 @@ public interface PhotoService extends PagedService<PhotoEntity> {
 
     PageImpl<PhotoEntity> findByUploader(UserEntity uploader, Pageable Pageable);
 
-    PageImpl<PhotoEntity> findByDescriptionContainingIgnoreCase(String searchStr, Pageable pageable);
+    PageImpl<PhotoEntity> findByDescPartIgnoreCase(String searchStr, Pageable pageable);
 
-    PageImpl<PhotoEntity> findByTitleContainingIgnoreCase(String searchStr, Pageable pageable);
+    PageImpl<PhotoEntity> findByTitlePartIgnoreCase(String searchStr, Pageable pageable);
 
-    Optional<PhotoEntity> findByBase64Identifier(String b64id);
+    Optional<PhotoEntity> findByBase64Id(String b64id);
 
-    PageImpl<PhotoEntity> findAllByOrderByUploadTimeDesc(Pageable pageable);
+    PageImpl<PhotoEntity> findNewestFirst(Pageable pageable);
 
     PhotoEntity registerPhoto(PhotoEntity entity, File photoFile, File metadataFile);
 

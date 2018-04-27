@@ -69,24 +69,24 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public PageImpl<PhotoEntity> findByDescriptionContainingIgnoreCase(String searchStr, Pageable pageable) {
+    public PageImpl<PhotoEntity> findByDescPartIgnoreCase(String searchStr, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByDescriptionContainingIgnoreCase(searchStr,pageable);
         return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
     }
 
     @Override
-    public PageImpl<PhotoEntity> findByTitleContainingIgnoreCase(String searchStr, Pageable pageable) {
+    public PageImpl<PhotoEntity> findByTitlePartIgnoreCase(String searchStr, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByTitleContainingIgnoreCase(searchStr,pageable);
         return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
     }
 
     @Override
-    public Optional<PhotoEntity> findByBase64Identifier(String b64id) {
+    public Optional<PhotoEntity> findByBase64Id(String b64id) {
         return photoDao.findByBase64Identifier(b64id);
     }
 
     @Override
-    public PageImpl<PhotoEntity> findAllByOrderByUploadTimeDesc(Pageable pageable) {
+    public PageImpl<PhotoEntity> findNewestFirst(Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findAllByOrderByUploadTimeDesc(pageable);
         return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
     }
