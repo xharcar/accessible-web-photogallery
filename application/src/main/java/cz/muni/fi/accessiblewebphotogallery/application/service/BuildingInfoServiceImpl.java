@@ -45,7 +45,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     }
 
     @Override
-    public List<BuildingInfo> findByBuildingNameContainingIgnoreCase(String search) {
+    public List<BuildingInfo> findByNamePartIgnoreCase(String search) {
         return infoDao.findByBuildingNameContainingIgnoreCase(search);
     }
 
@@ -55,7 +55,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     }
 
     @Override
-    public List<BuildingInfo> findByLatitudeAndLongitude(double lat, double lon) {
+    public List<BuildingInfo> findByGPSPosition(double lat, double lon) {
         return infoDao.findByLatitudeBetweenAndLongitudeBetween(lat- EPSILON,lat+ EPSILON,lon- EPSILON,lon+ EPSILON);
     }
 

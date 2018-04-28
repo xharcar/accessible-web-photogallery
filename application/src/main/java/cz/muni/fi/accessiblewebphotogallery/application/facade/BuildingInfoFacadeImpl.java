@@ -32,7 +32,7 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
 
     @Override
     public List<BuildingInfoDto> findByBuildingNameContainingIgnoreCase(String buildingName) {
-        return infoService.findByBuildingNameContainingIgnoreCase(buildingName).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
+        return infoService.findByNamePartIgnoreCase(buildingName).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
 
     @Override
     public List<BuildingInfoDto> findByGPS(double lat, double lon) {
-        return infoService.findByLatitudeAndLongitude(lat,lon).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
+        return infoService.findByGPSPosition(lat,lon).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
     }
 
     @Override

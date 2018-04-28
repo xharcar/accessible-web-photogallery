@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
@@ -38,8 +37,6 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PhotoServiceTest {
 
-    @Inject
-    private ApplicationConfig cfg;
     @Mock
     private PhotoDao photoDaoMock;
     private PhotoService photoService;
@@ -203,7 +200,7 @@ public class PhotoServiceTest {
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
         p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
-        p1.setTitle("Ceci n'est pas une photo du Louvre.");
+        p1.setTitle("Louvre");
         p1.setDescription("Description 1");
         p1.setBase64Identifier("thisisab64id");
 
@@ -331,6 +328,8 @@ public class PhotoServiceTest {
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setId(1L);
+        p2.setUploader(defaultUser);
+        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
         p2.setBase64Identifier("thisisab64id");

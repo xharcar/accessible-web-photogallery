@@ -13,11 +13,11 @@ public interface BuildingInfoService {
 
     List<BuildingInfo> findByPhoto(PhotoEntity photo);
 
-    List<BuildingInfo> findByBuildingNameContainingIgnoreCase(String search);
+    List<BuildingInfo> findByNamePartIgnoreCase(String search);
 
     List<BuildingInfo> findByOsmId(Long osmId);
 
-    List<BuildingInfo> findByLatitudeAndLongitude(double lat, double lon);
+    List<BuildingInfo> findByGPSPosition(double lat, double lon);
 
     List<BuildingInfo> saveBuildingInfos(Map<JsonObject,JsonObject> buildingMap, JsonObject camData, PhotoEntity photo);
 

@@ -175,11 +175,6 @@ public class PhotoServiceImpl implements PhotoService {
                 log.error("JSON metadata file not found when trying to parse photo metadata. Skipping.");
                 return photoDao.save(entity);
             }
-            long fileLen = metadataFile.length();
-            if(fileLen > (long) Integer.MAX_VALUE){
-                log.error("JSON metadata file too long (length check). Skipping.");
-                return photoDao.save(entity);
-            }
             byte[] jsonRaw; // if we haven't returned by now, the file does exist
             try {
                 jsonRaw = fis.readAllBytes();
