@@ -124,6 +124,7 @@ public class AlbumServiceImpl implements AlbumService {
             log.error("Attempting to add photo: " + photoBase64Id + " to album:" + album + " failed: album file doesn't seem to exist. Aborting");
             return false;
         }
+        photoBase64Id += System.lineSeparator();
         try {
             Files.write(albumFile.toPath(),photoBase64Id.getBytes(StandardCharsets.UTF_8), StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.SYNC);
         } catch (IOException e) {

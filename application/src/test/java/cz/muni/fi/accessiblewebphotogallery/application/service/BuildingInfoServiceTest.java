@@ -44,7 +44,7 @@ public class BuildingInfoServiceTest {
     @Mock
     private BuildingInfoDao infoDaoMock;
 
-    private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC,0x5A};
+    private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC, 0x5A};
     private byte[] dummysalt1 = new byte[]{0x3A, (byte) 0xB8, (byte) 0xE1};
     private UserEntity defaultUser;
     private PhotoEntity p1;
@@ -53,7 +53,7 @@ public class BuildingInfoServiceTest {
     private Gson jsonConverter;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         MockitoAnnotations.initMocks(this);
         infoDaoMock = mock(BuildingInfoDao.class);
         infoService = new BuildingInfoServiceImpl(infoDaoMock);
@@ -82,7 +82,7 @@ public class BuildingInfoServiceTest {
     }
 
     @Test
-    public void findAllTest(){
+    public void findAllTest() {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -107,11 +107,11 @@ public class BuildingInfoServiceTest {
 
         List<BuildingInfo> result = infoService.findAll();
         assertNotNull(result);
-        assertEquals(infoList,result);
+        assertEquals(infoList, result);
     }
 
     @Test
-    public void findByPhotoTest(){
+    public void findByPhotoTest() {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -135,11 +135,11 @@ public class BuildingInfoServiceTest {
 
         List<BuildingInfo> result = infoService.findByPhoto(p1);
         assertNotNull(result);
-        assertEquals(infoList,result);
+        assertEquals(infoList, result);
     }
 
     @Test
-    public void findByNameNoCaseTest(){
+    public void findByNameNoCaseTest() {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -164,11 +164,11 @@ public class BuildingInfoServiceTest {
 
         List<BuildingInfo> result = infoService.findByNamePartIgnoreCase("random");
         assertNotNull(result);
-        assertEquals(infoList,result);
+        assertEquals(infoList, result);
     }
 
     @Test
-    public void findByOsmIdTest(){
+    public void findByOsmIdTest() {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -192,11 +192,11 @@ public class BuildingInfoServiceTest {
 
         List<BuildingInfo> result = infoService.findByOsmId(1L);
         assertNotNull(result);
-        assertEquals(infoList,result);
+        assertEquals(infoList, result);
     }
 
     @Test
-    public void findByGPSTest(){
+    public void findByGPSTest() {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -216,17 +216,17 @@ public class BuildingInfoServiceTest {
 
         List<BuildingInfo> infoList = new ArrayList<>();
         infoList.add(info1);
-        when(infoDaoMock.findByLatitudeBetweenAndLongitudeBetween(info1.getLatitude()-EPSILON,
-                info1.getLatitude()+EPSILON,info1.getLongitude()-EPSILON,
-                info1.getLongitude()+EPSILON)).thenReturn(infoList);
+        when(infoDaoMock.findByLatitudeBetweenAndLongitudeBetween(info1.getLatitude() - EPSILON,
+                info1.getLatitude() + EPSILON, info1.getLongitude() - EPSILON,
+                info1.getLongitude() + EPSILON)).thenReturn(infoList);
 
-        List<BuildingInfo> result = infoService.findByGPSPosition(info1.getLatitude(),info1.getLongitude());
+        List<BuildingInfo> result = infoService.findByGPSPosition(info1.getLatitude(), info1.getLongitude());
         assertNotNull(result);
-        assertEquals(infoList,result);
+        assertEquals(infoList, result);
     }
 
     @Test
-    public void saveInfosTest(){
+    public void saveInfosTest() {
         File originalMetadataFile = new File("../sample_data/IMG_20171020_163217");
         File nominatimFile = new File("../sample_data/IMG_20171020_163217_nominatim.json");
 
@@ -246,16 +246,18 @@ public class BuildingInfoServiceTest {
         JsonArray jsonObjArr = jsonConverter.fromJson(jsonString, JsonArray.class);
         JsonObject cameraJsonObj = null;
         JsonObject originalPhotoJson = null;
-        for(int i=0;i<jsonObjArr.size();i++){
+        for (int i = 0; i < jsonObjArr.size(); i++) {
             JsonObject temp = jsonObjArr.get(i).getAsJsonObject();
-            if(temp.has("cameraposition")){
+            if (temp.has("cameraposition")) {
                 cameraJsonObj = temp.get("cameraposition").getAsJsonObject();
-            }else{
+            } else {
                 originalPhotoJson = temp;
                 // the test file only has 1 building object and the camera position object
             }
         }
-        if(cameraJsonObj == null){fail("couldn't retrieve camera position data");}
+        if (cameraJsonObj == null) {
+            fail("couldn't retrieve camera position data");
+        }
         InputStream nominatimFIS = null;
         try {
             nominatimFIS = new FileInputStream(nominatimFile);
@@ -269,9 +271,9 @@ public class BuildingInfoServiceTest {
             fail("JSON metadata file too long (IOException reading). Skipping.");
         }
         String nominatimString = new String(nominatimRaw);
-        JsonObject nominatimJson = jsonConverter.fromJson(nominatimString,JsonObject.class);
-        Map<JsonObject,JsonObject> jsonMap = new HashMap<>();
-        jsonMap.put(originalPhotoJson,nominatimJson);
+        JsonObject nominatimJson = jsonConverter.fromJson(nominatimString, JsonObject.class);
+        Map<JsonObject, JsonObject> jsonMap = new HashMap<>();
+        jsonMap.put(originalPhotoJson, nominatimJson);
         when(infoDaoMock.save(any(BuildingInfo.class))).then(new Answer<BuildingInfo>() {
             @Override
             public BuildingInfo answer(InvocationOnMock invocation) throws Throwable {
@@ -282,15 +284,15 @@ public class BuildingInfoServiceTest {
         });
         p1.setCameraHorizontalFOV(60.0);
         p1.setImageWidth(2592);
-        List<BuildingInfo> infoList = infoService.saveBuildingInfos(jsonMap,cameraJsonObj,p1);
+        List<BuildingInfo> infoList = infoService.saveBuildingInfos(jsonMap, cameraJsonObj, p1);
         assertNotNull(infoList);
-        assertEquals(1,infoList.size());
+        assertEquals(1, infoList.size());
         assertNotNull(infoList.get(0).getId());
-        assertEquals(2973995322L,infoList.get(0).getOsmId().longValue());
+        assertEquals(2973995322L, infoList.get(0).getOsmId().longValue());
     }
 
     @Test
-    public void updateInfoTest(){
+    public void updateInfoTest() {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -310,6 +312,6 @@ public class BuildingInfoServiceTest {
 
         when(infoDaoMock.save(info2)).thenReturn(info2);
         infoService.updateBuildingInfo(info2);
-        assertEquals(info1,info2);
+        assertEquals(info1, info2);
     }
 }
