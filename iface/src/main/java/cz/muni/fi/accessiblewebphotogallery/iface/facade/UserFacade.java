@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface UserFacade {
 
-    // findBy* methods: map 1:1 to DAO methods
-
     Optional<UserDto> findById(Long id);
 
     Optional<UserDto> findByEmail(String email);

@@ -37,7 +37,6 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AlbumServiceTest {
 
-
     @Inject
     ApplicationConfig cfg;
     private AlbumService albumService;
