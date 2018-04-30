@@ -27,7 +27,7 @@ public class PhotoEntity {
     private String description;
 
     @Column(nullable = false, length = 12, unique = true)
-    private String base64Identifier;
+    private String base64Id;
     /* Identifier Mk.3
         1) Register upload Instant
         2) Into a List of ByteBuffers, put:
@@ -56,7 +56,7 @@ public class PhotoEntity {
     private Double positionAccuracy;
 
     @Column(nullable = true, precision = 2)
-    private Double cameraHorizontalFOV;
+    private Double cameraFOV;
 
     // Some basic EXIF metadata- all non-mandatory- will be considered null for storage purposes if not present
     @Column(nullable = true)
@@ -123,12 +123,12 @@ public class PhotoEntity {
         this.description = description;
     }
 
-    public String getBase64Identifier() {
-        return base64Identifier;
+    public String getBase64Id() {
+        return base64Id;
     }
 
-    public void setBase64Identifier(String base64Identifier) {
-        this.base64Identifier = base64Identifier;
+    public void setBase64Id(String base64Identifier) {
+        this.base64Id = base64Identifier;
     }
 
     public Double getCameraLatitude() {
@@ -163,12 +163,12 @@ public class PhotoEntity {
         this.positionAccuracy = positionAccuracy;
     }
 
-    public Double getCameraHorizontalFOV() {
-        return cameraHorizontalFOV;
+    public Double getCameraFOV() {
+        return cameraFOV;
     }
 
-    public void setCameraHorizontalFOV(Double cameraHorizontalFOV) {
-        this.cameraHorizontalFOV = cameraHorizontalFOV;
+    public void setCameraFOV(Double cameraHorizontalFOV) {
+        this.cameraFOV = cameraHorizontalFOV;
     }
 
     public LocalDateTime getDatetimeTaken() {
@@ -233,13 +233,13 @@ public class PhotoEntity {
         if (o == null) return false;
         if (!(o instanceof PhotoEntity)) return false;
         PhotoEntity that = (PhotoEntity) o;
-        return Objects.equals(base64Identifier, that.base64Identifier);
+        return Objects.equals(base64Id, that.base64Id);
         // no other element needed due to aforementioned b64ID generation strategy
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(base64Identifier);
+        return Objects.hash(base64Id);
     }
 
     @Override
@@ -248,12 +248,12 @@ public class PhotoEntity {
                 "id=" + id +
                 ", uploader=" + uploader +
                 ", uploadTime=" + uploadTime +
-                ", imageHash=" + Objects.toString(base64Identifier) +
+                ", imageHash=" + Objects.toString(base64Id) +
                 ", cameraLatitude=" + cameraLatitude +
                 ", cameraLongitude=" + cameraLongitude +
                 ", cameraAzimuth=" + cameraAzimuth +
                 ", positionAccuracy=" + positionAccuracy +
-                ", cameraHorizontalFOV=" + cameraHorizontalFOV +
+                ", cameraHorizontalFOV=" + cameraFOV +
                 ", datetimeTaken=" + datetimeTaken +
                 ", cameraModel='" + cameraModel +
                 ", imageWidth=" + imageWidth +

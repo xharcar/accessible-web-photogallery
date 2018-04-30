@@ -16,9 +16,9 @@ public interface PhotoFacade {
 
     PageImpl<PhotoDto> findByUploader(UserDto uploader, Pageable pageable);
 
-    PageImpl<PhotoDto> findByDescPartCaseless(String partialDescription, Pageable pageable);
+    PageImpl<PhotoDto> findByDescPartIgnoreCase(String partialDescription, Pageable pageable);
 
-    PageImpl<PhotoDto> findByTitlePartCaseless(String partialTitle, Pageable pageable);
+    PageImpl<PhotoDto> findByTitlePartIgnoreCase(String partialTitle, Pageable pageable);
 
     Optional<PhotoDto> findByBase64Id(String base64Id);
 
@@ -26,12 +26,10 @@ public interface PhotoFacade {
 
     PageImpl<PhotoDto> findMultipleByBase64(List<String> b64ids, Pageable pageable);
 
-//    PhotoDto registerPhoto(File photoFile, File metaDataFile, UserDto uploaderDto, String photoTitle, String photoDescription);
-
     PhotoDto registerPhoto(PhotoDto photo, File photoFile, File metadataFile);
 
     PhotoDto updatePhoto(PhotoDto photoDto);
 
-    void delete(PhotoDto photo);
+    void deletePhoto(PhotoDto photo);
 
 }

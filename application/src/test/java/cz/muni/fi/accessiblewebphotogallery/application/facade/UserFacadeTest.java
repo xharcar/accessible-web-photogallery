@@ -1,12 +1,12 @@
 package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
 import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.UserService;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.UserFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
-import org.dozer.Mapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -41,9 +41,7 @@ public class UserFacadeTest {
     private UserFacade userFacade;
     @Mock
     private UserService userServiceMock;
-    private Mapper mapper;
     private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC,0x5A};
-
     private byte[] dummysalt1 = new byte[]{0x3A, (byte) 0xB8, (byte) 0xE1};
 
 
@@ -51,8 +49,7 @@ public class UserFacadeTest {
     public void init(){
         MockitoAnnotations.initMocks(this);
         userServiceMock = mock(UserService.class);
-        mapper = cfg.getMapper();
-        userFacade = new UserFacadeImpl(userServiceMock,mapper);
+        userFacade = new UserFacadeImpl(userServiceMock);
     }
 
     @Test
@@ -60,14 +57,14 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
-        u1.setAccState(AccountState.USER);
+        u1.setAccountState(AccountState.USER);
         u1.setLoginName("xdck");
         u1.setBio("Lorem ipsum dolor sit amet.");
 
         UserDto u2 = new UserDto();
         u2.setEmail("atks@email.org");
         u2.setScreenName("SakMto");
-        u2.setAccState(AccountState.USER);
+        u2.setAccountState(AccountState.USER);
         u2.setLoginName("motkas");
         u2.setBio("Consectetuer adipiscing elit.");
 
@@ -88,7 +85,7 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
-        u1.setAccState(AccountState.USER);
+        u1.setAccountState(AccountState.USER);
         u1.setLoginName("xdck");
         u1.setBio("Lorem ipsum dolor sit amet.");
         u1.setId(1L);
@@ -106,7 +103,7 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
-        u1.setAccState(AccountState.USER);
+        u1.setAccountState(AccountState.USER);
         u1.setLoginName("xdck");
         u1.setBio("Lorem ipsum dolor sit amet.");
 
@@ -123,7 +120,7 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
-        u1.setAccState(AccountState.USER);
+        u1.setAccountState(AccountState.USER);
         u1.setLoginName("xdck");
         u1.setBio("Lorem ipsum dolor sit amet.");
 
@@ -140,23 +137,23 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
-        u1.setAccState(AccountState.USER);
+        u1.setAccountState(AccountState.USER);
         u1.setLoginName("ksngmtk");
         u1.setBio("Lorem ipsum dolor sit amet.");
 
         UserDto u2 = new UserDto();
         u2.setEmail("skmtm@email.org");
         u2.setScreenName("Sakamoto Mio");
-        u2.setAccState(AccountState.USER);
+        u2.setAccountState(AccountState.USER);
         u2.setLoginName("skmtm");
         u2.setBio("Consectetuer adipiscing elit.");
 
         List<UserDto> userList = new ArrayList<>();
         userList.add(u1);
 
-        when(userServiceMock.findByScreenNameContainingIgnoreCase("moto"))
+        when(userServiceMock.findByScreenNameApx("moto"))
                 .thenReturn(userList.stream().map(this::userDtoToEntity).collect(Collectors.toList()));
-        List<UserDto> resultList = userFacade.findByScreenNameContainingIgnoreCase("moto");
+        List<UserDto> resultList = userFacade.findByScreenNameApx("moto");
 
         assertNotNull(resultList);
         assertEquals(1,resultList.size());
@@ -168,7 +165,7 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
-        u1.setAccState(AccountState.USER);
+        u1.setAccountState(AccountState.USER);
         u1.setLoginName("ksngmtk");
         u1.setBio("Lorem ipsum dolor sit amet.");
 
@@ -178,10 +175,10 @@ public class UserFacadeTest {
         when(userServiceMock.authenticateUser(u1e,"password")).thenReturn(true);
         when(userServiceMock.authenticateUser(u1e,"not password")).thenReturn(false);
 
-        assertTrue(userFacade.authenticate("ksngmtk@email.org","password"));
-        assertFalse(userFacade.authenticate("ksngmtk@email.org","not password"));
-        assertTrue(userFacade.authenticate("ksngmtk","password"));
-        assertFalse(userFacade.authenticate("ksngmtk","not password"));
+        assertTrue(userFacade.authenticateUser("ksngmtk@email.org","password"));
+        assertFalse(userFacade.authenticateUser("ksngmtk@email.org","not password"));
+        assertTrue(userFacade.authenticateUser("ksngmtk","password"));
+        assertFalse(userFacade.authenticateUser("ksngmtk","not password"));
     }
 
     @Test
@@ -189,7 +186,7 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
-        u1.setAccState(AccountState.USER);
+        u1.setAccountState(AccountState.USER);
         u1.setLoginName("ksngmtk");
         u1.setBio("Lorem ipsum dolor sit amet.");
 
@@ -208,9 +205,9 @@ public class UserFacadeTest {
         Pair<UserDto,String> result = userFacade.registerUser(u1,"password");
         assertNotNull(result);
         assertNotNull(u1.getId());
-        assertNotNull(u1.getPassHash());
-        assertNotNull(u1.getPassSalt());
-        assertNotEquals("password", u1.getPassHash());
+        assertNotNull(u1.getPasswordHash());
+        assertNotNull(u1.getPasswordSalt());
+        assertNotEquals("password", u1.getPasswordHash());
     }
 
     @Test
@@ -218,14 +215,14 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
-        u1.setAccState(AccountState.ADMINISTRATOR);
+        u1.setAccountState(AccountState.ADMINISTRATOR);
         u1.setLoginName("ksngmtk");
         u1.setBio("Lorem ipsum dolor sit amet.");
 
         UserDto u2 = new UserDto();
         u2.setEmail("skmtm@email.org");
         u2.setScreenName("Sakamoto Mio");
-        u2.setAccState(AccountState.USER);
+        u2.setAccountState(AccountState.USER);
         u2.setLoginName("skmtm");
         u2.setBio("Consectetuer adipiscing elit.");
 
@@ -243,7 +240,7 @@ public class UserFacadeTest {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
-        u1.setAccState(AccountState.ADMINISTRATOR);
+        u1.setAccountState(AccountState.ADMINISTRATOR);
         u1.setLoginName("ksngmtk");
         u1.setBio("Lorem ipsum dolor sit amet.");
         u1.setId(1L);
@@ -254,7 +251,7 @@ public class UserFacadeTest {
     }
 
     private UserEntity userDtoToEntity(UserDto dto){
-        return mapper.map(dto,UserEntity.class);
+        return PhotoGalleryBackendMapper.userDtoToEntity(dto);
     }
 
 }

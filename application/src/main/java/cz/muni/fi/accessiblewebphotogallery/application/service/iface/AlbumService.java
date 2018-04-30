@@ -14,7 +14,7 @@ public interface AlbumService {
 
     AlbumEntity createAlbum(UserEntity user, String albumName);
 
-    AlbumEntity saveAlbum(AlbumEntity album);
+    AlbumEntity updateAlbum(AlbumEntity album);
 
     void deleteAlbum(AlbumEntity album);
 
@@ -24,5 +24,6 @@ public interface AlbumService {
 
     List<String> listPhotosInAlbum(AlbumEntity album);
 
-    Optional<AlbumEntity> findByBase64Identifier(String base64);
+    Optional<AlbumEntity> findByBase64Id(String base64);
+
 }

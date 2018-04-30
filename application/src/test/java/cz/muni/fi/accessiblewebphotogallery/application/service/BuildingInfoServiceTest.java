@@ -65,19 +65,19 @@ public class BuildingInfoServiceTest {
         defaultUser.setBio("Lorem ipsum dolor sit amet.");
         defaultUser.setPasswordHash(dummyhash1);
         defaultUser.setPasswordSalt(dummysalt1);
-        Instant rightnow = Instant.now();
+        Instant timeZero = Instant.now();
         p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(rightnow.minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
         p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
-        p2.setUploadTime(rightnow.minusSeconds(600));
+        p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setBase64Id("anotherb64id");
         jsonConverter = new Gson();
     }
 
@@ -162,7 +162,7 @@ public class BuildingInfoServiceTest {
         infoList.add(info1);
         when(infoDaoMock.findByBuildingNameContainingIgnoreCase("random")).thenReturn(infoList);
 
-        List<BuildingInfo> result = infoService.findByNamePartIgnoreCase("random");
+        List<BuildingInfo> result = infoService.findByBuildingNameApx("random");
         assertNotNull(result);
         assertEquals(infoList, result);
     }
@@ -282,9 +282,9 @@ public class BuildingInfoServiceTest {
                 return info;
             }
         });
-        p1.setCameraHorizontalFOV(60.0);
+        p1.setCameraFOV(60.0);
         p1.setImageWidth(2592);
-        List<BuildingInfo> infoList = infoService.saveBuildingInfos(jsonMap, cameraJsonObj, p1);
+        List<BuildingInfo> infoList = infoService.registerBuildings(jsonMap, cameraJsonObj, p1);
         assertNotNull(infoList);
         assertEquals(1, infoList.size());
         assertNotNull(infoList.get(0).getId());
@@ -307,8 +307,8 @@ public class BuildingInfoServiceTest {
         info2.setPhotoMinX(134);
         info2.setPhotoMaxX(1045);
         info2.setDistance(210);
-        info2.setLatitude(32.81);
-        info2.setLongitude(16.97);
+        info2.setLatitude(48.35);
+        info2.setLongitude(12.54);
 
         when(infoDaoMock.save(info2)).thenReturn(info2);
         infoService.updateBuildingInfo(info2);

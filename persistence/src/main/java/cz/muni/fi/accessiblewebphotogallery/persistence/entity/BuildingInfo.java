@@ -54,7 +54,8 @@ public class BuildingInfo {
     @Column(nullable = true, length = 384)
     private String focusText;
 
-    public BuildingInfo() {}
+    public BuildingInfo() {
+    }
 
     public Long getId() {
         return id;
@@ -138,13 +139,13 @@ public class BuildingInfo {
 
     @Override
     public boolean equals(Object o) {
-        if(o == null) return false;
+        if (o == null) return false;
         if (this == o) return true;
         if (!(o instanceof BuildingInfo)) return false;
         BuildingInfo that = (BuildingInfo) o;
-        return  osmId.equals(that.osmId) ||
+        return osmId.equals(that.osmId) ||
                 (Math.abs(Double.compare(that.latitude, latitude)) <= EPSILON &&
-                Math.abs(Double.compare(that.longitude, longitude)) <= EPSILON);
+                        Math.abs(Double.compare(that.longitude, longitude)) <= EPSILON);
         // a single building can be in multiple photos, known under multiple names, and be photographed from different distances;
         // if a BuildingInfo instance has the same OSM ID as another, then they're of the same building;
         // if that fails (eg. OSM doesn't have that building in its DB), it's pretty safe to assume no two buildings are

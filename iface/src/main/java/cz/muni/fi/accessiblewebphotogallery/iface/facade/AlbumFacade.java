@@ -4,6 +4,7 @@ import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AlbumFacade {
 
@@ -13,18 +14,16 @@ public interface AlbumFacade {
 
     AlbumDto createAlbum(UserDto user, String albumName);
 
+    AlbumDto updateAlbum(AlbumDto album);
+
+    void deleteAlbum(AlbumDto albumDto);
+
     boolean addPhotoToAlbum(AlbumDto albumDto, String photoB64Id);
 
     boolean removePhotoFromAlbum(AlbumDto albumDto, String photoB64Id);
 
     List<String> listPhotosInAlbum(AlbumDto albumDto);// returns b64 IDs
 
-    void deleteAlbum(AlbumDto albumDto);
-
-
-//    List<AlbumDto> findByAlbumName(String albumName);
-//
-//    List<AlbumEntity> findByAlbumNameContainingIgnoreCase(String partialName);
-
+    Optional<AlbumDto> findByBase64Id(String base64);
 
 }

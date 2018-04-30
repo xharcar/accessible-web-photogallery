@@ -45,7 +45,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     }
 
     @Override
-    public List<BuildingInfo> findByNamePartIgnoreCase(String search) {
+    public List<BuildingInfo> findByBuildingNameApx(String search) {
         return infoDao.findByBuildingNameContainingIgnoreCase(search);
     }
 
@@ -60,7 +60,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     }
 
     @Override
-    public List<BuildingInfo> saveBuildingInfos(Map<JsonObject, JsonObject> buildingMap, JsonObject camData, PhotoEntity photo) {
+    public List<BuildingInfo> registerBuildings(Map<JsonObject, JsonObject> buildingMap, JsonObject camData, PhotoEntity photo) {
         Validate.notNull(camData);
         List<BuildingInfo> rv = new ArrayList<>();
         Pair<Double,Double> cameraGPS = Pair.of(camData.get("latitude").getAsDouble(),camData.get("longitude").getAsDouble());
@@ -149,7 +149,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
                 }else{
                     int bearingDiff1 = Math.abs(bearings[0]-photoLeftBound);
                     int bearingDiff2 = Math.min(bearingDiff1,360-bearingDiff1);
-                    double bearingPhotoStart = bearingDiff2/photo.getCameraHorizontalFOV();
+                    double bearingPhotoStart = bearingDiff2/photo.getCameraFOV();
                     // how far, in ratio, into the photo the building 'starts'
                     leftBoundInPhoto = (int)Math.round(bearingPhotoStart*photo.getImageWidth());
                 }
@@ -159,7 +159,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
                 }else{
                     int bearingDiff1 = Math.abs(photoRightBound-bearings[2]);
                     int bearingDiff2 = Math.min(bearingDiff1,360-bearingDiff1);
-                    double bearingPhotoEnd = bearingDiff2/photo.getCameraHorizontalFOV();
+                    double bearingPhotoEnd = bearingDiff2/photo.getCameraFOV();
                     // how far, in ratio, into the photo the building 'end'
                     leftBoundInPhoto = (int)Math.round(bearingPhotoEnd*photo.getImageWidth());
                 }

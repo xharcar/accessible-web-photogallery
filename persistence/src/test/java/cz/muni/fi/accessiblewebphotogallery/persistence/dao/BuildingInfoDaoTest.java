@@ -49,7 +49,7 @@ public class BuildingInfoDaoTest {
         Instant time2 = Instant.now().plusSeconds(30);
         photoDao.save(createPhoto(user1,time1));
         PhotoEntity photo2 = createPhoto(user2,time2);
-        photo2.setBase64Identifier("anotherb64id");
+        photo2.setBase64Id("anotherb64id");
         photoDao.save(photo2);
         assertEquals(2,photoDao.count());
     }

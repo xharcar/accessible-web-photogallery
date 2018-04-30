@@ -1,7 +1,5 @@
 package cz.muni.fi.accessiblewebphotogallery.application;
 
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +13,6 @@ import java.io.File;
 @PropertySource("classpath:application.properties")
 @ConfigurationProperties
 public class ApplicationConfig {
-
-    private Mapper mapper = new DozerBeanMapper();
 
     @Value("${rootdir}")
     private String rootDBDirectorySetting;
@@ -49,9 +45,5 @@ public class ApplicationConfig {
             return getRootDBDirectory() + File.separator + "albums";
         }
         return albumDirectorySetting;
-    }
-
-    public Mapper getMapper() {
-        return mapper;
     }
 }

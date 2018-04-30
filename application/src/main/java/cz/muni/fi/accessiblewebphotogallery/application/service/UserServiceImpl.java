@@ -79,8 +79,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> findByScreenNameContainingIgnoreCase(String insensitiveScreenNamePart) {
-        return userDao.findByScreenNameContainingIgnoreCase(insensitiveScreenNamePart);
+    public List<UserEntity> findByScreenNameApx(String apxName) {
+        return userDao.findByScreenNameContainingIgnoreCase(apxName);
     }
 
     @Override
@@ -104,10 +104,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticateUser(UserEntity user, String password) {
-        Validate.notNull(user);
+    public boolean authenticateUser(String identifier, String password) {
+        Validate.notNull(identifier);
         Validate.notNull(password);
-        return checkPassword(password, user.getPasswordHash(), user.getPasswordSalt());
+        Optional<UserEntity> presumedUser = null;
+        if (identifier.contains("@")) {
+            presumedUser = findByLoginName(identifier);
+        } else {
+            presumedUser = findByEmail(identifier);
+        }
+        return presumedUser.isPresent() && checkPassword(password, presumedUser.get().getPasswordHash(), presumedUser.get().getPasswordSalt());
     }
 
     @Override

@@ -8,22 +8,22 @@ import java.util.Optional;
 
 public interface UserFacade {
 
+    List<UserDto> findAll();
+
     Optional<UserDto> findById(Long id);
 
     Optional<UserDto> findByEmail(String email);
 
     Optional<UserDto> findByLoginName(String loginName);
 
-    List<UserDto> findByScreenNameContainingIgnoreCase(String partialScreenName);
+    List<UserDto> findByScreenNameApx(String apxName);
 
-    List<UserDto> findAll();
-
-    // to be used with both email and login name
-    boolean authenticate(String identifier, String password);
+    boolean isAdmin(UserDto user);
 
     Pair<UserDto,String> registerUser(UserDto user, String password);
 
-    boolean isAdmin(UserDto user);
+    // to be used with both email and login name
+    boolean authenticateUser(String identifier, String password);
 
     UserDto updateUser(UserDto user);
 

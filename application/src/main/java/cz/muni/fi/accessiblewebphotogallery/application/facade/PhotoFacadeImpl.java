@@ -1,12 +1,12 @@
 package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
+import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.PhotoService;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.PhotoFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
-import org.dozer.Mapper;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +21,10 @@ import java.util.stream.Collectors;
 
 public class PhotoFacadeImpl implements PhotoFacade {
 
-    private Mapper mapper;
     private PhotoService photoService;
 
     @Inject
-    public PhotoFacadeImpl(Mapper mapper, PhotoService photoService) {
-        this.mapper = mapper;
+    public PhotoFacadeImpl(PhotoService photoService) {
         this.photoService = photoService;
     }
 
@@ -44,14 +42,14 @@ public class PhotoFacadeImpl implements PhotoFacade {
     }
 
     @Override
-    public PageImpl<PhotoDto> findByDescPartCaseless(String partialDescription, Pageable pageable) {
-        PageImpl<PhotoEntity> entityPage = photoService.findByDescPartIgnoreCase(partialDescription, pageable);
+    public PageImpl<PhotoDto> findByDescPartIgnoreCase(String partialDescription, Pageable pageable) {
+        PageImpl<PhotoEntity> entityPage = photoService.findByDescriptionApx(partialDescription, pageable);
         return new PageImpl<>(entityPage.getContent().stream().map(this::photoToDto).collect(Collectors.toList()), pageable, entityPage.getTotalElements());
     }
 
     @Override
-    public PageImpl<PhotoDto> findByTitlePartCaseless(String partialTitle, Pageable pageable) {
-        PageImpl<PhotoEntity> entityPage = photoService.findByTitlePartIgnoreCase(partialTitle, pageable);
+    public PageImpl<PhotoDto> findByTitlePartIgnoreCase(String partialTitle, Pageable pageable) {
+        PageImpl<PhotoEntity> entityPage = photoService.findByTitleApx(partialTitle, pageable);
         return new PageImpl<>(entityPage.getContent().stream().map(this::photoToDto).collect(Collectors.toList()), pageable, entityPage.getTotalElements());
     }
 
@@ -90,19 +88,19 @@ public class PhotoFacadeImpl implements PhotoFacade {
     }
 
     @Override
-    public void delete(PhotoDto photo) {
+    public void deletePhoto(PhotoDto photo) {
         photoService.deletePhoto(photoDtoToEntity(photo));
     }
 
     private UserEntity userDtoToEntity(UserDto userDto) {
-        return mapper.map(userDto, UserEntity.class);
+        return PhotoGalleryBackendMapper.userDtoToEntity(userDto);
     }
 
     private PhotoDto photoToDto(PhotoEntity entity) {
-        return mapper.map(entity, PhotoDto.class);
+        return PhotoGalleryBackendMapper.photoEntityToDto(entity);
     }
 
     private PhotoEntity photoDtoToEntity(PhotoDto dto) {
-        return mapper.map(dto, PhotoEntity.class);
+        return PhotoGalleryBackendMapper.photoDtoToEntity(dto);
     }
 }

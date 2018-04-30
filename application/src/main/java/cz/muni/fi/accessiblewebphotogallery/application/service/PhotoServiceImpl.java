@@ -51,12 +51,6 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public PageImpl<PhotoEntity> findAll(Pageable pageable) {
-        Page<PhotoEntity> page = photoDao.findAll(pageable);
-        return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
-    }
-
-    @Override
     public PageImpl<PhotoEntity> findByUploadTimeBetween(Instant begin, Instant end, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByUploadTimeBetween(begin, end, pageable);
         return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
@@ -69,13 +63,13 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public PageImpl<PhotoEntity> findByDescPartIgnoreCase(String searchStr, Pageable pageable) {
+    public PageImpl<PhotoEntity> findByDescriptionApx(String searchStr, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByDescriptionContainingIgnoreCase(searchStr,pageable);
         return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
     }
 
     @Override
-    public PageImpl<PhotoEntity> findByTitlePartIgnoreCase(String searchStr, Pageable pageable) {
+    public PageImpl<PhotoEntity> findByTitleApx(String searchStr, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByTitleContainingIgnoreCase(searchStr,pageable);
         return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
     }
@@ -121,7 +115,7 @@ public class PhotoServiceImpl implements PhotoService {
             if (photoBase64 == null) return null;
         } while (photoDao.findByBase64Identifier(photoBase64).isPresent());
         entity.setUploadTime(uploadTime);
-        entity.setBase64Identifier(photoBase64);
+        entity.setBase64Id(photoBase64);
         Metadata exif = null;
         try {
             exif = ImageMetadataReader.readMetadata(photoFile);
@@ -165,7 +159,7 @@ public class PhotoServiceImpl implements PhotoService {
         entity.setCameraLongitude(null);
         entity.setCameraAzimuth(null);
         entity.setPositionAccuracy(null);
-        entity.setCameraHorizontalFOV(null);
+        entity.setCameraFOV(null);
         if (metadataFile != null) { // else no user JSON
             FileInputStream fis = null;
             try {
@@ -207,7 +201,7 @@ public class PhotoServiceImpl implements PhotoService {
                     entity.setPositionAccuracy(cameraJsonObj.get("accuracy").getAsDouble());
                 }
                 if (cameraJsonObj.has("horizontal")) {
-                    entity.setCameraHorizontalFOV(cameraJsonObj.get("horizontal").getAsDouble());
+                    entity.setCameraFOV(cameraJsonObj.get("horizontal").getAsDouble());
                 }
             }
         }

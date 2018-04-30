@@ -1,13 +1,13 @@
 package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
 import com.google.gson.JsonObject;
+import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.BuildingInfoService;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.BuildingInfoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.BuildingInfoFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.BuildingInfo;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
-import org.dozer.Mapper;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -16,13 +16,16 @@ import java.util.stream.Collectors;
 
 public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
 
-    private Mapper mapper;
     private BuildingInfoService infoService;
 
     @Inject
-    public BuildingInfoFacadeImpl(Mapper mapper, BuildingInfoService infoService) {
-        this.mapper = mapper;
+    public BuildingInfoFacadeImpl(BuildingInfoService infoService) {
         this.infoService = infoService;
+    }
+
+    @Override
+    public List<BuildingInfoDto> findAll() {
+        return infoService.findAll().stream().map(this::buildingInfoToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -31,8 +34,8 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
     }
 
     @Override
-    public List<BuildingInfoDto> findByBuildingNameContainingIgnoreCase(String buildingName) {
-        return infoService.findByNamePartIgnoreCase(buildingName).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
+    public List<BuildingInfoDto> findByBuildingNameApx(String buildingName) {
+        return infoService.findByBuildingNameApx(buildingName).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -41,13 +44,13 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
     }
 
     @Override
-    public List<BuildingInfoDto> findByGPS(double lat, double lon) {
+    public List<BuildingInfoDto> findByGPSPosition(double lat, double lon) {
         return infoService.findByGPSPosition(lat,lon).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<BuildingInfoDto> registerBuildingsFromJson(Map<JsonObject, JsonObject> jsonMap, JsonObject camPosition, PhotoDto photoDto) {
-        return infoService.saveBuildingInfos(jsonMap,camPosition, photoDtoToEntity(photoDto)).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
+    public List<BuildingInfoDto> registerBuildings(Map<JsonObject, JsonObject> jsonMap, JsonObject camPosition, PhotoDto photoDto) {
+        return infoService.registerBuildings(jsonMap,camPosition, photoDtoToEntity(photoDto)).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -60,7 +63,7 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
         infoService.delete(buildingDtoToEntity(buildingDto));
     }
 
-    private PhotoEntity photoDtoToEntity(PhotoDto dto){return mapper.map(dto,PhotoEntity.class);}
-    private BuildingInfoDto buildingInfoToDto(BuildingInfo info){return mapper.map(info,BuildingInfoDto.class);}
-    private BuildingInfo buildingDtoToEntity(BuildingInfoDto dto){return mapper.map(dto,BuildingInfo.class);}
+    private PhotoEntity photoDtoToEntity(PhotoDto dto){return PhotoGalleryBackendMapper.photoDtoToEntity(dto);}
+    private BuildingInfoDto buildingInfoToDto(BuildingInfo info){return PhotoGalleryBackendMapper.buildingInfoToDto(info);}
+    private BuildingInfo buildingDtoToEntity(BuildingInfoDto dto){return PhotoGalleryBackendMapper.buildingInfoDtoToEntity(dto);}
 }

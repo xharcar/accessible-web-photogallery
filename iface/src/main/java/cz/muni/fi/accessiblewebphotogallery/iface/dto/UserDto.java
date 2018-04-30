@@ -15,11 +15,11 @@ public class UserDto {
 
     private String email;
 
-    private byte[] passHash;
+    private byte[] passwordHash;
 
-    private byte[] passSalt;
+    private byte[] passwordSalt;
 
-    private AccountState accState;
+    private AccountState accountState;
 
     private String bio;
 
@@ -57,28 +57,28 @@ public class UserDto {
         this.email = email;
     }
 
-    public byte[] getPassHash() {
-        return passHash;
+    public byte[] getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassHash(byte[] passHash) {
-        this.passHash = passHash;
+    public void setPasswordHash(byte[] passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
-    public byte[] getPassSalt() {
-        return passSalt;
+    public byte[] getPasswordSalt() {
+        return passwordSalt;
     }
 
-    public void setPassSalt(byte[] passSalt) {
-        this.passSalt = passSalt;
+    public void setPasswordSalt(byte[] passwordSalt) {
+        this.passwordSalt = passwordSalt;
     }
 
-    public AccountState getAccState() {
-        return accState;
+    public AccountState getAccountState() {
+        return accountState;
     }
 
-    public void setAccState(AccountState accState) {
-        this.accState = accState;
+    public void setAccountState(AccountState accountState) {
+        this.accountState = accountState;
     }
 
     public String getBio() {
@@ -98,13 +98,13 @@ public class UserDto {
         return Objects.equals(loginName, userDto.loginName) &&
                 Objects.equals(screenName, userDto.screenName) &&
                 Objects.equals(email, userDto.email) &&
-                Arrays.equals(passHash, userDto.passHash) &&
-                Arrays.equals(passSalt, userDto.passSalt);
+                Arrays.equals(passwordHash, userDto.passwordHash) &&
+                Arrays.equals(passwordSalt, userDto.passwordSalt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(loginName, screenName, email, passHash, passSalt);
+        return Objects.hash(loginName, screenName, email, passwordHash, passwordSalt);
     }
 
     @Override
@@ -113,9 +113,9 @@ public class UserDto {
                 "id=" + id +
                 ", loginName='" + loginName + '\'' +
                 ", email='" + email + '\'' +
-                ", passHash=" + Arrays.toString(passHash) +
-                ", passSalt=" + Arrays.toString(passSalt) +
-                ", accState=" + accState +
+                ", passwordHash=" + Arrays.toString(passwordHash) +
+                ", passwordSalt=" + Arrays.toString(passwordSalt) +
+                ", accountState=" + accountState +
                 '}';
     }
 }

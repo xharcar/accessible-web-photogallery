@@ -18,29 +18,29 @@ public class PhotoDto {
 
     private String base64Id;
 
-    private double camLatitude;
+    private Double cameraLatitude;
 
-    private double camLongitude;
+    private Double cameraLongitude;
 
-    private double camAzimuth;
+    private Double cameraAzimuth;
 
-    private double posAccuracy;
+    private Double positionAccuracy;
 
-    private double camFOV;
+    private Double cameraFOV;
 
     private LocalDateTime datetimeTaken;
 
-    private String camModel;
+    private String cameraModel;
 
-    private int width;
+    private Integer imageWidth;
 
-    private int height;
+    private Integer imageHeight;
 
-    private int iso;
+    private Integer iso;
 
-    private boolean flash;
+    private Boolean flash;
 
-    private double expTime;
+    private Double exposureTime;
 
     public PhotoDto() {}
 
@@ -92,44 +92,44 @@ public class PhotoDto {
         this.base64Id = base64Id;
     }
 
-    public double getCamLatitude() {
-        return camLatitude;
+    public Double getCameraLatitude() {
+        return cameraLatitude;
     }
 
-    public void setCamLatitude(double camLatitude) {
-        this.camLatitude = camLatitude;
+    public void setCameraLatitude(Double cameraLatitude) {
+        this.cameraLatitude = cameraLatitude;
     }
 
-    public double getCamLongitude() {
-        return camLongitude;
+    public Double getCameraLongitude() {
+        return cameraLongitude;
     }
 
-    public void setCamLongitude(double camLongitude) {
-        this.camLongitude = camLongitude;
+    public void setCameraLongitude(Double cameraLongitude) {
+        this.cameraLongitude = cameraLongitude;
     }
 
-    public double getCamAzimuth() {
-        return camAzimuth;
+    public Double getCameraAzimuth() {
+        return cameraAzimuth;
     }
 
-    public void setCamAzimuth(double camAzimuth) {
-        this.camAzimuth = camAzimuth;
+    public void setCameraAzimuth(Double cameraAzimuth) {
+        this.cameraAzimuth = cameraAzimuth;
     }
 
-    public double getPosAccuracy() {
-        return posAccuracy;
+    public Double getPositionAccuracy() {
+        return positionAccuracy;
     }
 
-    public void setPosAccuracy(double posAccuracy) {
-        this.posAccuracy = posAccuracy;
+    public void setPositionAccuracy(Double positionAccuracy) {
+        this.positionAccuracy = positionAccuracy;
     }
 
-    public double getCamFOV() {
-        return camFOV;
+    public Double getCameraFOV() {
+        return cameraFOV;
     }
 
-    public void setCamFOV(double camFOV) {
-        this.camFOV = camFOV;
+    public void setCameraFOV(Double cameraFOV) {
+        this.cameraFOV = cameraFOV;
     }
 
     public LocalDateTime getDatetimeTaken() {
@@ -140,52 +140,52 @@ public class PhotoDto {
         this.datetimeTaken = datetimeTaken;
     }
 
-    public String getCamModel() {
-        return camModel;
+    public String getCameraModel() {
+        return cameraModel;
     }
 
-    public void setCamModel(String camModel) {
-        this.camModel = camModel;
+    public void setCameraModel(String cameraModel) {
+        this.cameraModel = cameraModel;
     }
 
-    public int getWidth() {
-        return width;
+    public Integer getImageWidth() {
+        return imageWidth;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
+    public void setImageWidth(Integer imageWidth) {
+        this.imageWidth = imageWidth;
     }
 
-    public int getHeight() {
-        return height;
+    public Integer getImageHeight() {
+        return imageHeight;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
+    public void setImageHeight(Integer imageHeight) {
+        this.imageHeight = imageHeight;
     }
 
-    public int getIso() {
+    public Integer getIso() {
         return iso;
     }
 
-    public void setIso(int iso) {
+    public void setIso(Integer iso) {
         this.iso = iso;
     }
 
-    public boolean isFlash() {
+    public Boolean getFlash() {
         return flash;
     }
 
-    public void setFlash(boolean flash) {
+    public void setFlash(Boolean flash) {
         this.flash = flash;
     }
 
-    public double getExpTime() {
-        return expTime;
+    public Double getExposureTime() {
+        return exposureTime;
     }
 
-    public void setExpTime(double expTime) {
-        this.expTime = expTime;
+    public void setExposureTime(Double exposureTime) {
+        this.exposureTime = exposureTime;
     }
 
     @Override
@@ -210,21 +210,19 @@ public class PhotoDto {
                 ", uploadTime=" + uploadTime +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", imageHash=" + Objects.toString(base64Id) +
-                ", camLatitude=" + camLatitude +
-                ", camLongitude=" + camLongitude +
-                ", camAzimuth=" + camAzimuth +
-                ", posAccuracy=" + posAccuracy +
-                ", camFOV=" + camFOV +
+                ", base64Id='" + base64Id + '\'' +
+                ", cameraLatitude=" + cameraLatitude +
+                ", cameraLongitude=" + cameraLongitude +
+                ", cameraAzimuth=" + cameraAzimuth +
+                ", positionAccuracy=" + positionAccuracy +
+                ", cameraFOV=" + cameraFOV +
                 ", datetimeTaken=" + datetimeTaken +
-                ", camModel='" + camModel + '\'' +
-                ", width=" + width +
-                ", height=" + height +
+                ", cameraModel='" + cameraModel + '\'' +
+                ", imageWidth=" + imageWidth +
+                ", imageHeight=" + imageHeight +
                 ", iso=" + iso +
                 ", flash=" + flash +
-                ", expTime=" + expTime +
+                ", exposureTime=" + exposureTime +
                 '}';
     }
-
-
 }

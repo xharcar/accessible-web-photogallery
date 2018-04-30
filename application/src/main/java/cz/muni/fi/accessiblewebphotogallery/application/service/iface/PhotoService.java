@@ -9,18 +9,15 @@ import java.io.File;
 import java.time.Instant;
 import java.util.Optional;
 
-public interface PhotoService extends PagedService<PhotoEntity> {
-
-    @Override
-    PageImpl<PhotoEntity> findAll(Pageable pageable);
+public interface PhotoService {
 
     PageImpl<PhotoEntity> findByUploadTimeBetween(Instant begin, Instant end, Pageable pageable);
 
     PageImpl<PhotoEntity> findByUploader(UserEntity uploader, Pageable Pageable);
 
-    PageImpl<PhotoEntity> findByDescPartIgnoreCase(String searchStr, Pageable pageable);
+    PageImpl<PhotoEntity> findByDescriptionApx(String searchStr, Pageable pageable);
 
-    PageImpl<PhotoEntity> findByTitlePartIgnoreCase(String searchStr, Pageable pageable);
+    PageImpl<PhotoEntity> findByTitleApx(String searchStr, Pageable pageable);
 
     Optional<PhotoEntity> findByBase64Id(String b64id);
 

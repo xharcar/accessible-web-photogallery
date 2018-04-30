@@ -140,7 +140,7 @@ public class UserServiceTest {
                 return rv;
             }
         });
-        List<UserEntity> foundList = userService.findByScreenNameContainingIgnoreCase("manda");
+        List<UserEntity> foundList = userService.findByScreenNameApx("manda");
         assertFalse(foundList.isEmpty());
         assertEquals(1,foundList.size());
         assertEquals(u1,foundList.get(0));

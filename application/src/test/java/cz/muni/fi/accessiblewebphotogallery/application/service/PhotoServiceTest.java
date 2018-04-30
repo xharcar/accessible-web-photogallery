@@ -44,6 +44,7 @@ public class PhotoServiceTest {
     private UserEntity defaultUser;
     private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC,0x5A};
     private byte[] dummysalt1 = new byte[]{0x3A, (byte) 0xB8, (byte) 0xE1};
+    private Instant timeZero;
 
 
     @BeforeAll
@@ -60,78 +61,72 @@ public class PhotoServiceTest {
         defaultUser.setBio("Lorem ipsum dolor sit amet.");
         defaultUser.setPasswordHash(dummyhash1);
         defaultUser.setPasswordSalt(dummysalt1);
+        timeZero = Instant.now();
     }
 
     @Test
     public void findAllTest(){
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minusSeconds(45));
+        p1.setUploadTime(timeZero.minusSeconds(45));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
         // EXIF and other info are irrelevant here
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
-        p2.setUploadTime(Instant.now().minusSeconds(15));
+        p2.setUploadTime(timeZero.minusSeconds(15));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setBase64Id("anotherb64id");
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
         photoList.add(p2);
-        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList);
+        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList,defaultPageRq,2);
 
         PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList,defaultPageRq,2);
         when(photoDaoMock.findAll(defaultPageRq)).thenReturn(returnPage);
 
         PageImpl<PhotoEntity> result = photoService.findAll(defaultPageRq);
         assertNotNull(result);
-        assertEquals(expectedPage.getContent(),result.getContent());
-        assertEquals(expectedPage.getTotalElements(),result.getTotalElements());
-        assertEquals(expectedPage.getTotalPages(),result.getTotalPages());
-        assertEquals(expectedPage.getNumber(),result.getNumber());
+        assertEquals(expectedPage,result);
     }
 
     @Test
     public void findByUploadTimeBetweenTest(){
-        Instant rightnow = Instant.now();
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(rightnow.minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
-        p2.setUploadTime(rightnow.minusSeconds(600));
+        p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setBase64Id("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
-        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList);
+        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList,defaultPageRq,1);
 
         PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList,defaultPageRq,1);
-        when(photoDaoMock.findByUploadTimeBetween(rightnow.minus(Duration.ofDays(30)),rightnow.minus(Duration.ofDays(16)),defaultPageRq))
+        when(photoDaoMock.findByUploadTimeBetween(timeZero.minus(Duration.ofDays(30)),timeZero.minus(Duration.ofDays(16)),defaultPageRq))
                 .thenReturn(returnPage);
-        PageImpl<PhotoEntity> result = photoService.findByUploadTimeBetween(rightnow.minus(Duration.ofDays(30)),rightnow.minus(Duration.ofDays(16)),defaultPageRq);
+        PageImpl<PhotoEntity> result = photoService.findByUploadTimeBetween(timeZero.minus(Duration.ofDays(30)),timeZero.minus(Duration.ofDays(16)),defaultPageRq);
         assertNotNull(result);
-        assertEquals(expectedPage.getTotalElements(),result.getTotalElements());
-        assertEquals(expectedPage.getTotalPages(),result.getTotalPages());
-        assertEquals(expectedPage.getContent(),result.getContent());
-        assertEquals(expectedPage.getNumber(),result.getNumber());
+        assertEquals(expectedPage,result);
     }
 
     @Test
     public void findByUploaderTest(){
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
 
         UserEntity anotherUser = new UserEntity();
         anotherUser.setPasswordHash(dummysalt1);
@@ -144,109 +139,98 @@ public class PhotoServiceTest {
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(anotherUser);
-        p2.setUploadTime(Instant.now().minusSeconds(600));
+        p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setBase64Id("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
-        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList);
+        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList,defaultPageRq,1);
 
         PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList,defaultPageRq,1);
         when(photoDaoMock.findByUploader(defaultUser,defaultPageRq)).thenReturn(returnPage);
         PageImpl<PhotoEntity> result = photoService.findByUploader(defaultUser,defaultPageRq);
 
         assertNotNull(result);
-        assertEquals(expectedPage.getContent(),result.getContent());
-        assertEquals(expectedPage.getTotalElements(),result.getTotalElements());
-        assertEquals(expectedPage.getTotalPages(),result.getTotalPages());
-        assertEquals(expectedPage.getNumber(),result.getNumber());
+        assertEquals(expectedPage,result);
     }
 
     @Test
     public void findByDescPartIgnoreCaseTest(){
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Taken while on my recent trip to Antwerp, Belgium.");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
-        p2.setUploadTime(Instant.now().minusSeconds(600));
+        p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setBase64Id("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
-        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList);
+        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList,defaultPageRq,1);
 
         PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList,defaultPageRq,1);
         when(photoDaoMock.findByDescriptionContainingIgnoreCase("antwerp",defaultPageRq)).thenReturn(returnPage);
-        PageImpl<PhotoEntity> result = photoService.findByDescPartIgnoreCase("antwerp",defaultPageRq);
+        PageImpl<PhotoEntity> result = photoService.findByDescriptionApx("antwerp",defaultPageRq);
 
         assertNotNull(result);
-        assertEquals(expectedPage.getContent(),result.getContent());
-        assertEquals(expectedPage.getTotalElements(),result.getTotalElements());
-        assertEquals(expectedPage.getTotalPages(),result.getTotalPages());
-        assertEquals(expectedPage.getNumber(),result.getNumber());
+        assertEquals(expectedPage,result);
     }
 
     @Test
     public void findByTitlePartIgnoreCaseTest() {
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Louvre");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
-        p2.setUploadTime(Instant.now().minusSeconds(600));
+        p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setBase64Id("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
-        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList);
+        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList,defaultPageRq,1);
 
         PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList, defaultPageRq, 1);
         when(photoDaoMock.findByTitleContainingIgnoreCase("louvre", defaultPageRq)).thenReturn(returnPage);
-        PageImpl<PhotoEntity> result = photoService.findByTitlePartIgnoreCase("louvre", defaultPageRq);
+        PageImpl<PhotoEntity> result = photoService.findByTitleApx("louvre", defaultPageRq);
 
         assertNotNull(result);
-        assertEquals(expectedPage.getContent(), result.getContent());
-        assertEquals(expectedPage.getTotalElements(), result.getTotalElements());
-        assertEquals(expectedPage.getTotalPages(), result.getTotalPages());
-        assertEquals(expectedPage.getNumber(), result.getNumber());
+        assertEquals(expectedPage, result);
     }
 
     @Test
     public void findByBase64Test(){
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
-        p2.setUploadTime(Instant.now().minusSeconds(600));
+        p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setBase64Id("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
-        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList);
-
-        PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList, defaultPageRq, 1);
+        
         when(photoDaoMock.findByBase64Identifier("thisisab64id")).thenReturn(Optional.of(p1));
         Optional<PhotoEntity> result = photoService.findByBase64Id("thisisab64id");
 
@@ -259,32 +243,29 @@ public class PhotoServiceTest {
     public void findNewestFirstTest(){
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
-        p2.setUploadTime(Instant.now().minusSeconds(600));
+        p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setBase64Id("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p2);
         photoList.add(p1);
-        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList);
+        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList,defaultPageRq,1);
 
         PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList, defaultPageRq, 1);
         when(photoDaoMock.findAllByOrderByUploadTimeDesc(defaultPageRq)).thenReturn(returnPage);
         PageImpl<PhotoEntity> result = photoService.findNewestFirst(defaultPageRq);
 
         assertNotNull(result);
-        assertEquals(expectedPage.getContent(), result.getContent());
-        assertEquals(expectedPage.getTotalElements(), result.getTotalElements());
-        assertEquals(expectedPage.getTotalPages(), result.getTotalPages());
-        assertEquals(expectedPage.getNumber(), result.getNumber());
+        assertEquals(expectedPage, result);
         for(int i=0;i<expectedPage.getTotalElements()-1;i++){
             assertEquals(expectedPage.getContent().get(i),result.getContent().get(i));
         } // same order
@@ -294,10 +275,10 @@ public class PhotoServiceTest {
     public void registerPhotoTest(){
         PhotoEntity p1 = new PhotoEntity();
         p1.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
 
         when(photoDaoMock.save(p1)).then(new Answer<PhotoEntity>() {
             @Override
@@ -313,7 +294,7 @@ public class PhotoServiceTest {
         assertNotNull(photoService.registerPhoto(p1,photoFile,metadataFile));
         assertNotNull(p1.getId());
         assertNotNull(p1.getImageWidth()); // to see if retrieving EXIF works
-        assertNotNull(p1.getCameraHorizontalFOV()); // to see if retrieving data from json works
+        assertNotNull(p1.getCameraFOV()); // to see if retrieving data from json works
     }
 
     @Test
@@ -321,18 +302,18 @@ public class PhotoServiceTest {
         PhotoEntity p1 = new PhotoEntity();
         p1.setId(1L);
         p1.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
+        p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setBase64Id("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setId(1L);
         p2.setUploader(defaultUser);
-        p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
+        p2.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("thisisab64id");
+        p2.setBase64Id("thisisab64id");
 
         when(photoDaoMock.save(p2)).thenReturn(p2);
         photoService.updatePhoto(p2);

@@ -16,13 +16,13 @@ public interface UserService{
 
     Optional<UserEntity> findByLoginName(String loginName);
 
-    List<UserEntity> findByScreenNameContainingIgnoreCase(String insensitiveScreenNamePart);
+    List<UserEntity> findByScreenNameApx(String apxName);
 
     boolean isAdmin(UserEntity user);
 
     Pair<UserEntity,String> registerUser(UserEntity user, String password);
 
-    boolean authenticateUser(UserEntity user, String password);
+    boolean authenticateUser(String identifier, String password);
 
     UserEntity updateUser(UserEntity user);
 

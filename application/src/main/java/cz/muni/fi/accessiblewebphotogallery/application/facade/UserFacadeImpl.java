@@ -1,11 +1,11 @@
 package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
+import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.UserService;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.UserFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.apache.commons.lang3.Validate;
-import org.dozer.Mapper;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +18,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserFacadeImpl implements UserFacade{
 
-    private Mapper mapper;
     private UserService userService;
 
     @Inject
-    public UserFacadeImpl(UserService userService, Mapper mapper){
+    public UserFacadeImpl(UserService userService){
         this.userService = userService;
-        this.mapper = mapper;
     }
 
     @Override
@@ -47,8 +45,8 @@ public class UserFacadeImpl implements UserFacade{
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> findByScreenNameContainingIgnoreCase(String partialScreenName) {
-        return userService.findByScreenNameContainingIgnoreCase(partialScreenName).stream().map(this::userEntityToDto).collect(Collectors.toList());
+    public List<UserDto> findByScreenNameApx(String apxName) {
+        return userService.findByScreenNameApx(apxName).stream().map(this::userEntityToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -61,18 +59,8 @@ public class UserFacadeImpl implements UserFacade{
 
     @Override
     @Transactional(readOnly = true)
-    public boolean authenticate(String identifier, String password) {
-        Optional<UserEntity> byLogin = userService.findByLoginName(identifier);
-        boolean rv = false;
-        if(byLogin.isPresent()){
-            rv = userService.authenticateUser(byLogin.get(),password);
-        } else {
-            Optional<UserEntity> byEmail = userService.findByEmail(identifier);
-            if(byEmail.isPresent()){
-                rv = userService.authenticateUser(byEmail.get(),password);
-            }
-        }
-        return rv;
+    public boolean authenticateUser(String identifier, String password) {
+        return userService.authenticateUser(identifier,password);
     }
 
     @Override
@@ -82,8 +70,8 @@ public class UserFacadeImpl implements UserFacade{
         Pair<UserEntity,String> prelim = userService.registerUser(userDtoToEntity(user),password);
         if (null != prelim){
             user.setId(prelim.getFirst().getId());
-            user.setPassHash(prelim.getFirst().getPasswordHash());
-            user.setPassSalt(prelim.getFirst().getPasswordSalt());
+            user.setPasswordHash(prelim.getFirst().getPasswordHash());
+            user.setPasswordSalt(prelim.getFirst().getPasswordSalt());
             rv = Pair.of(user,prelim.getSecond());
         }
         return rv;
@@ -111,10 +99,10 @@ public class UserFacadeImpl implements UserFacade{
     }
 
     private UserDto userEntityToDto(UserEntity e){
-        return mapper.map(e,UserDto.class);
+        return PhotoGalleryBackendMapper.userEntityToDto(e);
     }
 
     private UserEntity userDtoToEntity(UserDto dto){
-        return mapper.map(dto,UserEntity.class);
+        return PhotoGalleryBackendMapper.userDtoToEntity(dto);
     }
 }

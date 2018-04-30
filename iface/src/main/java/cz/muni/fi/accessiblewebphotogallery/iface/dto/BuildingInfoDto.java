@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public class BuildingInfoDto {
 
+    private double EPSILON = 0.0000025;// see BuildingInfoServiceImpl
+
     private Long id;
 
     private PhotoDto photo;
@@ -18,13 +20,14 @@ public class BuildingInfoDto {
 
     private Double longitude;
 
-    private Integer minX;
+    private Integer photoMinX;
 
-    private Integer maxX;
+    private Integer photoMaxX;
 
     private String focusText;
 
-    public BuildingInfoDto() {}
+    public BuildingInfoDto() {
+    }
 
     public Long getId() {
         return id;
@@ -82,20 +85,20 @@ public class BuildingInfoDto {
         this.longitude = longitude;
     }
 
-    public Integer getMinX() {
-        return minX;
+    public Integer getPhotoMinX() {
+        return photoMinX;
     }
 
-    public void setMinX(Integer minX) {
-        this.minX = minX;
+    public void setPhotoMinX(Integer photoMinX) {
+        this.photoMinX = photoMinX;
     }
 
-    public Integer getMaxX() {
-        return maxX;
+    public Integer getPhotoMaxX() {
+        return photoMaxX;
     }
 
-    public void setMaxX(Integer maxX) {
-        this.maxX = maxX;
+    public void setPhotoMaxX(Integer photoMaxX) {
+        this.photoMaxX = photoMaxX;
     }
 
     public String getFocusText() {
@@ -108,20 +111,17 @@ public class BuildingInfoDto {
 
     @Override
     public boolean equals(Object o) {
-        if(o == null) return false;
+        if (o == null) return false;
         if (this == o) return true;
         if (!(o instanceof BuildingInfoDto)) return false;
         BuildingInfoDto that = (BuildingInfoDto) o;
-        return distance == that.distance &&
-                Double.compare(that.latitude, latitude) == 0 &&
-                Double.compare(that.longitude, longitude) == 0 &&
-                Objects.equals(photo, that.photo) &&
-                Objects.equals(buildingName, that.buildingName);
+        return osmId.equals(that.osmId) ||
+                (Math.abs(Double.compare(that.latitude, latitude)) <= EPSILON &&
+                        Math.abs(Double.compare(that.longitude, longitude)) <= EPSILON);
     }
 
     @Override
     public int hashCode() {
-
         return Objects.hash(osmId, latitude, longitude);
     }
 
@@ -134,8 +134,8 @@ public class BuildingInfoDto {
                 ", buildingName='" + buildingName + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", minX=" + minX +
-                ", maxX=" + maxX +
+                ", photoMinX=" + photoMinX +
+                ", photoMaxX=" + photoMaxX +
                 ", focusText='" + focusText + '\'' +
                 '}';
     }

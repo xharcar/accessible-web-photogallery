@@ -1,26 +1,24 @@
 package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
-import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.AlbumService;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.AlbumFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
-import org.dozer.Mapper;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AlbumFacadeImpl implements AlbumFacade {
 
-    private Mapper mapper;
     private AlbumService albumService;
 
     @Inject
-    public AlbumFacadeImpl(Mapper mapper, AlbumService albumService, ApplicationConfig config) {
-        this.mapper = mapper;
+    public AlbumFacadeImpl(AlbumService albumService) {
         this.albumService = albumService;
     }
 
@@ -40,6 +38,11 @@ public class AlbumFacadeImpl implements AlbumFacade {
     }
 
     @Override
+    public AlbumDto updateAlbum(AlbumDto album) {
+        return albumToDto(albumService.updateAlbum(albumDtoToEntity(album)));
+    }
+
+    @Override
     public boolean addPhotoToAlbum(AlbumDto albumDto, String photoB64Id) {
         return albumService.addPhotoToAlbum(albumDtoToEntity(albumDto),photoB64Id);
     }
@@ -55,21 +58,26 @@ public class AlbumFacadeImpl implements AlbumFacade {
     }
 
     @Override
+    public Optional<AlbumDto> findByBase64Id(String base64) {
+        return albumService.findByBase64Id(base64).map(this::albumToDto);
+    }
+
+    @Override
     public void deleteAlbum(AlbumDto albumDto) {
         albumService.deleteAlbum(albumDtoToEntity(albumDto));
     }
 
 
     private UserEntity userDtoToEntity(UserDto userDto){
-        return mapper.map(userDto,UserEntity.class);
+        return PhotoGalleryBackendMapper.userDtoToEntity(userDto);
     }
 
     private AlbumDto albumToDto(AlbumEntity entity){
-        return mapper.map(entity,AlbumDto.class);
+        return PhotoGalleryBackendMapper.albumEntityToDto(entity);
     }
 
     private AlbumEntity albumDtoToEntity(AlbumDto dto){
-        return mapper.map(dto,AlbumEntity.class);
+        return PhotoGalleryBackendMapper.albumDtoToEntity(dto);
     }
 
 }
