@@ -95,7 +95,7 @@ public class UserFacadeImpl implements UserFacade{
     @Override
     @Transactional
     public boolean confirmUserRegistration(String email, String token) {
-        return userService.confirmUser(email,token);
+        return userService.confirmUserRegistration(email,token);
     }
 
     private UserDto userEntityToDto(UserEntity e){

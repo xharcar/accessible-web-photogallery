@@ -45,8 +45,8 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     }
 
     @Override
-    public List<BuildingInfo> findByBuildingNameApx(String search) {
-        return infoDao.findByBuildingNameContainingIgnoreCase(search);
+    public List<BuildingInfo> findByBuildingNameApx(String searchStr) {
+        return infoDao.findByBuildingNameContainingIgnoreCase(searchStr);
     }
 
     @Override

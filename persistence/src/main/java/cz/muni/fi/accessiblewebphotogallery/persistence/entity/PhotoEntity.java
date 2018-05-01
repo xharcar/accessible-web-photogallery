@@ -5,6 +5,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Entity representing a photo, or rather, information about a photo. Uniquely identified (besides ID) by a base-64
+ * string, that's also used in links, eg. photogallery.net/{base64} (exact format TBD, but the idea is clear)
+ */
 @Entity
 @Table(name = "PHOTOS")
 public class PhotoEntity {
@@ -28,10 +32,10 @@ public class PhotoEntity {
 
     @Column(nullable = false, length = 12, unique = true)
     private String base64Id;
-    /* Identifier Mk.3
+    /* Base-64 identifier Mk.3
         1) Register upload Instant
         2) Into a List of ByteBuffers, put:
-            - uploading user's DTO hashCode() result
+            - uploading user entity hashCode() result
             - hashCode() of upload Instant
         3) Generate 4 pseudo-random bytes, append to ByteBuffer list
         4) Update a MessageDigest(MD5) with the ByteBuffer arrays
@@ -39,7 +43,7 @@ public class PhotoEntity {
         6) If a metadata file is present, update the digest with it
         7) Finalise the digest
         8) Take the 9 least significant bytes and convert them to Base64(URL-safe)
-        9) If the resulting String is already present, goto 3; else assign it as identifier
+        9) If the resulting String is already present in the photos table, goto 3; else assign it as identifier
      */
 
     // camera info - nullable for when no JSON metadata file is uploaded

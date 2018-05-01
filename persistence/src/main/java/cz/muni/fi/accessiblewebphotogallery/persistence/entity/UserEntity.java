@@ -4,6 +4,10 @@ import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Objects;
 
+
+/**
+ * A user entity. Uniquely identifiable by login name and email.
+ */
 @Entity
 @Table(name = "USERS")
 public class UserEntity {
@@ -107,8 +111,7 @@ public class UserEntity {
 
         UserEntity that = (UserEntity) o;
 
-        if (!Objects.equals(loginName,that.loginName)) return false;
-        return Objects.equals(email,that.email);
+        return Objects.equals(loginName, that.loginName) && Objects.equals(email, that.email);
     }
 
     @Override

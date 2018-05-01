@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean confirmUser(String email, String token) {
+    public boolean confirmUserRegistration(String email, String token) {
         Validate.notNull(email);
         Validate.notNull(token);
         Optional<RegistrationToken> regTokenOpt = registrationDao.findByEmail(email);

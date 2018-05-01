@@ -4,7 +4,15 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.entity;
 import javax.persistence.*;
 import java.util.Objects;
 
-// Information about a building in a picture
+/**
+ * Entity representing (information about) a building in a photo taken with the AssistiveCamera application
+ * (or another app that creates a JSON metadata file with a similar enough format). Identifiable by photo and OSM* ID,
+ * searchable by OSM ID and geographical coordinates.
+ * Each recognised building gets bounds inside the photo. The idea is that upon mouseover within the specified X
+ * coordinate range (Y was considered, but ultimately relinquished), a string of text, editable by the uploader,
+ * is displayed to provide more information if available, and can be read by screen readers.
+ * *: OpenStreetMap
+ */
 @Entity
 @Table(name = "BUILDINGINFO")
 public class BuildingInfo {

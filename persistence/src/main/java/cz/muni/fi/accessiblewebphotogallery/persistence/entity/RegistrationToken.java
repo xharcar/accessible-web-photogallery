@@ -6,6 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Objects;
 
+/**
+ * Registration token entity for confirming user registrations.
+ */
 @Entity
 public class RegistrationToken {
 
