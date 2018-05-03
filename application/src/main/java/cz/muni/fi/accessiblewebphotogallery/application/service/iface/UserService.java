@@ -67,10 +67,10 @@ public interface UserService{
      * Authenticates a user
      * @param identifier User's email or login name
      * @param password What the (presumed) user typed into the 'Password' login field
-     * @return true if authentication was successful, ie. the password hash matches the one saved in the DB,
-     * false otherwise
+     * @return Pair of {true;authenticated user entity} if authentication succeeded(salted password hash matches
+     * DB record), Pair of {false;empty Optional} otherwise
      */
-    boolean authenticateUser(String identifier, String password);
+    Pair<Boolean,Optional<UserEntity>> authenticateUser(String identifier, String password);
 
     /**
      * Updates a user's information

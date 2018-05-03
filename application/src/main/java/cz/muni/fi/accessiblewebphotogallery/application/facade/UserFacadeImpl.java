@@ -44,6 +44,17 @@ public class UserFacadeImpl implements UserFacade{
     }
 
     @Override
+    public Optional<UserDto> findByIdentifier(String identifier) {
+        Optional<UserEntity> searchResult;
+        if(identifier.contains("@")){
+            searchResult = userService.findByEmail(identifier);
+        }else{
+            searchResult = userService.findByLoginName(identifier);
+        }
+        return searchResult.map(this::userEntityToDto);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<UserDto> findByScreenNameApx(String apxName) {
         return userService.findByScreenNameApx(apxName).stream().map(this::userEntityToDto).collect(Collectors.toList());
@@ -59,8 +70,9 @@ public class UserFacadeImpl implements UserFacade{
 
     @Override
     @Transactional(readOnly = true)
-    public boolean authenticateUser(String identifier, String password) {
-        return userService.authenticateUser(identifier,password);
+    public Pair<Boolean, Optional<UserDto>> authenticateUser(String identifier, String password) {
+        Pair<Boolean,Optional<UserEntity>> toMap = userService.authenticateUser(identifier,password);
+        return Pair.of(toMap.getFirst(),toMap.getSecond().map(this::userEntityToDto));
     }
 
     @Override

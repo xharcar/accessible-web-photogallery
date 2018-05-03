@@ -104,16 +104,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticateUser(String identifier, String password) {
+    public Pair<Boolean, Optional<UserEntity>> authenticateUser(String identifier, String password) {
         Validate.notNull(identifier);
         Validate.notNull(password);
-        Optional<UserEntity> presumedUser = null;
+        Optional<UserEntity> presumedUser;
         if (identifier.contains("@")) {
             presumedUser = findByLoginName(identifier);
         } else {
             presumedUser = findByEmail(identifier);
         }
-        return presumedUser.isPresent() && checkPassword(password, presumedUser.get().getPasswordHash(), presumedUser.get().getPasswordSalt());
+        if(!presumedUser.isPresent() || !checkPassword(password,presumedUser.get().getPasswordHash(),presumedUser.get().getPasswordSalt())){
+            return Pair.of(false, Optional.empty());
+        }
+        return Pair.of(true,presumedUser);
     }
 
     @Override

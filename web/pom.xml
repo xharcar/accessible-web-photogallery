@@ -61,7 +61,17 @@
 			<artifactId>dsl-json-java8</artifactId>
 			<version>1.7.1</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>cz.muni.fi.accessible-web-photogallery</groupId>
+            <artifactId>persistence</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cz.muni.fi.accessible-web-photogallery</groupId>
+            <artifactId>iface</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

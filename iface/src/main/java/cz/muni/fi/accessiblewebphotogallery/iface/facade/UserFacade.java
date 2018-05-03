@@ -16,6 +16,8 @@ public interface UserFacade {
 
     Optional<UserDto> findByLoginName(String loginName);
 
+    Optional<UserDto> findByIdentifier(String identifier);
+
     List<UserDto> findByScreenNameApx(String apxName);
 
     boolean isAdmin(UserDto user);
@@ -23,7 +25,7 @@ public interface UserFacade {
     Pair<UserDto,String> registerUser(UserDto user, String password);
 
     // to be used with both email and login name
-    boolean authenticateUser(String identifier, String password);
+    Pair<Boolean,Optional<UserDto>> authenticateUser(String identifier, String password);
 
     UserDto updateUser(UserDto user);
 
