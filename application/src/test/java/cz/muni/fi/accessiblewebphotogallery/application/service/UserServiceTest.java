@@ -1,7 +1,7 @@
 package cz.muni.fi.accessiblewebphotogallery.application.service;
 
 
-import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.UserService;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.RegistrationTokenDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.UserDao;
@@ -185,8 +185,10 @@ public class UserServiceTest {
         u1.setBio("Lorem ipsum dolor sit amet.");
         u1.setPasswordHash(hash);
         u1.setPasswordSalt(salt);
-        assertTrue(userService.authenticateUser(u1,"password"));
-        assertFalse(userService.authenticateUser(u1,"notpassword"));
+        assertTrue(userService.authenticateUser(u1.getLoginName(),"password").getFirst());
+        assertTrue(userService.authenticateUser(u1.getEmail(),"password").getFirst());
+        assertFalse(userService.authenticateUser(u1.getLoginName(),"notpassword").getFirst());
+        assertFalse(userService.authenticateUser(u1.getEmail(),"notpassword").getFirst());
     }
 
     @Test

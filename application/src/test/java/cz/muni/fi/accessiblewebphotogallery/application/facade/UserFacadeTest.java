@@ -1,6 +1,6 @@
 package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
-import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.UserService;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
@@ -172,13 +172,15 @@ public class UserFacadeTest {
         UserEntity u1e = userDtoToEntity(u1);
         when(userServiceMock.findByEmail("ksngmtk@email.org")).thenReturn(Optional.of(u1e));
         when(userServiceMock.findByLoginName("ksngmtk")).thenReturn(Optional.of(u1e));
-        when(userServiceMock.authenticateUser(u1e,"password")).thenReturn(true);
-        when(userServiceMock.authenticateUser(u1e,"not password")).thenReturn(false);
+        when(userServiceMock.authenticateUser(u1e.getEmail(),"password")).thenReturn(Pair.of(true,Optional.of(u1e)));
+        when(userServiceMock.authenticateUser(u1e.getLoginName(),"password")).thenReturn(Pair.of(true,Optional.of(u1e)));
+        when(userServiceMock.authenticateUser(u1e.getEmail(),"not password")).thenReturn(Pair.of(false,Optional.empty()));
+        when(userServiceMock.authenticateUser(u1e.getLoginName(),"not password")).thenReturn(Pair.of(false,Optional.empty()));
 
-        assertTrue(userFacade.authenticateUser("ksngmtk@email.org","password"));
-        assertFalse(userFacade.authenticateUser("ksngmtk@email.org","not password"));
-        assertTrue(userFacade.authenticateUser("ksngmtk","password"));
-        assertFalse(userFacade.authenticateUser("ksngmtk","not password"));
+        assertTrue(userFacade.authenticateUser("ksngmtk@email.org","password").getFirst());
+        assertFalse(userFacade.authenticateUser("ksngmtk@email.org","not password").getFirst());
+        assertTrue(userFacade.authenticateUser("ksngmtk","password").getFirst());
+        assertFalse(userFacade.authenticateUser("ksngmtk","not password").getFirst());
     }
 
     @Test

@@ -20,6 +20,8 @@ public interface PhotoFacade {
 
     PageImpl<PhotoDto> findByTitlePartIgnoreCase(String partialTitle, Pageable pageable);
 
+    Optional<PhotoDto> findById(Long id);
+
     Optional<PhotoDto> findByBase64Id(String base64Id);
 
     PageImpl<PhotoDto> findNewestFirst(Pageable pageable);

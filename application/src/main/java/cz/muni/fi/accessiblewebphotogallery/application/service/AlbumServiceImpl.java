@@ -1,6 +1,6 @@
 package cz.muni.fi.accessiblewebphotogallery.application.service;
 
-import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.AlbumService;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.AlbumDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
@@ -150,7 +150,7 @@ public class AlbumServiceImpl implements AlbumService {
             log.error("Attempting to remove photo: "+ photoBase64Id + " from album:" + album + " failed reading file(IOException). Aborting");
             return false;
         }
-        boolean rv = photoList.remove(photoBase64Id);
+        photoList.remove(photoBase64Id);
         try {
             Files.write(albumFile.toPath(),photoList, StandardCharsets.UTF_8, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
         } catch (IOException e) {

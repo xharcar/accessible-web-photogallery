@@ -1,4 +1,4 @@
-package cz.muni.fi.accessiblewebphotogallery.application;
+package cz.muni.fi.accessiblewebphotogallery.iface;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;

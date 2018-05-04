@@ -54,6 +54,11 @@ public class PhotoFacadeImpl implements PhotoFacade {
     }
 
     @Override
+    public Optional<PhotoDto> findById(Long id) {
+        return photoService.findById(id).map(PhotoGalleryBackendMapper::photoEntityToDto);
+    }
+
+    @Override
     public Optional<PhotoDto> findByBase64Id(String base64Id) {
         return photoService.findByBase64Id(base64Id).map(this::photoToDto);
     }

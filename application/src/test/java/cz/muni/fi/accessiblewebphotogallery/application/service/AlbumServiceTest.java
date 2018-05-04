@@ -1,6 +1,6 @@
 package cz.muni.fi.accessiblewebphotogallery.application.service;
 
-import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.AlbumService;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.AlbumDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;

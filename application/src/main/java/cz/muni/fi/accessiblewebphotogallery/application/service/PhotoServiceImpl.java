@@ -20,7 +20,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -30,6 +33,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.List;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
@@ -72,6 +76,11 @@ public class PhotoServiceImpl implements PhotoService {
     public PageImpl<PhotoEntity> findByTitleApx(String searchStr, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByTitleContainingIgnoreCase(searchStr,pageable);
         return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
+    }
+
+    @Override
+    public Optional<PhotoEntity> findById(Long id) {
+        return photoDao.findById(id);
     }
 
     @Override
@@ -204,6 +213,24 @@ public class PhotoServiceImpl implements PhotoService {
                     entity.setCameraFOV(cameraJsonObj.get("horizontal").getAsDouble());
                 }
             }
+        }
+        BufferedImage thumb = new BufferedImage(640, 360, BufferedImage.TYPE_INT_RGB);
+        File thumbFile = new File(photoFile.getParentFile().getAbsolutePath() + File.separator + photoBase64 + "_thumb.jpg");
+        BufferedImage origPhoto;
+        try {
+            origPhoto = ImageIO.read(photoFile);
+        } catch (IOException e) {
+            log.catching(e);
+            log.error("Couldn't create thumbnail: IOException reading original photo. Aborting.");
+            return null;
+        }
+        thumb.createGraphics().drawImage(origPhoto.getScaledInstance(640,360,Image.SCALE_FAST),0,0,null);
+        try {
+            ImageIO.write(thumb, "jpg", thumbFile);
+        } catch (IOException e) {
+            log.catching(e);
+            log.error("Couldn't create thumbnail: IOException writing thumbnail. Aborting.");
+            return null;
         }
         return photoDao.save(entity);
     }

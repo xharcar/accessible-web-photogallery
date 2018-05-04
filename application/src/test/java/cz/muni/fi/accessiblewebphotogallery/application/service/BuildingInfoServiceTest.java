@@ -3,7 +3,7 @@ package cz.muni.fi.accessiblewebphotogallery.application.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.BuildingInfoService;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.BuildingInfoDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;

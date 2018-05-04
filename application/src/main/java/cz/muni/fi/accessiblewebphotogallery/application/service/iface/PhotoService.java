@@ -48,6 +48,13 @@ public interface PhotoService {
     PageImpl<PhotoEntity> findByTitleApx(String searchStr, Pageable pageable);
 
     /**
+     * Finds photo by ID
+     * @param id DB ID to look up
+     * @return Optional with a photo whose DB ID == id, empty Optional otherwise
+     */
+    Optional<PhotoEntity> findById(Long id);
+
+    /**
      * Retrieves a photo with a given Base-64 identifier
      * @param b64id Base-64 identifier to search
      * @return Optional containing a PhotoEntity whose base64Identifier equals b64id
