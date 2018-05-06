@@ -4,10 +4,8 @@ import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.BuildingInfoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
-import cz.muni.fi.accessiblewebphotogallery.web.pto.AlbumPto;
-import cz.muni.fi.accessiblewebphotogallery.web.pto.BuildingInfoPto;
-import cz.muni.fi.accessiblewebphotogallery.web.pto.PhotoPto;
-import cz.muni.fi.accessiblewebphotogallery.web.pto.UserPto;
+import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
+import cz.muni.fi.accessiblewebphotogallery.web.pto.*;
 
 public class PhotoGalleryFrontendMapper {
 
@@ -19,6 +17,16 @@ public class PhotoGalleryFrontendMapper {
         rv.setLoginName(dto.getLoginName());
         rv.setScreenName(dto.getScreenName());
         rv.setBio(dto.getBio());
+        return rv;
+    }
+
+    public static UserDto userRegistrationPtoToDto(UserRegistrationPto pto){
+        UserDto rv = new UserDto();
+        rv.setLoginName(pto.getLoginName());
+        rv.setScreenName(pto.getScreenName());
+        rv.setEmail(pto.getEmail());
+        rv.setBio("");
+        rv.setAccountState(AccountState.INACTIVE);
         return rv;
     }
 
