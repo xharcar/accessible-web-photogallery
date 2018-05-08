@@ -93,8 +93,8 @@ public class PhotoFacadeImpl implements PhotoFacade {
     }
 
     @Override
-    public void deletePhoto(PhotoDto photo) {
-        photoService.deletePhoto(photoDtoToEntity(photo));
+    public boolean clearPhoto(PhotoDto photo) {
+        return photoService.clearPhoto(photoDtoToEntity(photo));
     }
 
     private UserEntity userDtoToEntity(UserDto userDto) {

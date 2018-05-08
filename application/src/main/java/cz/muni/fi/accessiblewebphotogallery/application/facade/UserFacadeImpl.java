@@ -80,7 +80,7 @@ public class UserFacadeImpl implements UserFacade{
     public Pair<UserDto, String> registerUser(UserDto user, String password) {
         Pair<UserDto,String> rv = null;
         Pair<UserEntity,String> prelim = userService.registerUser(userDtoToEntity(user),password);
-        if (null != prelim){
+        if (prelim != null){
             user.setId(prelim.getFirst().getId());
             user.setPasswordHash(prelim.getFirst().getPasswordHash());
             user.setPasswordSalt(prelim.getFirst().getPasswordSalt());

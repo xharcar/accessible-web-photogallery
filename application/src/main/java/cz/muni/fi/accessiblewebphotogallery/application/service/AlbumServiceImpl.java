@@ -69,6 +69,7 @@ public class AlbumServiceImpl implements AlbumService {
                 hasher = MessageDigest.getInstance("MD5");
             } catch (NoSuchAlgorithmException e) {
                 log.catching(e);
+                log.error(e.getMessage());
                 log.error("Could not obtain a MessageDigest instance. Aborting.");
                 return null;
             }
@@ -93,6 +94,7 @@ public class AlbumServiceImpl implements AlbumService {
             }
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("Failed to create album file(IOException). Aborting.");
             return null;
         }
@@ -111,6 +113,7 @@ public class AlbumServiceImpl implements AlbumService {
             Files.delete(albumFile.toPath());
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("IOException deleting album file of album:" + album + " . Aborting." );
             return;
         }
@@ -129,6 +132,7 @@ public class AlbumServiceImpl implements AlbumService {
             Files.write(albumFile.toPath(),photoBase64Id.getBytes(StandardCharsets.UTF_8), StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.SYNC);
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("Attempting to add photo: "+ photoBase64Id + " to album:" + album + " failed(IOException). Aborting");
             return false;
         }
@@ -147,6 +151,7 @@ public class AlbumServiceImpl implements AlbumService {
             photoList = Files.readAllLines(albumFile.toPath());
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("Attempting to remove photo: "+ photoBase64Id + " from album:" + album + " failed reading file(IOException). Aborting");
             return false;
         }
@@ -155,6 +160,7 @@ public class AlbumServiceImpl implements AlbumService {
             Files.write(albumFile.toPath(),photoList, StandardCharsets.UTF_8, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("Attempting to remove photo: "+ photoBase64Id + " from album:" + album + " failed writing file(IOException). Aborting");
             return false;
         }
@@ -173,6 +179,7 @@ public class AlbumServiceImpl implements AlbumService {
             photoList = Files.readAllLines(albumFile.toPath());
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("Attempting to list photos from album:" + album + " failed reading file(IOException). Aborting");
             return null;
         }

@@ -162,8 +162,6 @@ public class HomeController {
         model.addAttribute("albumNextLink", albumNextLink);
         model.addAttribute("photoPto",PhotoGalleryFrontendMapper.photoDtoToPto(photoDtoOpt.get()));
         model.addAttribute("buildingPtos",buildingInfoPtos);
-        //(idea:) model has photoFilePath,photoPto and buildingPtos, same as photoDetail,
-        // but instead of linking to previous and next photos chronologically, links to prev/next in album cyclically
         return "detail_album";
     }
 
@@ -182,16 +180,10 @@ public class HomeController {
         }
         UserDto userDto = PhotoGalleryFrontendMapper.userRegistrationPtoToDto(userRegistrationPto);
         Pair<UserDto, String> registerResult;
-        try {
-            registerResult = userFacade.registerUser(userDto, userRegistrationPto.getPassword());
-        } catch (Exception e) {
-            return "registration";
-        }
+        registerResult = userFacade.registerUser(userDto, userRegistrationPto.getPassword());
         AuthenticationProviderImpl.logInUser(userDto, userRegistrationPto.getPassword());
-
         model.addAttribute("email", userDto.getEmail());
         model.addAttribute("token", registerResult.getSecond());
-
         return "registration_successful";
     }
 
@@ -207,21 +199,4 @@ public class HomeController {
         return "/profile";
     }
 
-
-    /**
-     * Side note: deleting pictures, inspired by Imgur
-     * - This will allow for continuous indexation by ID for browsing purposes
-     * - No PhotoEntity will be actually removed from the DB -
-     *  -- TODO: replace the delete methods with ones doing 4-6) below
-     *   + do the same for users (if photos can't be deleted, neither should users, or else what is to happen to
-     *   a photo if a user wants to close their account?
-     * - Upon user triggering a deletion:
-     * 1) Delete the image file
-     * 2) Delete the associated metadata file if one was provided
-     * 3) Delete the thumbnail
-     * 4) Null all nullable values for the associated PhotoDto
-     * 5) Reset the title and description to something reasonable, eg.
-     * "Picture deleted"; "This picture has been deleted by its owner."
-     * 6) Update the DB entry of the photo
-     */
 }

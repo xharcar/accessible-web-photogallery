@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.PhotoService;
+import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.PhotoDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
@@ -27,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -44,14 +46,16 @@ public class PhotoServiceImpl implements PhotoService {
     private MessageDigest hasher;
     private Random rng;
     private Gson jsonConverter;
+    private ApplicationConfig applicationConfig;
 
     @Inject
-    public PhotoServiceImpl(PhotoDao photoDao) {
+    public PhotoServiceImpl(PhotoDao photoDao, ApplicationConfig applicationConfig) {
         this.photoDao = photoDao;
         enc = Base64.getUrlEncoder();
         rng = new Random();
         hasher = null;
         jsonConverter = new Gson();
+        this.applicationConfig = applicationConfig;
     }
 
     @Override
@@ -109,6 +113,7 @@ public class PhotoServiceImpl implements PhotoService {
             } catch (NoSuchAlgorithmException nsae) {
                 // this should never occur, but I know better than that...
                 log.catching(nsae);
+                log.error(nsae.getMessage());
                 log.error("Could not obtain an MD5 MessageDigest instance.");
                 return null;
             }
@@ -130,6 +135,7 @@ public class PhotoServiceImpl implements PhotoService {
             exif = ImageMetadataReader.readMetadata(photoFile);
         } catch (ImageProcessingException | IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("Couldn't extract EXIF metadata from photo.");
         }
         if (exif != null) {
@@ -160,7 +166,7 @@ public class PhotoServiceImpl implements PhotoService {
                 entity.setDatetimeTaken(LocalDateTime.ofInstant(exifDate.toInstant(), ZoneId.of("UTC")));// could use system default alternatively
             }
             entity.setIso(exifDir.getInteger(ExifDirectoryBase.TAG_ISO_EQUIVALENT));
-            entity.setFlash(exifDir.getBooleanObject(ExifDirectoryBase.TAG_FLASH));
+            entity.setFlash((exifDir.getInteger(ExifDirectoryBase.TAG_FLASH) & 0x01) == 1);
             entity.setImageWidth(exifDir.getInteger(ExifDirectoryBase.TAG_IMAGE_WIDTH));
             entity.setImageHeight(exifDir.getInteger(ExifDirectoryBase.TAG_IMAGE_HEIGHT));
         }
@@ -175,6 +181,7 @@ public class PhotoServiceImpl implements PhotoService {
                 fis = new FileInputStream(metadataFile);
             } catch (FileNotFoundException e) {
                 log.catching(e);
+                log.error(e.getMessage());
                 log.error("JSON metadata file not found when trying to parse photo metadata. Skipping.");
                 return photoDao.save(entity);
             }
@@ -183,6 +190,7 @@ public class PhotoServiceImpl implements PhotoService {
                 jsonRaw = fis.readAllBytes();
             } catch (IOException e) {
                 log.catching(e);
+                log.error(e.getMessage());
                 log.error("JSON metadata file too long (IOException reading). Skipping.");
                 return photoDao.save(entity);
             }
@@ -221,6 +229,7 @@ public class PhotoServiceImpl implements PhotoService {
             origPhoto = ImageIO.read(photoFile);
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("Couldn't create thumbnail: IOException reading original photo. Aborting.");
             return null;
         }
@@ -229,6 +238,7 @@ public class PhotoServiceImpl implements PhotoService {
             ImageIO.write(thumb, "jpg", thumbFile);
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("Couldn't create thumbnail: IOException writing thumbnail. Aborting.");
             return null;
         }
@@ -241,8 +251,51 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public void deletePhoto(PhotoEntity photo) {
-        photoDao.delete(photo);
+    public boolean clearPhoto(PhotoEntity photo) {
+        String photoBase64Id = photo.getBase64Id();
+        File photoDir = new File(applicationConfig.getPhotoDirectory());
+        File[] fileList = photoDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                // the photo itself, the thumbnail, and the supplementary JSON file if one was uploaded
+                return name.startsWith(photoBase64Id);
+            }
+        });
+        if(fileList == null){
+            log.error("Retrieving relevant photo files for photo with Base-64 ID: " + photoBase64Id + " failed.");
+            return false;
+        }
+        for(File file : fileList){
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException e) {
+                log.catching(e);
+                log.error(e.getMessage());
+            }
+        }
+        photo.setUploadTime(Instant.EPOCH);
+        // if the upload time on a photo equals EPOCH, that means "deleted, do not display anything"
+        // - assuming equals() on an Instant is quicker than on a String
+        photo.setTitle("Deleted photo");
+        photo.setDescription("This photo has been deleted.");
+        photo.setCameraLatitude(null);
+        photo.setCameraLongitude(null);
+        photo.setCameraAzimuth(null);
+        photo.setPositionAccuracy(null);
+        photo.setCameraFOV(null);
+        photo.setDatetimeTaken(null);
+        photo.setCameraModel(null);
+        photo.setImageWidth(null);
+        photo.setImageHeight(null);
+        photo.setIso(null);
+        photo.setFlash(null);
+        photo.setExposureTime(null);
+        PhotoEntity photo2 = updatePhoto(photo);
+        if(!photo2.equals(photo)){
+            log.error("Error nullifying photo.");
+            return false;
+        }
+        return true;
     }
 
     private boolean readFileUpdateHash(File inputFile) {
@@ -255,10 +308,12 @@ public class PhotoServiceImpl implements PhotoService {
             fis.close();
         } catch (FileNotFoundException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("File " + inputFile.getAbsolutePath() + " not found.");
             return false;
         } catch (IOException e) {
             log.catching(e);
+            log.error(e.getMessage());
             log.error("File " + inputFile.getAbsolutePath() + " could not be read.");
             return false;
         }

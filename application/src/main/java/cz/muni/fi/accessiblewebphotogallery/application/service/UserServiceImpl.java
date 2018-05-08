@@ -188,6 +188,7 @@ public class UserServiceImpl implements UserService {
 
     private void handlePBKDF2Fail(GeneralSecurityException gse){
         log.catching(gse);
+        log.error(gse.getMessage());
         if(gse instanceof NoSuchAlgorithmException){
             log.error("PBKDF2 failed- no such algorithm.");
         } else{

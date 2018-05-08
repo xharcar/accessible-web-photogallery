@@ -32,6 +32,6 @@ public interface PhotoFacade {
 
     PhotoDto updatePhoto(PhotoDto photoDto);
 
-    void deletePhoto(PhotoDto photo);
+    boolean clearPhoto(PhotoDto photo);
 
 }

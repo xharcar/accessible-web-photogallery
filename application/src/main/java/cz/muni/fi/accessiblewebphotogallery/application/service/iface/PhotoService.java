@@ -86,9 +86,11 @@ public interface PhotoService {
     PhotoEntity updatePhoto(PhotoEntity photo);
 
     /**
-     * Removes a photo from the DB.
+     * Clears a photo, ie. removes all information about it, and deletes files belonging to it
+     * (ie. the image file itself, the thumbnail, and the supplementary JSON file, if one was uploaded alongside it)
      * @param photo PhotoEntity to be removed
+     * @return true upon success, false upon failure (to eg. delete relevant files)
      */
-    void deletePhoto(PhotoEntity photo);
+    boolean clearPhoto(PhotoEntity photo);
 
 }
