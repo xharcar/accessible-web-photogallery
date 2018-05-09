@@ -93,4 +93,6 @@ public interface PhotoService {
      */
     boolean clearPhoto(PhotoEntity photo);
 
+    void deletePhoto(PhotoEntity photo);
+
 }

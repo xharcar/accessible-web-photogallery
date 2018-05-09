@@ -142,6 +142,11 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public void deleteUser(UserEntity user) {
+        userDao.delete(user);
+    }
+
     private Pair<byte[],byte[]> makeSaltAndHashPass(String password){
         byte[] salt = new byte[HASH_SIZE];
         csprng.nextBytes(salt);

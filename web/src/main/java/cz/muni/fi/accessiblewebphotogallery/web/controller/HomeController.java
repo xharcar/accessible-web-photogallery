@@ -9,9 +9,11 @@ import cz.muni.fi.accessiblewebphotogallery.iface.facade.AlbumFacade;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.BuildingInfoFacade;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.PhotoFacade;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.UserFacade;
+import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 import cz.muni.fi.accessiblewebphotogallery.web.AuthenticationProviderImpl;
+import cz.muni.fi.accessiblewebphotogallery.web.Mailer;
 import cz.muni.fi.accessiblewebphotogallery.web.PhotoGalleryFrontendMapper;
-import cz.muni.fi.accessiblewebphotogallery.web.UserRegistrationPtoValidator;
+import cz.muni.fi.accessiblewebphotogallery.web.validation.UserRegistrationPtoValidator;
 import cz.muni.fi.accessiblewebphotogallery.web.pto.BuildingInfoPto;
 import cz.muni.fi.accessiblewebphotogallery.web.pto.PhotoPto;
 import cz.muni.fi.accessiblewebphotogallery.web.pto.UserRegistrationPto;
@@ -179,12 +181,26 @@ public class HomeController {
             return "registration";
         }
         UserDto userDto = PhotoGalleryFrontendMapper.userRegistrationPtoToDto(userRegistrationPto);
-        Pair<UserDto, String> registerResult;
-        registerResult = userFacade.registerUser(userDto, userRegistrationPto.getPassword());
+        userDto.setAccountState(AccountState.INACTIVE);
+        Pair<UserDto, String> registerResult = userFacade.registerUser(userDto, userRegistrationPto.getPassword());
+        String confirmLink = "www.photogallery.com/confirm?email=" /*to be modified as appropriate*/
+                + registerResult.getFirst().getEmail() + "&token=" + registerResult.getSecond();
+        boolean mail_ok = Mailer.sendConfirmRegistrationMail(userDto.getEmail(),confirmLink);
+        if(!mail_ok){
+            userFacade.deleteUser(registerResult.getFirst());
+            model.addAttribute("failureMessage","Registration failed. Please try again later.");
+            return "registration";
+        }
         AuthenticationProviderImpl.logInUser(userDto, userRegistrationPto.getPassword());
-        model.addAttribute("email", userDto.getEmail());
-        model.addAttribute("token", registerResult.getSecond());
+        // user can be logged in after successful registration, that's not a problem
         return "registration_successful";
+    }
+
+    @RequestMapping(value = "/confirm")
+    public String confirmUserRegistration(@RequestParam String email, @RequestParam String token, Model model){
+        boolean success = userFacade.confirmUserRegistration(email, token);
+        model.addAttribute("success", success ? "success" : "failure");
+        return "redirect:/profile";
     }
 
     @RequestMapping("/about")

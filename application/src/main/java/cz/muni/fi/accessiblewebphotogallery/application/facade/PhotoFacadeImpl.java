@@ -97,6 +97,8 @@ public class PhotoFacadeImpl implements PhotoFacade {
         return photoService.clearPhoto(photoDtoToEntity(photo));
     }
 
+    public void deletePhoto(PhotoDto photo){photoService.deletePhoto(photoDtoToEntity(photo));}
+
     private UserEntity userDtoToEntity(UserDto userDto) {
         return PhotoGalleryBackendMapper.userDtoToEntity(userDto);
     }

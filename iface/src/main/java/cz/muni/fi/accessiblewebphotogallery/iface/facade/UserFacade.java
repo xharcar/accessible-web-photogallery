@@ -31,4 +31,6 @@ public interface UserFacade {
 
     boolean confirmUserRegistration(String email, String token);
 
+    void deleteUser(UserDto user);
+
 }

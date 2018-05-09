@@ -110,6 +110,11 @@ public class UserFacadeImpl implements UserFacade{
         return userService.confirmUserRegistration(email,token);
     }
 
+    @Override
+    public void deleteUser(UserDto user) {
+        userService.deleteUser(userDtoToEntity(user));
+    }
+
     private UserDto userEntityToDto(UserEntity e){
         return PhotoGalleryBackendMapper.userEntityToDto(e);
     }

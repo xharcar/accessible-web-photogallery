@@ -1,4 +1,4 @@
-package cz.muni.fi.accessiblewebphotogallery.web;
+package cz.muni.fi.accessiblewebphotogallery.web.validation;
 
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.PhotoFacade;
 import cz.muni.fi.accessiblewebphotogallery.web.pto.PhotoPto;

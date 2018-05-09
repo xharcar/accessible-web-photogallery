@@ -87,4 +87,6 @@ public interface UserService{
      */
     boolean confirmUserRegistration(String email, String token);
 
+    void deleteUser(UserEntity user);
+
 }

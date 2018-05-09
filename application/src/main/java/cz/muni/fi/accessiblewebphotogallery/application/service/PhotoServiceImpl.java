@@ -298,6 +298,11 @@ public class PhotoServiceImpl implements PhotoService {
         return true;
     }
 
+    @Override
+    public void deletePhoto(PhotoEntity photo) {
+        photoDao.delete(photo);
+    }
+
     private boolean readFileUpdateHash(File inputFile) {
         byte[] dataArr = new byte[1024];
         try {
