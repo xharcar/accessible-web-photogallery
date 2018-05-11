@@ -24,6 +24,18 @@ public class UserRegistrationPtoValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         UserRegistrationPto urpto = (UserRegistrationPto) target;
+        if(urpto.getEmail() == null || urpto.getEmail().isEmpty()){
+            errors.rejectValue("email","EmailMustNotBeEmpty");
+        }
+        if(urpto.getLoginName() == null || urpto.getLoginName().isEmpty()){
+            errors.rejectValue("loginName","LoginNameMustNotBeEmpty");
+        }
+        if(urpto.getLoginName().length() > 64){
+            errors.rejectValue("loginName","LoginNameTooLong");
+        }
+        if(urpto.getScreenName().length() > 128){
+            errors.rejectValue("screenName","ScreenNameTooLong");
+        }
         Optional<UserDto> oudto = userFacade.findByEmail(urpto.getEmail());
         if(oudto.isPresent()){
             errors.rejectValue("email","UserEmailAlreadyExists");
@@ -31,6 +43,9 @@ public class UserRegistrationPtoValidator implements Validator {
         oudto = userFacade.findByLoginName(urpto.getLoginName());
         if(oudto.isPresent()){
             errors.rejectValue("loginName","UserLoginAlreadyExists");
+        }
+        if(urpto.getEmail().length() > 128){
+            errors.rejectValue("email","EmailTooLong");
         }
     }
 }

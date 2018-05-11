@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head th:replace="fragments/head :: head (pageTitle='Browse photos')">
+    </head>
+</head>
+<body>
+
+    <div class="container">
+        <div th:each="photo : ${photos.getContent()}" class="row" style="margin-bottom: 30px">
+
+        </div>
+
+    </div>
+
+    <img th:src="${thumbnails}"
+
+</body>
+</html>

@@ -185,6 +185,11 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     }
 
     @Override
+    public List<BuildingInfo> updateBuildings(List<BuildingInfo> buildingList) {
+        return infoDao.saveAll(buildingList);
+    }
+
+    @Override
     public void delete(BuildingInfo buildingInfo) {
         infoDao.delete(buildingInfo);
     }

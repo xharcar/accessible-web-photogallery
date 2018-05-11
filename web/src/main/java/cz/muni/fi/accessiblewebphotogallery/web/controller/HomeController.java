@@ -13,10 +13,14 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 import cz.muni.fi.accessiblewebphotogallery.web.AuthenticationProviderImpl;
 import cz.muni.fi.accessiblewebphotogallery.web.Mailer;
 import cz.muni.fi.accessiblewebphotogallery.web.PhotoGalleryFrontendMapper;
-import cz.muni.fi.accessiblewebphotogallery.web.validation.UserRegistrationPtoValidator;
+import cz.muni.fi.accessiblewebphotogallery.web.pto.AlbumPto;
 import cz.muni.fi.accessiblewebphotogallery.web.pto.BuildingInfoPto;
 import cz.muni.fi.accessiblewebphotogallery.web.pto.PhotoPto;
 import cz.muni.fi.accessiblewebphotogallery.web.pto.UserRegistrationPto;
+import cz.muni.fi.accessiblewebphotogallery.web.validation.AlbumPtoValidator;
+import cz.muni.fi.accessiblewebphotogallery.web.validation.BuildingInfoPtoValidator;
+import cz.muni.fi.accessiblewebphotogallery.web.validation.PhotoPtoValidator;
+import cz.muni.fi.accessiblewebphotogallery.web.validation.UserRegistrationPtoValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -59,10 +64,29 @@ public class HomeController {
         if (binder.getTarget() instanceof UserRegistrationPto) {
             binder.addValidators(new UserRegistrationPtoValidator(userFacade));
         }
+        if(binder.getTarget() instanceof  PhotoPto){
+            binder.addValidators(new PhotoPtoValidator());
+        }
+        if(binder.getTarget() instanceof BuildingInfoPto){
+            binder.addValidators(new BuildingInfoPtoValidator());
+        }
+        if(binder.getTarget() instanceof AlbumPto){
+            binder.addValidators(new AlbumPtoValidator());
+        }
+    }
+
+    @RequestMapping("/")
+    public String index(){return "redirect:/browse";} // auto-redirect to the most recent
+
+
+    @RequestMapping("/")
+    public String hello(Model model){
+        model.addAttribute("msg","UROD BLYAT");
+        return "hello";
     }
 
     @RequestMapping("/browse")
-    public String browse(Model model, @RequestParam(name = "p", defaultValue = "1") Integer pageNr) {
+    public String browse(Model model, @RequestParam(name = "page", defaultValue = "1") Integer pageNr) {
         PageImpl<PhotoDto> photoPage = photoFacade.findNewestFirst(PageRequest.of(pageNr-1,10));
         PageImpl<PhotoPto> photoPtoPage = new PageImpl<>(photoPage.getContent().stream().map(PhotoGalleryFrontendMapper::photoDtoToPto).collect(Collectors.toList()), photoPage.getPageable(), photoPage.getTotalElements());
         List<String> base64Ids = new ArrayList<>();
@@ -74,7 +98,7 @@ public class HomeController {
         for(int i=0;i<base64Ids.size();i++){
             thumbnailPathList.add(photoDir.getAbsolutePath() + base64Ids.get(i) + "_thumb.jpg");
         }
-        model.addAttribute("photoPtoPage",photoPtoPage);
+        model.addAttribute("photos",photoPtoPage);
         model.addAttribute("thumbnails",thumbnailPathList);
         return "browse";
     }
@@ -115,6 +139,19 @@ public class HomeController {
         model.addAttribute("photoFilePath",photoFilePath);
         model.addAttribute("photoPto",PhotoGalleryFrontendMapper.photoDtoToPto(photoDtoOpt.get()));
         model.addAttribute("buildingPtos",buildingDtos.stream().map(PhotoGalleryFrontendMapper::buildingDtoToPto));
+        if(isAllowedToEdit(photoDtoOpt.get())){
+            model.addAttribute("editPhotoLink","/edit/"+base64Id);
+        }else{
+            model.addAttribute("editPhotoLink", null);
+        }
+        String loggedInUserIdent = AuthenticationProviderImpl.getLoggedUserLoginId();
+        if(loggedInUserIdent != null){
+            Optional<UserDto> loggedInUserOpt = userFacade.findByIdentifier(loggedInUserIdent);
+            if(!loggedInUserOpt.isPresent()){
+                throw new IllegalStateException("User with identifier:" + loggedInUserIdent + " not found.");
+            }
+            model.addAttribute("userAlbums",albumFacade.findByAlbumOwner(loggedInUserOpt.get()));
+        }
         return "detail";
     }
 
@@ -164,6 +201,11 @@ public class HomeController {
         model.addAttribute("albumNextLink", albumNextLink);
         model.addAttribute("photoPto",PhotoGalleryFrontendMapper.photoDtoToPto(photoDtoOpt.get()));
         model.addAttribute("buildingPtos",buildingInfoPtos);
+        if(isAllowedToEdit(photoDtoOpt.get())){
+            model.addAttribute("editPhotoLink","/edit/"+photoBase64Id);
+        }else{
+            model.addAttribute("editPhotoLink", null);
+        }
         return "detail_album";
     }
 
@@ -196,6 +238,47 @@ public class HomeController {
         return "registration_successful";
     }
 
+    @RequestMapping(value = "/edit/{base64}", method = RequestMethod.GET)
+    public String editPhotoGet(@PathVariable String base64, Model model){
+        Optional<PhotoDto> photoOpt = photoFacade.findByBase64Id(base64);
+        if(!photoOpt.isPresent()){
+            log.error("Failed to retrieve photo entry with base64 ID: " + base64+ ", that is supposed to exist.");
+            return "redirect:/browse?page=1"; // or somewhere else, I don't know...
+            // (well, the photo entry doesn't seem to exist, better go somewhere valid, I guess...)
+        }
+        List<BuildingInfoDto> buildingInfoDtoList = buildingFacade.findByPhoto(photoOpt.get());
+        model.addAttribute("photoPto", PhotoGalleryFrontendMapper.photoDtoToPto(photoOpt.get()));
+        model.addAttribute("buildingList",buildingInfoDtoList.stream().map(PhotoGalleryFrontendMapper::buildingDtoToPto).collect(Collectors.toList()));
+        model.addAttribute("selfLink","/detail/"+base64); //for a 'clear photo' button, which then redirects back to the detail of this photo
+        return "edit";
+    }
+
+
+    @RequestMapping(value = "/edit/{base64}", method = RequestMethod.POST)
+    public String editPhotoPost(@PathVariable String base64, @Valid PhotoPto photoPto, @Valid List<BuildingInfoPto> buildingList, BindingResult bindingResult, Model model){
+        if(bindingResult.hasErrors()){
+            model.addAttribute("failureMessage","Invalid input.");
+            return "/edit/"+base64;
+        }
+        Optional<UserDto> uploaderOpt = userFacade.findById(photoPto.getUploader().getId());
+        if(!uploaderOpt.isPresent()){
+            throw new IllegalStateException("Uploader for photo with base64 ID: " + base64 + " not found.");
+        }
+        Optional<PhotoDto> photoDtoOpt = photoFacade.findByBase64Id(base64);
+        if(!photoDtoOpt.isPresent()){
+            throw new IllegalStateException("Photo with base64 ID: " + base64 + "not found.");
+        }
+        List<BuildingInfoDto> updatedList = new ArrayList<>();
+        for(BuildingInfoPto x:buildingList){
+            updatedList.add(PhotoGalleryFrontendMapper.buildingPtoToDto(x,photoDtoOpt.get()));
+        }
+        buildingFacade.updateBuildings(updatedList);
+        photoFacade.updatePhoto(PhotoGalleryFrontendMapper.photoPtoToDto(photoPto,uploaderOpt.get()));
+        // It makes sense that a photo can be edited on the same page as the buildings in it
+        return "redirect:/detail/" + base64;
+    }
+
+
     @RequestMapping(value = "/confirm")
     public String confirmUserRegistration(@RequestParam String email, @RequestParam String token, Model model){
         boolean success = userFacade.confirmUserRegistration(email, token);
@@ -213,6 +296,25 @@ public class HomeController {
         String loginId = AuthenticationProviderImpl.getLoggedUserLoginId();
         model.addAttribute("userOptional",userFacade.findByIdentifier(loginId).map(PhotoGalleryFrontendMapper::userDtoToPto));
         return "/profile";
+    }
+
+    private boolean isAllowedToEdit(PhotoDto photo){
+        String loginId = AuthenticationProviderImpl.getLoggedUserLoginId();
+        if(loginId == null) return false;
+        Optional<UserDto> userDtoOpt = userFacade.findByIdentifier(loginId);
+        return userDtoOpt.isPresent() && (userDtoOpt.get().getAccountState().equals(AccountState.ADMINISTRATOR) || userDtoOpt.get().equals(photo.getUploader()));
+    }
+
+    @RequestMapping("/login")
+    public String login(@RequestParam(required = false, defaultValue = "false") Boolean logout, Model model) {
+        model.addAttribute("logout", logout);
+        return "login";
+    }
+
+    @RequestMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        AuthenticationProviderImpl.logout(request);
+        return "redirect:/login?logout=true";
     }
 
 }

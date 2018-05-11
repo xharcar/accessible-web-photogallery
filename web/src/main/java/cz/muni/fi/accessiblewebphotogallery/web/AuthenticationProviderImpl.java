@@ -55,6 +55,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     public static String getLoggedUserLoginId(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth == null) return null;
         return auth.getName();
     }
 

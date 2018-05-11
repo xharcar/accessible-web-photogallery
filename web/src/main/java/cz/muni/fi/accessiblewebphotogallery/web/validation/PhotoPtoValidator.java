@@ -1,12 +1,12 @@
 package cz.muni.fi.accessiblewebphotogallery.web.validation;
 
-import cz.muni.fi.accessiblewebphotogallery.iface.facade.PhotoFacade;
 import cz.muni.fi.accessiblewebphotogallery.web.pto.PhotoPto;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 public class PhotoPtoValidator implements Validator {
-    public PhotoPtoValidator(PhotoFacade photoFacade) {
+
+    public PhotoPtoValidator() {
     }
 
     @Override
@@ -19,6 +19,12 @@ public class PhotoPtoValidator implements Validator {
         PhotoPto pto = (PhotoPto) target;
         if(pto.getTitle() == null || pto.getTitle().isEmpty()){
             errors.rejectValue("title","TitleMustNotBeEmpty");
+        }
+        if(pto.getTitle().length() > 128){
+            errors.rejectValue("title","TitleTooLong");
+        }
+        if(pto.getDescription().length() > 2048){
+            errors.rejectValue("description","DescriptionTooLong");
         }
     }
 }

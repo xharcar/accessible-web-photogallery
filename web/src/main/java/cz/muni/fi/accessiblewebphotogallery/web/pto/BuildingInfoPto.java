@@ -1,6 +1,7 @@
 package cz.muni.fi.accessiblewebphotogallery.web.pto;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 public class BuildingInfoPto {
@@ -17,6 +18,7 @@ public class BuildingInfoPto {
 
     private Integer distance;
 
+    @Pattern(regexp = "[\\p{Print}]+")
     private String buildingName;
 
     private Double latitude;

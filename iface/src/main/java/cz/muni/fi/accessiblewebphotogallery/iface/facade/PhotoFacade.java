@@ -34,6 +34,6 @@ public interface PhotoFacade {
 
     boolean clearPhoto(PhotoDto photo);
 
-    public void deletePhoto(PhotoDto photo)
+    public void deletePhoto(PhotoDto photo);
 
 }

@@ -62,6 +62,9 @@ public interface BuildingInfoService {
      */
     BuildingInfo updateBuildingInfo(BuildingInfo buildingInfo);
 
+
+    List<BuildingInfo> updateBuildings(List<BuildingInfo> buildingList);
+
     /**
      * Deletes a building entry from the DB
      * @param buildingInfo building entry to delete

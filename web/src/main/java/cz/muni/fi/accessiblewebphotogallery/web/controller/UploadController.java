@@ -63,7 +63,7 @@ public class UploadController {
     @InitBinder
     protected void initBinder(WebDataBinder binder){
         if(binder.getTarget() instanceof PhotoPto){
-            binder.addValidators(new PhotoPtoValidator(photoFacade));
+            binder.addValidators(new PhotoPtoValidator());
         }
     }
 
@@ -195,7 +195,7 @@ public class UploadController {
                 photoFacade.deletePhoto(registeredPhoto);
                 return null;
             }
-            //could work around pathing issues by assigning photo file and metedata file paths to DB entries(then again, Base-64 IDs already do part of that)
+            //could work around pathing issues by assigning photo file and metadata file paths to DB entries(then again, Base-64 IDs already do part of that)
         }
         File photoDest = new File(applicationConfig.getPhotoDirectory()+File.separator+registeredPhoto.getBase64Id()+photoExt);
         moveOk = photoFile.renameTo(photoDest);

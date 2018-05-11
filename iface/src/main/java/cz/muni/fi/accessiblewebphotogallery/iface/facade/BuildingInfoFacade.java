@@ -27,6 +27,8 @@ public interface BuildingInfoFacade {
 
     BuildingInfoDto updateBuildingInfo(BuildingInfoDto buildingDto);
 
+    List<BuildingInfoDto> updateBuildings(List<BuildingInfoDto> buildingList);
+
     public void delete(BuildingInfoDto building);
 
 }

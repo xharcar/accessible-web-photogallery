@@ -59,6 +59,11 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
     }
 
     @Override
+    public List<BuildingInfoDto> updateBuildings(List<BuildingInfoDto> buildingList) {
+        return infoService.updateBuildings(buildingList.stream().map(this::buildingDtoToEntity).collect(Collectors.toList())).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
+    }
+
+    @Override
     public void delete(BuildingInfoDto buildingDto) {
         infoService.delete(buildingDtoToEntity(buildingDto));
     }

@@ -53,6 +53,29 @@ public class PhotoGalleryFrontendMapper {
         return rv;
     }
 
+    public static PhotoDto photoPtoToDto(PhotoPto pto, UserDto userDto){
+        PhotoDto rv = new PhotoDto();
+        rv.setId(pto.getId());
+        rv.setUploader(userDto);
+        rv.setUploadTime(pto.getUploadTime());
+        rv.setTitle(pto.getTitle());
+        rv.setDescription(pto.getDescription());
+        rv.setBase64Id(pto.getBase64Id());
+        rv.setCameraLatitude(pto.getCameraLatitude());
+        rv.setCameraLongitude(pto.getCameraLongitude());
+        rv.setCameraAzimuth(pto.getCameraAzimuth());
+        rv.setPositionAccuracy(pto.getPositionAccuracy());
+        rv.setCameraFOV(pto.getCameraFOV());
+        rv.setDatetimeTaken(pto.getDatetimeTaken());
+        rv.setCameraModel(pto.getCameraModel());
+        rv.setImageWidth(pto.getImageWidth());
+        rv.setImageHeight(pto.getImageHeight());
+        rv.setIso(pto.getIso());
+        rv.setFlash(pto.getFlash());
+        rv.setExposureTime(pto.getExposureTime());
+        return rv;
+    }
+
     public static BuildingInfoPto buildingDtoToPto(BuildingInfoDto dto){
         BuildingInfoPto rv = new BuildingInfoPto();
         rv.setId(dto.getId());
@@ -67,6 +90,22 @@ public class PhotoGalleryFrontendMapper {
         rv.setFocusText(dto.getFocusText());
         return rv;
     }
+
+    public static BuildingInfoDto buildingPtoToDto(BuildingInfoPto pto, PhotoDto photoDto){
+        BuildingInfoDto rv = new BuildingInfoDto();
+        rv.setId(pto.getId());
+        rv.setPhoto(photoDto);
+        rv.setOsmId(pto.getOsmId());
+        rv.setDistance(pto.getDistance());
+        rv.setBuildingName(pto.getBuildingName());
+        rv.setLatitude(pto.getLatitude());
+        rv.setLongitude(pto.getLongitude());
+        rv.setPhotoMinX(pto.getPhotoMinX());
+        rv.setPhotoMaxX(pto.getPhotoMaxX());
+        rv.setFocusText(pto.getFocusText());
+        return rv;
+    }
+
 
     public static AlbumPto albumDtoToPto(AlbumDto dto){
         AlbumPto rv = new AlbumPto();
