@@ -8,12 +8,14 @@ import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.BuildingInfoFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.BuildingInfo;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Service
 public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
 
     private BuildingInfoService infoService;

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.math.BigInteger;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class BuildingInfoServiceImpl implements BuildingInfoService {
 
 

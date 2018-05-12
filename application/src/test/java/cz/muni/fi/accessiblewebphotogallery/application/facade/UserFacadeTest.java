@@ -1,6 +1,6 @@
 package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
-import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.UserService;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;

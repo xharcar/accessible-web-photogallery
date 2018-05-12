@@ -1,7 +1,7 @@
 package cz.muni.fi.accessiblewebphotogallery.application.service;
 
 
-import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.UserService;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.RegistrationTokenDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.UserDao;

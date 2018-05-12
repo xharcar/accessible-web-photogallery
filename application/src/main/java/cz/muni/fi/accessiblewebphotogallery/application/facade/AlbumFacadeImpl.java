@@ -7,12 +7,14 @@ import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.AlbumFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class AlbumFacadeImpl implements AlbumFacade {
 
     private AlbumService albumService;

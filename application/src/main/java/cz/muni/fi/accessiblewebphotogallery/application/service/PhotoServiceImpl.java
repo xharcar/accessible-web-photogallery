@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.PhotoService;
-import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.PhotoDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;

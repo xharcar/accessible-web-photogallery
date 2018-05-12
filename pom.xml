@@ -6,7 +6,7 @@
 	<groupId>cz.muni.fi</groupId>
 	<artifactId>accessible-web-photogallery</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
 	<name>accessible-web-photogallery</name>
 	<description>Master&#39;s thesis- &quot;Accessible web photogallery&quot; Java application code</description>

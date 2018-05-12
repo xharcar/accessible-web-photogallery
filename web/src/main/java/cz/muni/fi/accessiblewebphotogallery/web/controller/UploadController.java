@@ -4,7 +4,7 @@ package cz.muni.fi.accessiblewebphotogallery.web.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.facade.BuildingInfoFacade;

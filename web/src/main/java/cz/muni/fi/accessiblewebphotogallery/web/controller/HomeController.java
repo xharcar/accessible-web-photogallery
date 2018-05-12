@@ -1,6 +1,6 @@
 package cz.muni.fi.accessiblewebphotogallery.web.controller;
 
-import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.BuildingInfoDto;
 import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
@@ -87,18 +87,37 @@ public class HomeController {
 
     @RequestMapping("/browse")
     public String browse(Model model, @RequestParam(name = "page", defaultValue = "1") Integer pageNr) {
-        PageImpl<PhotoDto> photoPage = photoFacade.findNewestFirst(PageRequest.of(pageNr-1,10));
-        PageImpl<PhotoPto> photoPtoPage = new PageImpl<>(photoPage.getContent().stream().map(PhotoGalleryFrontendMapper::photoDtoToPto).collect(Collectors.toList()), photoPage.getPageable(), photoPage.getTotalElements());
+        PageImpl<PhotoDto> photoDtoPage = photoFacade.findNewestFirst(PageRequest.of(pageNr-1,10));
+        PageImpl<PhotoPto> photoPtoPage = new PageImpl<>(photoDtoPage.getContent().stream().map(PhotoGalleryFrontendMapper::photoDtoToPto).collect(Collectors.toList()), photoDtoPage.getPageable(), photoDtoPage.getTotalElements());
         List<String> base64Ids = new ArrayList<>();
-        for(int i=0;i<photoPage.getContent().size();i++){
-            base64Ids.add(photoPage.getContent().get(i).getBase64Id());
+        for(int i=0;i<photoDtoPage.getContent().size();i++){
+            base64Ids.add(photoDtoPage.getContent().get(i).getBase64Id());
         }
         List<String> thumbnailPathList = new ArrayList<>();
         File photoDir = new File(applicationConfig.getPhotoDirectory());
-        for(int i=0;i<base64Ids.size();i++){
-            thumbnailPathList.add(photoDir.getAbsolutePath() + base64Ids.get(i) + "_thumb.jpg");
+        for(int i=0;i<photoDtoPage.getSize();i++){
+            thumbnailPathList.add(photoDir.getAbsolutePath() + File.separator +  photoDtoPage.getContent().get(i).getBase64Id() + "_thumb.jpg");
         }
         model.addAttribute("photos",photoPtoPage);
+        model.addAttribute("thumbnails",thumbnailPathList);
+        return "browse";
+    }
+
+    @RequestMapping("/browse/user/{userId}")
+    public String browseByUser(Model model, @PathVariable("userId") Long userId,@RequestParam(name = "page", defaultValue = "1") Integer pageNr){
+        Optional<UserDto> uploaderOpt = userFacade.findById(userId);
+        if(!uploaderOpt.isPresent()){
+            throw new IllegalStateException("User with ID " + userId + " supposed to exist but not found.");
+        }
+        PageRequest pageRq = PageRequest.of(pageNr-1,10);
+        PageImpl<PhotoDto> photoDtoPage = photoFacade.findByUploader(uploaderOpt.get(),pageRq);
+        PageImpl<PhotoPto> photoPtoPage = new PageImpl<>(photoDtoPage.getContent().stream().map(PhotoGalleryFrontendMapper::photoDtoToPto).collect(Collectors.toList()),pageRq,photoDtoPage.getTotalElements());
+        List<String> thumbnailPathList = new ArrayList<>();
+        File photoDir = new File(applicationConfig.getPhotoDirectory());
+        for (int i = 0; i < photoDtoPage.getSize(); i++) {
+            thumbnailPathList.add(photoDir.getAbsolutePath() + File.separator + photoDtoPage.getContent().get(i).getBase64Id() + "_thumb.jpg");
+        }
+        model.addAttribute("photos", photoPtoPage);
         model.addAttribute("thumbnails",thumbnailPathList);
         return "browse";
     }

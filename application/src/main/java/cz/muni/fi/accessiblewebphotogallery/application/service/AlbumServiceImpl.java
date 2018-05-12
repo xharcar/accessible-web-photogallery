@@ -1,6 +1,6 @@
 package cz.muni.fi.accessiblewebphotogallery.application.service;
 
-import cz.muni.fi.accessiblewebphotogallery.iface.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.AlbumService;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.AlbumDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
@@ -8,6 +8,7 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -22,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
 
+@Service
 public class AlbumServiceImpl implements AlbumService {
 
     private Logger log = LogManager.getLogger(AlbumServiceImpl.class);

@@ -6,7 +6,7 @@
 	<groupId>cz.muni.fi.accessible-web-photogallery</groupId>
 	<artifactId>web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>web</name>
 	<description>Web module</description>
@@ -62,9 +62,14 @@
         </dependency>
         <dependency>
             <groupId>cz.muni.fi.accessible-web-photogallery</groupId>
-            <artifactId>iface</artifactId>
+            <artifactId>application</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+		<dependency>
+			<groupId>cz.muni.fi.accessible-web-photogallery</groupId>
+			<artifactId>iface</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>com.drewnoakes</groupId>
 			<artifactId>metadata-extractor</artifactId>
@@ -84,6 +89,11 @@
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity4</artifactId>
 			<version>3.0.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyclient</artifactId>
+			<version>10.14.2.0</version>
 		</dependency>
 	</dependencies>
 
