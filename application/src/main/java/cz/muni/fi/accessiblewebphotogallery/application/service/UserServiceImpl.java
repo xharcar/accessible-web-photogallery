@@ -100,6 +100,7 @@ public class UserServiceImpl implements UserService {
         user = userDao.save(user);
         String token = RandomStringUtils.randomAlphanumeric(32);
         registrationDao.save(new RegistrationToken(user.getEmail(), token));
+        log.info("New user with login name " + user.getLoginName() + " and email " + user.getEmail() + " registered successfully.");
         return Pair.of(user, token);
     }
 
@@ -109,13 +110,21 @@ public class UserServiceImpl implements UserService {
         Validate.notNull(password);
         Optional<UserEntity> presumedUser;
         if (identifier.contains("@")) {
-            presumedUser = findByLoginName(identifier);
-        } else {
             presumedUser = findByEmail(identifier);
+        } else {
+            presumedUser = findByLoginName(identifier);
         }
-        if(!presumedUser.isPresent() || !checkPassword(password,presumedUser.get().getPasswordHash(),presumedUser.get().getPasswordSalt())){
+        if(!presumedUser.isPresent()){
+            log.info("Failed to find user with identifier: " + identifier + ".");
+            return Pair.of(false,Optional.empty());
+        }
+        if(!checkPassword(password,presumedUser.get().getPasswordHash(),presumedUser.get().getPasswordSalt())){
+            log.info("Failed to authenticate present user with identifier: " + identifier + ".");
+            // do NOT log attempted password- #1 way to help guess it if hacked as most fails will be typos
+            // or passwords to accounts elsewhere- also unwanted
             return Pair.of(false, Optional.empty());
         }
+        log.info("User with identifier " + identifier + " authenticated successfully.");
         return Pair.of(true,presumedUser);
     }
 
@@ -169,6 +178,7 @@ public class UserServiceImpl implements UserService {
             actual = pbkdf2(password.toCharArray(),salt,KDF_IT,HASH_SIZE);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             handlePBKDF2Fail(e);
+
             return false;
         }
         return slowEquals(expected,actual);
@@ -193,12 +203,12 @@ public class UserServiceImpl implements UserService {
 
     private void handlePBKDF2Fail(GeneralSecurityException gse){
         log.catching(gse);
-        log.error(gse.getMessage());
         if(gse instanceof NoSuchAlgorithmException){
-            log.error("PBKDF2 failed- no such algorithm.");
+            log.error("PBKDF2 failed- no such algorithm.\n");
         } else{
-            log.error("PBKDF2 failed- invalid key spec");
+            log.error("PBKDF2 failed- invalid key spec.\n");
         }
+        log.error(gse.getMessage());
     }
 
 }

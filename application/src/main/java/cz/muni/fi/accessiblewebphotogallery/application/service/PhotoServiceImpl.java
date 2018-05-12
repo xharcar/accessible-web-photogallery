@@ -129,7 +129,7 @@ public class PhotoServiceImpl implements PhotoService {
             if (photoBase64 == null) return null;
         } while (photoDao.findByBase64Identifier(photoBase64).isPresent());
         entity.setUploadTime(uploadTime);
-        entity.setBase64Id(photoBase64);
+        entity.setBase64Identifier(photoBase64);
         Metadata exif = null;
         try {
             exif = ImageMetadataReader.readMetadata(photoFile);
@@ -166,7 +166,12 @@ public class PhotoServiceImpl implements PhotoService {
                 entity.setDatetimeTaken(LocalDateTime.ofInstant(exifDate.toInstant(), ZoneId.of("UTC")));// could use system default alternatively
             }
             entity.setIso(exifDir.getInteger(ExifDirectoryBase.TAG_ISO_EQUIVALENT));
-            entity.setFlash((exifDir.getInteger(ExifDirectoryBase.TAG_FLASH) & 0x01) == 1);
+            Integer flashCode = exifDir.getInteger(ExifDirectoryBase.TAG_FLASH);
+            if(flashCode != null){
+                entity.setFlash(((flashCode) & 0x01) == 1);
+            }else{
+                entity.setFlash(null);
+            }
             entity.setImageWidth(exifDir.getInteger(ExifDirectoryBase.TAG_IMAGE_WIDTH));
             entity.setImageHeight(exifDir.getInteger(ExifDirectoryBase.TAG_IMAGE_HEIGHT));
         }
@@ -252,7 +257,7 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public boolean clearPhoto(PhotoEntity photo) {
-        String photoBase64Id = photo.getBase64Id();
+        String photoBase64Id = photo.getBase64Identifier();
         File photoDir = new File(applicationConfig.getPhotoDirectory());
         File[] fileList = photoDir.listFiles(new FilenameFilter() {
             @Override

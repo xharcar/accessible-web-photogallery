@@ -24,6 +24,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -185,10 +186,18 @@ public class UserServiceTest {
         u1.setBio("Lorem ipsum dolor sit amet.");
         u1.setPasswordHash(hash);
         u1.setPasswordSalt(salt);
-        assertTrue(userService.authenticateUser(u1.getLoginName(),"password").getFirst());
-        assertTrue(userService.authenticateUser(u1.getEmail(),"password").getFirst());
-        assertFalse(userService.authenticateUser(u1.getLoginName(),"notpassword").getFirst());
-        assertFalse(userService.authenticateUser(u1.getEmail(),"notpassword").getFirst());
+        when(userDaoMock.findByLoginName("xdck")).thenReturn(Optional.of(u1));
+        when(userDaoMock.findByEmail("abdc@email.org")).thenReturn(Optional.of(u1));
+        System.out.println("Starting authentication tests proper. Time: " + Instant.now().toString());
+        Pair<Boolean, Optional<UserEntity>> testReturn = userService.authenticateUser(u1.getLoginName(),"password");
+        assertTrue(testReturn.getFirst() && testReturn.getSecond().isPresent() && testReturn.getSecond().get().equals(u1));
+        testReturn = userService.authenticateUser(u1.getEmail(),"password");
+        assertTrue(testReturn.getFirst() && testReturn.getSecond().isPresent() && testReturn.getSecond().get().equals(u1));
+        testReturn = userService.authenticateUser(u1.getLoginName(),"notpassword");
+        assertFalse(testReturn.getFirst() || testReturn.getSecond().isPresent());
+        testReturn = userService.authenticateUser(u1.getEmail(),"notpassword");
+        assertFalse(testReturn.getFirst() || testReturn.getSecond().isPresent());
+        System.out.println("Finished authentication tests proper. Time: " + Instant.now().toString());
     }
 
     @Test

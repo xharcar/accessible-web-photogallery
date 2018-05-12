@@ -12,7 +12,7 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{WebSecurityConfig.class,ServletConfig.class};
+        return new Class[]{WebSecurityConfig.class, ThymeleafConfig.class};
     }
 
     @Override

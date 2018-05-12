@@ -84,7 +84,7 @@ public class AlbumServiceImpl implements AlbumService {
         AlbumEntity toSave = new AlbumEntity();
         toSave.setAlbumName(albumName);
         toSave.setAlbumOwner(user);
-        toSave.setBase64Id(base64);
+        toSave.setBase64Identifier(base64);
         File albumFile = new File(albumDir,base64+".txt");
         try {
             boolean created = albumFile.createNewFile();
@@ -108,7 +108,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public void deleteAlbum(AlbumEntity album) {
-        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Id() + ".txt");
+        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Identifier() + ".txt");
         try {
             Files.delete(albumFile.toPath());
         } catch (IOException e) {
@@ -122,7 +122,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public boolean addPhotoToAlbum(AlbumEntity album, String photoBase64Id) {
-        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Id() + ".txt");
+        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Identifier() + ".txt");
         if(!albumFile.exists()){
             log.error("Attempting to add photo: " + photoBase64Id + " to album:" + album + " failed: album file doesn't seem to exist. Aborting");
             return false;
@@ -141,7 +141,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public boolean removePhotoFromAlbum(AlbumEntity album, String photoBase64Id) {
-        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Id() + ".txt");
+        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Identifier() + ".txt");
         if(!albumFile.exists()){
             log.error("Attempting to remove photo: " + photoBase64Id + " from album:" + album + " failed: album file doesn't seem to exist. Aborting");
             return false;
@@ -170,7 +170,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<String> listPhotosInAlbum(AlbumEntity album) {
         List<String> photoList;
-        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Id() + ".txt");
+        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Identifier() + ".txt");
         if(!albumFile.exists()){
             log.error("Attempting to list photos from album:" + album + " failed: album file doesn't seem to exist. Aborting");
             return null;

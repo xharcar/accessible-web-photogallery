@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Configuration
-public class ServletConfig implements WebMvcConfigurer {
+public class ThymeleafConfig implements WebMvcConfigurer {
 
     @Bean
     public SpringResourceTemplateResolver thymeleafTemplateResolver(){

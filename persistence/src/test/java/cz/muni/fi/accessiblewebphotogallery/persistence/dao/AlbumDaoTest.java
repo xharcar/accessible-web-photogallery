@@ -47,7 +47,7 @@ public class AlbumDaoTest {
         assertEquals(2,userDao.count());
         photoDao.save(createPhoto(u1, Instant.now().minusSeconds(20)));
         PhotoEntity secondPhoto = createPhoto(u2,Instant.now().minusSeconds(10));
-        secondPhoto.setBase64Id("anotherb64id");
+        secondPhoto.setBase64Identifier("anotherb64id");
         photoDao.save(secondPhoto);
         assertEquals(2,photoDao.count());
     }
@@ -129,7 +129,7 @@ public class AlbumDaoTest {
         AlbumEntity rv = new AlbumEntity();
         rv.setAlbumName(name);
         rv.setAlbumOwner(owner);
-        rv.setBase64Id(base64);
+        rv.setBase64Identifier(base64);
         return rv;
     }
 

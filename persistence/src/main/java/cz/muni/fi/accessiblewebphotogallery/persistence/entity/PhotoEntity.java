@@ -31,7 +31,7 @@ public class PhotoEntity {
     private String description;
 
     @Column(nullable = false, length = 12, unique = true)
-    private String base64Id;
+    private String base64Identifier;
     /* Base-64 identifier Mk.3
         1) Register upload Instant
         2) Into a List of ByteBuffers, put:
@@ -127,12 +127,12 @@ public class PhotoEntity {
         this.description = description;
     }
 
-    public String getBase64Id() {
-        return base64Id;
+    public String getBase64Identifier() {
+        return base64Identifier;
     }
 
-    public void setBase64Id(String base64Identifier) {
-        this.base64Id = base64Identifier;
+    public void setBase64Identifier(String base64Identifier) {
+        this.base64Identifier = base64Identifier;
     }
 
     public Double getCameraLatitude() {
@@ -237,13 +237,13 @@ public class PhotoEntity {
         if (o == null) return false;
         if (!(o instanceof PhotoEntity)) return false;
         PhotoEntity that = (PhotoEntity) o;
-        return Objects.equals(base64Id, that.base64Id);
+        return Objects.equals(base64Identifier, that.base64Identifier);
         // no other element needed due to aforementioned b64ID generation strategy
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(base64Id);
+        return Objects.hash(base64Identifier);
     }
 
     @Override
@@ -252,7 +252,7 @@ public class PhotoEntity {
                 "id=" + id +
                 ", uploader=" + uploader +
                 ", uploadTime=" + uploadTime +
-                ", imageHash=" + Objects.toString(base64Id) +
+                ", imageHash=" + Objects.toString(base64Identifier) +
                 ", cameraLatitude=" + cameraLatitude +
                 ", cameraLongitude=" + cameraLongitude +
                 ", cameraAzimuth=" + cameraAzimuth +

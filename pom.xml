@@ -6,7 +6,7 @@
 	<groupId>cz.muni.fi</groupId>
 	<artifactId>accessible-web-photogallery</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>accessible-web-photogallery</name>
 	<description>Master&#39;s thesis- &quot;Accessible web photogallery&quot; Java application code</description>
@@ -45,10 +45,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-social-facebook</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

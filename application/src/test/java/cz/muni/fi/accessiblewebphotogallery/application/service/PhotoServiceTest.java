@@ -67,34 +67,6 @@ public class PhotoServiceTest {
         timeZero = Instant.now();
     }
 
-//    @Test
-//    public void findAllTest(){
-//        PhotoEntity p1 = new PhotoEntity();
-//        p1.setUploader(defaultUser);
-//        p1.setUploadTime(timeZero.minusSeconds(45));
-//        p1.setTitle("Photo 1");
-//        p1.setDescription("Description 1");
-//        p1.setBase64Id("thisisab64id");
-//        // EXIF and other info are irrelevant here
-//        PhotoEntity p2 = new PhotoEntity();
-//        p2.setUploader(defaultUser);
-//        p2.setUploadTime(timeZero.minusSeconds(15));
-//        p2.setTitle("Photo 2");
-//        p2.setDescription("Description 2");
-//        p2.setBase64Id("anotherb64id");
-//        List<PhotoEntity> photoList = new ArrayList<>();
-//        photoList.add(p1);
-//        photoList.add(p2);
-//        PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList,defaultPageRq,2);
-//
-//        PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList,defaultPageRq,2);
-//        when(photoDaoMock.findAll(defaultPageRq)).thenReturn(returnPage);
-//
-//        PageImpl<PhotoEntity> result = photoService.findAll(defaultPageRq);
-//        assertNotNull(result);
-//        assertEquals(expectedPage,result);
-//    }
-
     @Test
     public void findByUploadTimeBetweenTest(){
         PhotoEntity p1 = new PhotoEntity();
@@ -102,13 +74,13 @@ public class PhotoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Id("thisisab64id");
+        p1.setBase64Identifier("thisisab64id");
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
         p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Id("anotherb64id");
+        p2.setBase64Identifier("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
@@ -129,7 +101,7 @@ public class PhotoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Id("thisisab64id");
+        p1.setBase64Identifier("thisisab64id");
 
         UserEntity anotherUser = new UserEntity();
         anotherUser.setPasswordHash(dummysalt1);
@@ -145,7 +117,7 @@ public class PhotoServiceTest {
         p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Id("anotherb64id");
+        p2.setBase64Identifier("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
@@ -166,14 +138,14 @@ public class PhotoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Taken while on my recent trip to Antwerp, Belgium.");
-        p1.setBase64Id("thisisab64id");
+        p1.setBase64Identifier("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
         p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Id("anotherb64id");
+        p2.setBase64Identifier("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
@@ -194,14 +166,14 @@ public class PhotoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Louvre");
         p1.setDescription("Description 1");
-        p1.setBase64Id("thisisab64id");
+        p1.setBase64Identifier("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
         p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Id("anotherb64id");
+        p2.setBase64Identifier("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
@@ -222,14 +194,14 @@ public class PhotoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Id("thisisab64id");
+        p1.setBase64Identifier("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
         p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Id("anotherb64id");
+        p2.setBase64Identifier("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p1);
@@ -249,14 +221,14 @@ public class PhotoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Id("thisisab64id");
+        p1.setBase64Identifier("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
         p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Id("anotherb64id");
+        p2.setBase64Identifier("anotherb64id");
 
         List<PhotoEntity> photoList = new ArrayList<>();
         photoList.add(p2);
@@ -281,7 +253,7 @@ public class PhotoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Id("thisisab64id");
+        p1.setBase64Identifier("thisisab64id");
 
         when(photoDaoMock.save(p1)).then(new Answer<PhotoEntity>() {
             @Override
@@ -308,7 +280,7 @@ public class PhotoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Id("thisisab64id");
+        p1.setBase64Identifier("thisisab64id");
 
         PhotoEntity p2 = new PhotoEntity();
         p2.setId(1L);
@@ -316,13 +288,11 @@ public class PhotoServiceTest {
         p2.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Id("thisisab64id");
+        p2.setBase64Identifier("thisisab64id");
 
         when(photoDaoMock.save(p2)).thenReturn(p2);
         photoService.updatePhoto(p2);
         assertEquals(p1,p2);
     }
-
-
 
 }

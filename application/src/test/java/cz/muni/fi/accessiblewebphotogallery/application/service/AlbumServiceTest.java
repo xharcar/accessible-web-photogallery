@@ -66,11 +66,11 @@ public class AlbumServiceTest {
         AlbumEntity a1 = new AlbumEntity();
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
+        a1.setBase64Identifier("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
         a2.setAlbumOwner(defaultUser);
         a2.setAlbumName("Album 2");
-        a2.setBase64Id("anotherb64id");
+        a2.setBase64Identifier("anotherb64id");
 
         List<AlbumEntity> albumList = new ArrayList<>();
         albumList.add(a1);
@@ -95,11 +95,11 @@ public class AlbumServiceTest {
         AlbumEntity a1 = new AlbumEntity();
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
+        a1.setBase64Identifier("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
         a2.setAlbumOwner(user2);
         a2.setAlbumName("Album 2");
-        a2.setBase64Id("anotherb64id");
+        a2.setBase64Identifier("anotherb64id");
 
         List<AlbumEntity> albumList = new ArrayList<>();
         albumList.add(a1);
@@ -121,7 +121,7 @@ public class AlbumServiceTest {
             }
         });
         AlbumEntity entity = albumService.createAlbum(defaultUser, "Album 342");
-        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + entity.getBase64Id() + ".txt");
+        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + entity.getBase64Identifier() + ".txt");
         assertNotNull(entity.getId());
         assertTrue(albumFile.exists());
     }
@@ -132,12 +132,12 @@ public class AlbumServiceTest {
         a1.setId(1L);
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
+        a1.setBase64Identifier("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
         a2.setId(1L);
         a2.setAlbumOwner(defaultUser);
         a2.setAlbumName("Chernobyl 2018");
-        a2.setBase64Id("thisisab64id");
+        a2.setBase64Identifier("thisisab64id");
 
         when(albumDaoMock.save(a2)).thenReturn(a2);
         albumService.updateAlbum(a2);
@@ -150,8 +150,8 @@ public class AlbumServiceTest {
         a1.setId(1L);
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
-        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Id() + ".txt");
+        a1.setBase64Identifier("thisisab64id");
+        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Identifier() + ".txt");
         try {
             assertTrue(albumFile.createNewFile());
         } catch (IOException e) {
@@ -176,8 +176,8 @@ public class AlbumServiceTest {
         a1.setId(1L);
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
-        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Id() + ".txt");
+        a1.setBase64Identifier("thisisab64id");
+        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Identifier() + ".txt");
         String b64 = "photo00b64id";
         if (!albumFile.exists()) {
             try {
@@ -214,8 +214,8 @@ public class AlbumServiceTest {
         a1.setId(1L);
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
-        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Id() + ".txt");
+        a1.setBase64Identifier("thisisab64id");
+        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Identifier() + ".txt");
         String b64 = "photo00b64id";
         if (!albumFile.exists()) {
             try {
@@ -236,11 +236,11 @@ public class AlbumServiceTest {
         AlbumEntity a1 = new AlbumEntity();
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
+        a1.setBase64Identifier("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
         a2.setAlbumOwner(defaultUser);
         a2.setAlbumName("Album 2");
-        a2.setBase64Id("anotherb64id");
+        a2.setBase64Identifier("anotherb64id");
 
         when(albumDaoMock.findByBase64Identifier("thisisab64id")).thenReturn(Optional.of(a1));
 

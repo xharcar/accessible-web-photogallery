@@ -20,7 +20,7 @@ public class PhotoGalleryBackendMapper {
         rv.setUploadTime(entity.getUploadTime());
         rv.setTitle(entity.getTitle());
         rv.setDescription(entity.getDescription());
-        rv.setBase64Id(entity.getBase64Id());
+        rv.setBase64Id(entity.getBase64Identifier());
         rv.setCameraLatitude(entity.getCameraLatitude());
         rv.setCameraLongitude(entity.getCameraLongitude());
         rv.setCameraAzimuth(entity.getCameraAzimuth());
@@ -43,7 +43,7 @@ public class PhotoGalleryBackendMapper {
         rv.setUploadTime(dto.getUploadTime());
         rv.setTitle(dto.getTitle());
         rv.setDescription(dto.getDescription());
-        rv.setBase64Id(dto.getBase64Id());
+        rv.setBase64Identifier(dto.getBase64Id());
         rv.setCameraLatitude(dto.getCameraLatitude());
         rv.setCameraLongitude(dto.getCameraLongitude());
         rv.setCameraAzimuth(dto.getCameraAzimuth());
@@ -120,7 +120,7 @@ public class PhotoGalleryBackendMapper {
         rv.setId(entity.getId());
         rv.setAlbumOwner(userEntityToDto(entity.getAlbumOwner()));
         rv.setAlbumName(entity.getAlbumName());
-        rv.setBase64Id(entity.getBase64Id());
+        rv.setBase64Id(entity.getBase64Identifier());
         return rv;
     }
 
@@ -129,7 +129,7 @@ public class PhotoGalleryBackendMapper {
         rv.setId(dto.getId());
         rv.setAlbumOwner(userDtoToEntity(dto.getAlbumOwner()));
         rv.setAlbumName(dto.getAlbumName());
-        rv.setBase64Id(dto.getBase64Id());
+        rv.setBase64Identifier(dto.getBase64Id());
         return rv;
     }
 

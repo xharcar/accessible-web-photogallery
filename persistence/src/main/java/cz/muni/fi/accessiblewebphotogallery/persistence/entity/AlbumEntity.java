@@ -27,7 +27,7 @@ public class AlbumEntity {
     private String albumName;
 
     @Column(length = 24, unique = true, nullable = false)
-    private String base64Id;
+    private String base64Identifier;
 
     public AlbumEntity() {
     }
@@ -56,12 +56,12 @@ public class AlbumEntity {
         this.albumName = albumName;
     }
 
-    public String getBase64Id() {
-        return base64Id;
+    public String getBase64Identifier() {
+        return base64Identifier;
     }
 
-    public void setBase64Id(String base64Identifier) {
-        this.base64Id = base64Identifier;
+    public void setBase64Identifier(String base64Identifier) {
+        this.base64Identifier = base64Identifier;
     }
 
     @Override
@@ -70,12 +70,12 @@ public class AlbumEntity {
         if (this == o) return true;
         if (!(o instanceof AlbumEntity)) return false;
         AlbumEntity that = (AlbumEntity) o;
-        return base64Id.equals(that.base64Id);
+        return base64Identifier.equals(that.base64Identifier);
     }
 
     @Override
     public int hashCode() {
-        return base64Id.hashCode();
+        return base64Identifier.hashCode();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class AlbumEntity {
                 "id=" + id +
                 ", albumOwner=" + albumOwner +
                 ", albumName='" + albumName + '\'' +
-                ", base64Identifier='" + base64Id + '\'' +
+                ", base64Identifier='" + base64Identifier + '\'' +
                 '}';
     }
 }

@@ -69,7 +69,7 @@ public class PhotoDaoTest {
     @Test
     public void rejectNullBase64IdTest(){
         PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
-        photo.setBase64Id(null);
+        photo.setBase64Identifier(null);
         assertThrows(DataAccessException.class,()->{photoDao.save(photo);});
     }
 
@@ -98,7 +98,7 @@ public class PhotoDaoTest {
     @Test
     public void rejectTooLongBase64IdTest(){
         PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
-        photo.setBase64Id("thisbase64identifieristoolong");
+        photo.setBase64Identifier("thisbase64identifieristoolong");
         assertThrows(DataAccessException.class,()->{photoDao.save(photo);});
     }
 
@@ -118,7 +118,7 @@ public class PhotoDaoTest {
         Instant time2 = Instant.parse("2018-02-25T17:53:20.001Z");
         PhotoEntity photo = createPhoto(uploader,time1);
         PhotoEntity p2 = createPhoto(uploader, Instant.now());
-        p2.setBase64Id("anotherb64id");
+        p2.setBase64Identifier("anotherb64id");
         photo = photoDao.save(photo);
         photoDao.save(p2);
         List<PhotoEntity> found = photoDao.findByUploadTimeBetween(time0,time2, PageRequest.of(0,5)).getContent();
@@ -132,7 +132,7 @@ public class PhotoDaoTest {
         PhotoEntity photo = createPhoto(user,Instant.now());
         photo = photoDao.save(photo);
         PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
-        photo2.setBase64Id("anotherb64id");
+        photo2.setBase64Identifier("anotherb64id");
         photoDao.save(photo2);
         List<PhotoEntity> found = photoDao.findByUploader(user, PageRequest.of(0,3)).getContent();
         assertEquals(1,found.size());
@@ -146,7 +146,7 @@ public class PhotoDaoTest {
         photo.setDescription("Lorem ipsum dolor sit amet, consectetuer adipiscing elit.");
         photo = photoDao.save(photo);
         PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
-        photo2.setBase64Id("anotherb64id");
+        photo2.setBase64Identifier("anotherb64id");
         photo2.setDescription("Police police police police police police police police.");
         photoDao.save(photo2);
         List<PhotoEntity> found = photoDao.findByDescriptionContainingIgnoreCase("lorem", PageRequest.of(0,3)).getContent();
@@ -160,7 +160,7 @@ public class PhotoDaoTest {
         photo.setTitle("Lorem ipsum");
         photo = photoDao.save(photo);
         PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
-        photo2.setBase64Id("anotherb64id");
+        photo2.setBase64Identifier("anotherb64id");
         photo2.setTitle("Photo title");
         photoDao.save(photo2);
         List<PhotoEntity> found = photoDao.findByTitleContainingIgnoreCase("ipsum", PageRequest.of(0,10)).getContent();
@@ -172,7 +172,7 @@ public class PhotoDaoTest {
     public void findByBase64IdentifierTest(){
         PhotoEntity photo = createPhoto(userDao.findAll().get(0),Instant.now());
         PhotoEntity photo2 = createPhoto(userDao.findAll().get(1),Instant.now());
-        photo2.setBase64Id("anotherb64id");
+        photo2.setBase64Identifier("anotherb64id");
         photo = photoDao.save(photo);
         photoDao.save(photo2);
         Optional<PhotoEntity> found = photoDao.findByBase64Identifier("thisisab64id");
@@ -184,7 +184,7 @@ public class PhotoDaoTest {
     public void findAllOrderedByUploadTimeTest(){
         PhotoEntity photo1 = createPhoto(userDao.findAll().get(0),Instant.now().minusSeconds(30));
         PhotoEntity photo2 = createPhoto(userDao.findAll().get(0),Instant.now().minusSeconds(10));
-        photo2.setBase64Id("anotherb64id");
+        photo2.setBase64Identifier("anotherb64id");
         photo1 = photoDao.save(photo1);
         photo2 = photoDao.save(photo2);
         assertEquals(2,photoDao.count());
@@ -199,7 +199,7 @@ public class PhotoDaoTest {
         String newDesc = "Taken atop the Lomnicky Stit in the High Tatra mountains on 2018-01-10";
         photo.setDescription(newDesc);
         photo = photoDao.save(photo);
-        Optional<PhotoEntity> found = photoDao.findByBase64Identifier(photo.getBase64Id());
+        Optional<PhotoEntity> found = photoDao.findByBase64Identifier(photo.getBase64Identifier());
         assertTrue(found.isPresent());
         assertEquals(newDesc,found.get().getDescription());
     }
@@ -209,7 +209,7 @@ public class PhotoDaoTest {
         PhotoEntity photo = new PhotoEntity();
         photo.setUploader(uploader);
         photo.setUploadTime(uploadTime);
-        photo.setBase64Id("thisisab64id");
+        photo.setBase64Identifier("thisisab64id");
         photo.setTitle("title");
         photo.setDescription("description");
         photo.setCameraLatitude(53.234);
