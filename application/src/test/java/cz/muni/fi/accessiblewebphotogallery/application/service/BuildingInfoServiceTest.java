@@ -71,13 +71,13 @@ public class BuildingInfoServiceTest {
         p1.setUploadTime(timeZero.minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Identifier("thisisab64id");
+        p1.setId("thisisab64id");
         p2 = new PhotoEntity();
         p2.setUploader(defaultUser);
         p2.setUploadTime(timeZero.minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Identifier("anotherb64id");
+        p2.setId("anotherb64id");
         jsonConverter = new Gson();
     }
 

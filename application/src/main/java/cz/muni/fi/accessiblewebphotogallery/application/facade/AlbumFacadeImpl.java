@@ -2,14 +2,14 @@ package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
 import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.AlbumService;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.facade.AlbumFacade;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.AlbumDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.AlbumFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,7 +19,7 @@ public class AlbumFacadeImpl implements AlbumFacade {
 
     private AlbumService albumService;
 
-    @Inject
+    @Autowired
     public AlbumFacadeImpl(AlbumService albumService) {
         this.albumService = albumService;
     }
@@ -36,7 +36,7 @@ public class AlbumFacadeImpl implements AlbumFacade {
 
     @Override
     public AlbumDto createAlbum(UserDto user, String albumName) {
-        return albumToDto(albumService.createAlbum(userDtoToEntity(user),albumName));
+        return albumToDto(albumService.createAlbum(userDtoToEntity(user), albumName));
     }
 
     @Override
@@ -46,12 +46,12 @@ public class AlbumFacadeImpl implements AlbumFacade {
 
     @Override
     public boolean addPhotoToAlbum(AlbumDto albumDto, String photoB64Id) {
-        return albumService.addPhotoToAlbum(albumDtoToEntity(albumDto),photoB64Id);
+        return albumService.addPhotoToAlbum(albumDtoToEntity(albumDto), photoB64Id);
     }
 
     @Override
     public boolean removePhotoFromAlbum(AlbumDto albumDto, String photoB64Id) {
-        return albumService.removePhotoFromAlbum(albumDtoToEntity(albumDto),photoB64Id);
+        return albumService.removePhotoFromAlbum(albumDtoToEntity(albumDto), photoB64Id);
     }
 
     @Override
@@ -60,8 +60,8 @@ public class AlbumFacadeImpl implements AlbumFacade {
     }
 
     @Override
-    public Optional<AlbumDto> findByBase64Id(String base64) {
-        return albumService.findByBase64Id(base64).map(this::albumToDto);
+    public Optional<AlbumDto> findById(String base64) {
+        return albumService.findById(base64).map(this::albumToDto);
     }
 
     @Override
@@ -70,15 +70,15 @@ public class AlbumFacadeImpl implements AlbumFacade {
     }
 
 
-    private UserEntity userDtoToEntity(UserDto userDto){
+    private UserEntity userDtoToEntity(UserDto userDto) {
         return PhotoGalleryBackendMapper.userDtoToEntity(userDto);
     }
 
-    private AlbumDto albumToDto(AlbumEntity entity){
+    private AlbumDto albumToDto(AlbumEntity entity) {
         return PhotoGalleryBackendMapper.albumEntityToDto(entity);
     }
 
-    private AlbumEntity albumDtoToEntity(AlbumDto dto){
+    private AlbumEntity albumDtoToEntity(AlbumDto dto) {
         return PhotoGalleryBackendMapper.albumDtoToEntity(dto);
     }
 

@@ -4,9 +4,9 @@ package cz.muni.fi.accessiblewebphotogallery.application.facade;
 import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.AlbumService;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.facade.AlbumFacade;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.AlbumDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.AlbumFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
@@ -39,7 +39,7 @@ public class AlbumFacadeTest {
     private UserDto defaultUser;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         MockitoAnnotations.initMocks(this);
         albumServiceMock = mock(AlbumService.class);
         albumFacade = new AlbumFacadeImpl(albumServiceMock);
@@ -52,15 +52,15 @@ public class AlbumFacadeTest {
     }
 
     @Test
-    public void findAllTest(){
+    public void findAllTest() {
         AlbumDto a1 = new AlbumDto();
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
+        a1.setId("thisisab64id");
         AlbumDto a2 = new AlbumDto();
         a2.setAlbumOwner(defaultUser);
         a2.setAlbumName("Album 2");
-        a2.setBase64Id("anotherb64id");
+        a2.setId("anotherb64id");
 
         List<AlbumDto> albumList = new ArrayList<>();
         albumList.add(a1);
@@ -70,11 +70,11 @@ public class AlbumFacadeTest {
         List<AlbumDto> result = albumFacade.findAll();
 
         assertNotNull(result);
-        assertEquals(albumList,result);
+        assertEquals(albumList, result);
     }
 
     @Test
-    public void findByAlbumOwnerTest(){
+    public void findByAlbumOwnerTest() {
         UserDto u2 = new UserDto();
         u2.setEmail("skmtm@email.org");
         u2.setScreenName("Sakamoto Mio");
@@ -84,15 +84,15 @@ public class AlbumFacadeTest {
         AlbumDto a1 = new AlbumDto();
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Id("thisisab64id");
+        a1.setId("thisisab64id");
         AlbumDto a2 = new AlbumDto();
         a2.setAlbumOwner(defaultUser);
         a2.setAlbumName("Album 2");
-        a2.setBase64Id("anotherb64id");
+        a2.setId("anotherb64id");
         AlbumDto a3 = new AlbumDto();
         a3.setAlbumOwner(u2);
         a3.setAlbumName("Album 3");
-        a3.setBase64Id("b64idnumber3");
+        a3.setId("b64idnumber3");
 
         List<AlbumDto> albumList = new ArrayList<>();
         albumList.add(a1);
@@ -102,9 +102,14 @@ public class AlbumFacadeTest {
         List<AlbumDto> result = albumFacade.findByAlbumOwner(defaultUser);
 
         assertNotNull(result);
-        assertEquals(albumList,result);
+        assertEquals(albumList, result);
     }
 
-    private AlbumEntity albumDtoToEntity(AlbumDto dto){return PhotoGalleryBackendMapper.albumDtoToEntity(dto);}
-    private UserEntity userDtoToEntity(UserDto dto){return PhotoGalleryBackendMapper.userDtoToEntity(dto);}
+    private AlbumEntity albumDtoToEntity(AlbumDto dto) {
+        return PhotoGalleryBackendMapper.albumDtoToEntity(dto);
+    }
+
+    private UserEntity userDtoToEntity(UserDto dto) {
+        return PhotoGalleryBackendMapper.userDtoToEntity(dto);
+    }
 }

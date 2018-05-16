@@ -44,23 +44,23 @@ public class UserServiceTest {
     @Mock
     private UserDao userDaoMock;
 
-    private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC,0x5A};
-    private byte[] dummyhash2 = new byte[]{0x65,0x7A, (byte) 0xD3};
+    private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC, 0x5A};
+    private byte[] dummyhash2 = new byte[]{0x65, 0x7A, (byte) 0xD3};
     private byte[] dummysalt1 = new byte[]{0x3A, (byte) 0xB8, (byte) 0xE1};
-    private byte[] dummysalt2 = new byte[]{0x21, (byte) 0x8D,0x7F};
+    private byte[] dummysalt2 = new byte[]{0x21, (byte) 0x8D, 0x7F};
 
     @BeforeAll
-    public void init(){
+    public void init() {
         MockitoAnnotations.initMocks(this);
         RegistrationTokenDao regDaoMock = mock(RegistrationTokenDao.class);
         when(regDaoMock.findByEmail(any()))
-                .thenReturn(Optional.of(new RegistrationToken("email","USER_TOKEN")));
+                .thenReturn(Optional.of(new RegistrationToken("email", "USER_TOKEN")));
         userService = new UserServiceImpl(userDaoMock, regDaoMock);
     }
 
 
     @Test
-    public void findAllTest(){
+    public void findAllTest() {
         UserEntity u1 = new UserEntity();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -85,11 +85,11 @@ public class UserServiceTest {
         when(userDaoMock.findAll()).thenReturn(testUsers);
         List<UserEntity> resultList = userService.findAll();
         assertNotNull(resultList);
-        assertEquals(testUsers,resultList);
+        assertEquals(testUsers, resultList);
     }
 
     @Test
-    public void findByEmailTest(){
+    public void findByEmailTest() {
         UserEntity u1 = new UserEntity();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -102,11 +102,11 @@ public class UserServiceTest {
         when(userDaoMock.findByEmail("abdc@email.org")).thenReturn(Optional.of(u1));
         Optional<UserEntity> userOpt = userService.findByEmail("abdc@email.org");
         assertTrue(userOpt.isPresent());
-        assertEquals(u1,userOpt.get());
+        assertEquals(u1, userOpt.get());
     }
 
     @Test
-    public void findByLoginNameTest(){
+    public void findByLoginNameTest() {
         UserEntity u1 = new UserEntity();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -119,11 +119,11 @@ public class UserServiceTest {
         when(userDaoMock.findByLoginName("xdck")).thenReturn(Optional.of(u1));
         Optional<UserEntity> userOpt = userService.findByLoginName("xdck");
         assertTrue(userOpt.isPresent());
-        assertEquals(u1,userOpt.get());
+        assertEquals(u1, userOpt.get());
     }
 
     @Test
-    public void findByScreenNameCaselessTest(){
+    public void findByScreenNameCaselessTest() {
         UserEntity u1 = new UserEntity();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("Mandall Runroe");
@@ -143,12 +143,12 @@ public class UserServiceTest {
         });
         List<UserEntity> foundList = userService.findByScreenNameApx("manda");
         assertFalse(foundList.isEmpty());
-        assertEquals(1,foundList.size());
-        assertEquals(u1,foundList.get(0));
+        assertEquals(1, foundList.size());
+        assertEquals(u1, foundList.get(0));
     }
 
     @Test
-    public void registerUserTest(){
+    public void registerUserTest() {
         UserEntity u1 = new UserEntity();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -165,16 +165,16 @@ public class UserServiceTest {
                 return u;
             }
         });
-        assertNotNull(userService.registerUser(u1,"password1"));
+        assertNotNull(userService.registerUser(u1, "password1"));
         assertNotNull(u1.getId());
         assertNotNull(u1.getPasswordHash());
         assertNotNull(u1.getPasswordSalt());
-        assertNotEquals("password1",u1.getPasswordHash());
+        assertNotEquals("password1", u1.getPasswordHash());
     }
 
     @Test
-    public void authenticateTest(){
-        Pair<byte[],byte[]> hashAndSalt = makeSaltAndHashPass("password");
+    public void authenticateTest() {
+        Pair<byte[], byte[]> hashAndSalt = makeSaltAndHashPass("password");
         assertNotNull(hashAndSalt);
         byte[] hash = hashAndSalt.getFirst();
         byte[] salt = hashAndSalt.getSecond();
@@ -189,19 +189,19 @@ public class UserServiceTest {
         when(userDaoMock.findByLoginName("xdck")).thenReturn(Optional.of(u1));
         when(userDaoMock.findByEmail("abdc@email.org")).thenReturn(Optional.of(u1));
         System.out.println("Starting authentication tests proper. Time: " + Instant.now().toString());
-        Pair<Boolean, Optional<UserEntity>> testReturn = userService.authenticateUser(u1.getLoginName(),"password");
+        Pair<Boolean, Optional<UserEntity>> testReturn = userService.authenticateUser(u1.getLoginName(), "password");
         assertTrue(testReturn.getFirst() && testReturn.getSecond().isPresent() && testReturn.getSecond().get().equals(u1));
-        testReturn = userService.authenticateUser(u1.getEmail(),"password");
+        testReturn = userService.authenticateUser(u1.getEmail(), "password");
         assertTrue(testReturn.getFirst() && testReturn.getSecond().isPresent() && testReturn.getSecond().get().equals(u1));
-        testReturn = userService.authenticateUser(u1.getLoginName(),"notpassword");
+        testReturn = userService.authenticateUser(u1.getLoginName(), "notpassword");
         assertFalse(testReturn.getFirst() || testReturn.getSecond().isPresent());
-        testReturn = userService.authenticateUser(u1.getEmail(),"notpassword");
+        testReturn = userService.authenticateUser(u1.getEmail(), "notpassword");
         assertFalse(testReturn.getFirst() || testReturn.getSecond().isPresent());
         System.out.println("Finished authentication tests proper. Time: " + Instant.now().toString());
     }
 
     @Test
-    public void updateUserTest(){
+    public void updateUserTest() {
         UserEntity u0 = new UserEntity();
         u0.setId(1L);
         u0.setEmail("abdc@email.org");
@@ -224,11 +224,11 @@ public class UserServiceTest {
 
         when(userDaoMock.save(u1)).thenReturn(u1);
         userService.updateUser(u1);
-        assertEquals(u0,u1);
+        assertEquals(u0, u1);
     }
 
     @Test
-    public void updateUserNullIdTest(){
+    public void updateUserNullIdTest() {
         UserEntity u1 = new UserEntity();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -239,11 +239,13 @@ public class UserServiceTest {
         u1.setPasswordSalt(dummysalt1);
         when(userDaoMock.save(u1)).thenReturn(u1);
 
-        assertThrows(NullPointerException.class,()->{userService.updateUser(u1);});
+        assertThrows(NullPointerException.class, () -> {
+            userService.updateUser(u1);
+        });
     }
 
     @Test
-    public void adminCheckTest(){
+    public void adminCheckTest() {
         UserEntity u1 = new UserEntity();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -271,7 +273,8 @@ public class UserServiceTest {
 
     private short HASH_SIZE = 64; // in bytes, the size of password hashes and salts
     private int KDF_IT = 524288; // number of PBKDF2/SHA512 iterations- should do until 2019/2020 at least
-    private Pair<byte[],byte[]> makeSaltAndHashPass(String password){
+
+    private Pair<byte[], byte[]> makeSaltAndHashPass(String password) {
         Random random = new Random(); // for testing, not having a real CSPRNG isn't a problem;
         // of course, the actual implementation does use one
         byte[] salt = new byte[HASH_SIZE];
@@ -279,16 +282,16 @@ public class UserServiceTest {
         byte[] hash;
         try {
             hash = pbkdf2(password.toCharArray(), salt, KDF_IT, HASH_SIZE);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e){
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             fail(e.getMessage());
             return null;
         }
-        return Pair.of(hash,salt);
+        return Pair.of(hash, salt);
     }
 
     private byte[] pbkdf2(char[] password, byte[] salt, int iterations, int nbytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
         // note: PBEKeySpec takes bits
-        PBEKeySpec keySpec = new PBEKeySpec(password,salt,iterations,nbytes*8);
+        PBEKeySpec keySpec = new PBEKeySpec(password, salt, iterations, nbytes * 8);
         return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512").generateSecret(keySpec).getEncoded();
     }
 

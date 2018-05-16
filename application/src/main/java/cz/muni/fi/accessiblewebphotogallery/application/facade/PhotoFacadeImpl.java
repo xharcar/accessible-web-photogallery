@@ -2,17 +2,17 @@ package cz.muni.fi.accessiblewebphotogallery.application.facade;
 
 import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.PhotoService;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.facade.PhotoFacade;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.PhotoDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.PhotoFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class PhotoFacadeImpl implements PhotoFacade {
 
     private PhotoService photoService;
 
-    @Inject
+    @Autowired
     public PhotoFacadeImpl(PhotoService photoService) {
         this.photoService = photoService;
     }
@@ -56,14 +56,10 @@ public class PhotoFacadeImpl implements PhotoFacade {
     }
 
     @Override
-    public Optional<PhotoDto> findById(Long id) {
+    public Optional<PhotoDto> findById(String id) {
         return photoService.findById(id).map(PhotoGalleryBackendMapper::photoEntityToDto);
     }
 
-    @Override
-    public Optional<PhotoDto> findByBase64Id(String base64Id) {
-        return photoService.findByBase64Id(base64Id).map(this::photoToDto);
-    }
 
     @Override
     public PageImpl<PhotoDto> findNewestFirst(Pageable pageable) {
@@ -75,18 +71,18 @@ public class PhotoFacadeImpl implements PhotoFacade {
     // for looking up albums
     public PageImpl<PhotoDto> findMultipleByBase64(List<String> b64ids, Pageable pageable) {
         List<PhotoDto> photoDtoList = new ArrayList<>();
-        for(String id : b64ids){
-            Optional<PhotoDto> dtoOpt = findByBase64Id(id);
-            if(dtoOpt.isPresent()){
+        for (String id : b64ids) {
+            Optional<PhotoDto> dtoOpt = findById(id);
+            if (dtoOpt.isPresent()) {
                 photoDtoList.add(dtoOpt.get());
             }
         }
-        return new PageImpl<>(photoDtoList,pageable,photoDtoList.size());
+        return new PageImpl<>(photoDtoList, pageable, photoDtoList.size());
     }
 
     @Override
     public PhotoDto registerPhoto(PhotoDto photo, File photoFile, File metadataFile) {
-        return photoToDto(photoService.registerPhoto(photoDtoToEntity(photo),photoFile,metadataFile));
+        return photoToDto(photoService.registerPhoto(photoDtoToEntity(photo), photoFile, metadataFile));
     }
 
     @Override
@@ -99,7 +95,9 @@ public class PhotoFacadeImpl implements PhotoFacade {
         return photoService.clearPhoto(photoDtoToEntity(photo));
     }
 
-    public void deletePhoto(PhotoDto photo){photoService.deletePhoto(photoDtoToEntity(photo));}
+    public void deletePhoto(PhotoDto photo) {
+        photoService.deletePhoto(photoDtoToEntity(photo));
+    }
 
     private UserEntity userDtoToEntity(UserDto userDto) {
         return PhotoGalleryBackendMapper.userDtoToEntity(userDto);

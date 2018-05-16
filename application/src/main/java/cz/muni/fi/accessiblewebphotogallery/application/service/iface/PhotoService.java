@@ -16,8 +16,9 @@ public interface PhotoService {
 
     /**
      * Retrieves photos uploaded within a given time period, inclusive as per Hibernate documentation
-     * @param begin The earliest a photo could have been uploaded and still be retrieved
-     * @param end The latest a photo could have been uploaded and still be retrieved
+     *
+     * @param begin    The earliest a photo could have been uploaded and still be retrieved
+     * @param end      The latest a photo could have been uploaded and still be retrieved
      * @param pageable Pageable instance containing the required pagination information
      * @return A PageImpl instance containing up to $limit PhotoEntity instances with begin <= upload times <= end
      */
@@ -25,6 +26,7 @@ public interface PhotoService {
 
     /**
      * Retrieves photos uploaded by a user
+     *
      * @param uploader User whose photos are to be retrieved
      * @param pageable Pageable instance containing the required pagination information
      * @return A PageImpl instance containing up to $limit PhotoEntity instances representing photos uploaded by uploader
@@ -33,36 +35,34 @@ public interface PhotoService {
 
     /**
      * Retrieves photos whose description contains a given string, case-insensitive
+     *
      * @param searchStr String to search
-     * @param pageable Pageable instance containing the required pagination information
+     * @param pageable  Pageable instance containing the required pagination information
      * @return A PageImpl instance containing up to $limit PhotoEntity instances whose descriptions match searchStr
      */
     PageImpl<PhotoEntity> findByDescriptionApx(String searchStr, Pageable pageable);
 
     /**
      * Retrieves photos whose title contains a given string, case-insensitive
+     *
      * @param searchStr String to search
-     * @param pageable Pageable instance containing the required pagination information
+     * @param pageable  Pageable instance containing the required pagination information
      * @return A PageImpl instance containing up to $limit PhotoEntity instances whose titles match searchStr
      */
     PageImpl<PhotoEntity> findByTitleApx(String searchStr, Pageable pageable);
 
-    /**
-     * Finds photo by ID
-     * @param id DB ID to look up
-     * @return Optional with a photo whose DB ID == id, empty Optional otherwise
-     */
-    Optional<PhotoEntity> findById(Long id);
 
     /**
      * Retrieves a photo with a given Base-64 identifier
+     *
      * @param b64id Base-64 identifier to search
-     * @return Optional containing a PhotoEntity whose base64Identifier equals b64id
+     * @return Optional containing a PhotoEntity whose Id equals b64id
      */
-    Optional<PhotoEntity> findByBase64Id(String b64id);
+    Optional<PhotoEntity> findById(String b64id);
 
     /**
      * Retrieves all photos, sorted by upload time descending
+     *
      * @param pageable Pageable instance containing the required pagination information
      * @return A PageImpl containing up to $limit PhotoEntity instances, sorted by upload time in descending order
      * (ie. most recent first)
@@ -71,8 +71,9 @@ public interface PhotoService {
 
     /**
      * Registers a PhotoEntity in the DB
-     * @param entity PhotoEntity, with some basic info, to save
-     * @param photoFile File instance referring to the photo itself
+     *
+     * @param entity       PhotoEntity, with some basic info, to save
+     * @param photoFile    File instance referring to the photo itself
      * @param metadataFile File instance referring to the supplementary JSON metadata file, if provided
      * @return PhotoEntity as registered, with EXIF data and suppplementary data from the JSON file, if available
      */
@@ -80,6 +81,7 @@ public interface PhotoService {
 
     /**
      * Updates an already-existing photo
+     *
      * @param photo Photo to update with new data
      * @return PhotoEntity as saved
      */
@@ -88,6 +90,7 @@ public interface PhotoService {
     /**
      * Clears a photo, ie. removes all information about it, and deletes files belonging to it
      * (ie. the image file itself, the thumbnail, and the supplementary JSON file, if one was uploaded alongside it)
+     *
      * @param photo PhotoEntity to be removed
      * @return true upon success, false upon failure (to eg. delete relevant files)
      */

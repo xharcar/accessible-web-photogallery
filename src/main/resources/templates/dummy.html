@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+
+    <title th:text="${ttl}"></title>
+</head>
+<body>
+<b th:text="${msg}"></b>
+<p th:text="'Toto je Lenna'"></p>
+<b th:text="'Users'"></b>
+<img th:src="${lenna}"/>
+<p th:each="user : ${users}">
+    <b th:text="${user}"></b>
+</p>
+
+</body>
+</html>

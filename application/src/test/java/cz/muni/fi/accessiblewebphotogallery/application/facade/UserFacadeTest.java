@@ -3,8 +3,8 @@ package cz.muni.fi.accessiblewebphotogallery.application.facade;
 import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.UserService;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.facade.UserFacade;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.UserFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,18 +15,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,24 +34,24 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserFacadeTest {
 
-    @Inject
+    @Autowired
     ApplicationConfig cfg;
     private UserFacade userFacade;
     @Mock
     private UserService userServiceMock;
-    private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC,0x5A};
+    private byte[] dummyhash1 = new byte[]{0x32, (byte) 0xFC, 0x5A};
     private byte[] dummysalt1 = new byte[]{0x3A, (byte) 0xB8, (byte) 0xE1};
 
 
     @BeforeAll
-    public void init(){
+    public void init() {
         MockitoAnnotations.initMocks(this);
         userServiceMock = mock(UserService.class);
         userFacade = new UserFacadeImpl(userServiceMock);
     }
 
     @Test
-    public void findAllTest(){
+    public void findAllTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -76,12 +74,12 @@ public class UserFacadeTest {
         List<UserDto> resultList = userFacade.findAll();
 
         assertNotNull(resultList);
-        assertEquals(2,resultList.size());
-        assertEquals(userList,resultList);
+        assertEquals(2, resultList.size());
+        assertEquals(userList, resultList);
     }
 
     @Test
-    public void findByIdTest(){
+    public void findByIdTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -95,11 +93,11 @@ public class UserFacadeTest {
 
         assertNotNull(dtoOptional);
         assertTrue(dtoOptional.isPresent());
-        assertEquals(u1,dtoOptional.get());
+        assertEquals(u1, dtoOptional.get());
     }
 
     @Test
-    public void findByEmailTest(){
+    public void findByEmailTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -112,11 +110,11 @@ public class UserFacadeTest {
 
         assertNotNull(dtoOptional);
         assertTrue(dtoOptional.isPresent());
-        assertEquals(u1,dtoOptional.get());
+        assertEquals(u1, dtoOptional.get());
     }
 
     @Test
-    public void findByLoginNameTest(){
+    public void findByLoginNameTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("abdc@email.org");
         u1.setScreenName("DKXC");
@@ -129,11 +127,11 @@ public class UserFacadeTest {
 
         assertNotNull(dtoOptional);
         assertTrue(dtoOptional.isPresent());
-        assertEquals(u1,dtoOptional.get());
+        assertEquals(u1, dtoOptional.get());
     }
 
     @Test
-    public void findByScreenNameEtcTest(){
+    public void findByScreenNameEtcTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
@@ -156,12 +154,12 @@ public class UserFacadeTest {
         List<UserDto> resultList = userFacade.findByScreenNameApx("moto");
 
         assertNotNull(resultList);
-        assertEquals(1,resultList.size());
-        assertEquals(u1,resultList.get(0));
+        assertEquals(1, resultList.size());
+        assertEquals(u1, resultList.get(0));
     }
 
     @Test
-    public void authenticateTest(){
+    public void authenticateTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
@@ -172,19 +170,19 @@ public class UserFacadeTest {
         UserEntity u1e = userDtoToEntity(u1);
         when(userServiceMock.findByEmail("ksngmtk@email.org")).thenReturn(Optional.of(u1e));
         when(userServiceMock.findByLoginName("ksngmtk")).thenReturn(Optional.of(u1e));
-        when(userServiceMock.authenticateUser(u1e.getEmail(),"password")).thenReturn(Pair.of(true,Optional.of(u1e)));
-        when(userServiceMock.authenticateUser(u1e.getLoginName(),"password")).thenReturn(Pair.of(true,Optional.of(u1e)));
-        when(userServiceMock.authenticateUser(u1e.getEmail(),"not password")).thenReturn(Pair.of(false,Optional.empty()));
-        when(userServiceMock.authenticateUser(u1e.getLoginName(),"not password")).thenReturn(Pair.of(false,Optional.empty()));
+        when(userServiceMock.authenticateUser(u1e.getEmail(), "password")).thenReturn(Pair.of(true, Optional.of(u1e)));
+        when(userServiceMock.authenticateUser(u1e.getLoginName(), "password")).thenReturn(Pair.of(true, Optional.of(u1e)));
+        when(userServiceMock.authenticateUser(u1e.getEmail(), "not password")).thenReturn(Pair.of(false, Optional.empty()));
+        when(userServiceMock.authenticateUser(u1e.getLoginName(), "not password")).thenReturn(Pair.of(false, Optional.empty()));
 
-        assertTrue(userFacade.authenticateUser("ksngmtk@email.org","password").getFirst());
-        assertFalse(userFacade.authenticateUser("ksngmtk@email.org","not password").getFirst());
-        assertTrue(userFacade.authenticateUser("ksngmtk","password").getFirst());
-        assertFalse(userFacade.authenticateUser("ksngmtk","not password").getFirst());
+        assertTrue(userFacade.authenticateUser("ksngmtk@email.org", "password").getFirst());
+        assertFalse(userFacade.authenticateUser("ksngmtk@email.org", "not password").getFirst());
+        assertTrue(userFacade.authenticateUser("ksngmtk", "password").getFirst());
+        assertFalse(userFacade.authenticateUser("ksngmtk", "not password").getFirst());
     }
 
     @Test
-    public void registerUserTest(){
+    public void registerUserTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
@@ -194,17 +192,17 @@ public class UserFacadeTest {
 
 
         UserEntity u1e = userDtoToEntity(u1);
-        when(userServiceMock.registerUser(u1e, "password")).then(new Answer<Pair<UserEntity,String>>() {
-            public Pair<UserEntity,String> answer(InvocationOnMock invocation) throws Throwable {
+        when(userServiceMock.registerUser(u1e, "password")).then(new Answer<Pair<UserEntity, String>>() {
+            public Pair<UserEntity, String> answer(InvocationOnMock invocation) throws Throwable {
                 UserEntity u = (UserEntity) invocation.getArgument(0);
                 u.setId(1L);
                 u.setPasswordHash(dummyhash1);
                 u.setPasswordSalt(dummysalt1);
                 String x = Integer.toHexString(u.hashCode());
-                return Pair.of(u,x);
+                return Pair.of(u, x);
             }
         });
-        Pair<UserDto,String> result = userFacade.registerUser(u1,"password");
+        Pair<UserDto, String> result = userFacade.registerUser(u1, "password");
         assertNotNull(result);
         assertNotNull(u1.getId());
         assertNotNull(u1.getPasswordHash());
@@ -213,7 +211,7 @@ public class UserFacadeTest {
     }
 
     @Test
-    public void adminCheckTest(){
+    public void adminCheckTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
@@ -238,7 +236,7 @@ public class UserFacadeTest {
     }
 
     @Test
-    public void updateUserTest(){
+    public void updateUserTest() {
         UserDto u1 = new UserDto();
         u1.setEmail("ksngmtk@email.org");
         u1.setScreenName("Kusanagi Motoko");
@@ -249,10 +247,10 @@ public class UserFacadeTest {
         UserEntity u1e = userDtoToEntity(u1);
         when(userServiceMock.updateUser(u1e)).thenReturn(u1e);
         UserDto updated = userFacade.updateUser(u1);
-        assertEquals(u1,updated);
+        assertEquals(u1, updated);
     }
 
-    private UserEntity userDtoToEntity(UserDto dto){
+    private UserEntity userDtoToEntity(UserDto dto) {
         return PhotoGalleryBackendMapper.userDtoToEntity(dto);
     }
 

@@ -16,13 +16,13 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true,nullable = false, length = 64)
+    @Column(unique = true, nullable = false, length = 64)
     private String loginName; // name used to log in (alternatively, allow login by email or send username to email)
 
     @Column(unique = false, nullable = true, length = 128)
     private String screenName; // name displayed to other users
 
-    @Column(unique = true,nullable = false, length = 128) // no multiple accounts (with same email)
+    @Column(unique = true, nullable = false, length = 128) // no multiple accounts (with same email)
     private String email;
 
     @Column(nullable = false)
@@ -37,7 +37,8 @@ public class UserEntity {
     @Column(nullable = true, length = 1536)
     private String bio;
 
-    public UserEntity() {}
+    public UserEntity() {
+    }
 
     public Long getId() {
         return id;

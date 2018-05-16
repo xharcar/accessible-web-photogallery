@@ -6,18 +6,19 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.inject.Inject;
 import java.time.Instant;
 import java.util.List;
 
 import static cz.muni.fi.accessiblewebphotogallery.persistence.dao.PhotoDaoTest.createPhoto;
 import static cz.muni.fi.accessiblewebphotogallery.persistence.dao.UserDaoTest.setupAsdfUser1;
 import static cz.muni.fi.accessiblewebphotogallery.persistence.dao.UserDaoTest.setupFdsaUser2;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @ContextConfiguration(classes = {DatabaseConfig.class})
@@ -27,72 +28,74 @@ public class BuildingInfoDaoTest {
 
     private double EPSILON = 0.0000025;
 
-    @Inject
+    @Autowired
     UserDao userDao;
 
-    @Inject
+    @Autowired
     PhotoDao photoDao;
 
-    @Inject
+    @Autowired
     BuildingInfoDao bidao;
 
     @BeforeAll
-    public void init(){
+    public void init() {
         Instant time1 = Instant.now();
         userDao.deleteAll();
         photoDao.deleteAll();
-        assertEquals(0,userDao.count());
-        assertEquals(0,photoDao.count());
+        assertEquals(0, userDao.count());
+        assertEquals(0, photoDao.count());
         UserEntity user1 = userDao.save(setupAsdfUser1());
         UserEntity user2 = userDao.save(setupFdsaUser2());
-        assertEquals(2,userDao.count());
+        assertEquals(2, userDao.count());
         Instant time2 = Instant.now().plusSeconds(30);
-        photoDao.save(createPhoto(user1,time1));
-        PhotoEntity photo2 = createPhoto(user2,time2);
-        photo2.setBase64Identifier("anotherb64id");
+        photoDao.save(createPhoto(user1, time1));
+        PhotoEntity photo2 = createPhoto(user2, time2);
+        photo2.setId("anotherb64id");
         photoDao.save(photo2);
-        assertEquals(2,photoDao.count());
+        assertEquals(2, photoDao.count());
     }
 
     @BeforeEach
-    public void clearBuildingInfoDb(){
+    public void clearBuildingInfoDb() {
         bidao.deleteAll();
-        assertEquals(0,bidao.count());
+        assertEquals(0, bidao.count());
     }
 
     @AfterAll
-    public void clearEverything(){
+    public void clearEverything() {
         bidao.deleteAll();
-        assertEquals(0,bidao.count());
+        assertEquals(0, bidao.count());
         photoDao.deleteAll();
-        assertEquals(0,photoDao.count());
+        assertEquals(0, photoDao.count());
         userDao.deleteAll();
-        assertEquals(0,userDao.count());
+        assertEquals(0, userDao.count());
     }
 
     @Test
-    public void doNotRejectNullBuildingNameTest(){
+    public void doNotRejectNullBuildingNameTest() {
         BuildingInfo info = createBuildingInfo(photoDao.findAll().get(0));
         info.setBuildingName(null);
         bidao.save(info);
     }
 
     @Test
-    public void doNotRejectNullFocusText(){
+    public void doNotRejectNullFocusText() {
         BuildingInfo info = createBuildingInfo(photoDao.findAll().get(0));
         info.setFocusText(null);
         bidao.save(info);
     }
 
     @Test
-    public void rejectNullOSMIdTest(){
+    public void rejectNullOSMIdTest() {
         BuildingInfo info = createBuildingInfo(photoDao.findAll().get(0));
         info.setOsmId(null);
-        assertThrows(DataAccessException.class,()->{bidao.save(info);});
+        assertThrows(DataAccessException.class, () -> {
+            bidao.save(info);
+        });
     }
 
     @Test
-    public void findByBuildingNameContainingTest(){
+    public void findByBuildingNameContainingTest() {
         BuildingInfo info = createBuildingInfo(photoDao.findAll().get(0));
         info = bidao.save(info);
         BuildingInfo info2 = createBuildingInfo(photoDao.findAll().get(1));
@@ -100,12 +103,12 @@ public class BuildingInfoDaoTest {
         info2.setBuildingName("Empire State Building");
         bidao.save(info2);
         List<BuildingInfo> found = bidao.findByBuildingNameContainingIgnoreCase("masaryk");
-        assertEquals(1,found.size());
-        assertEquals(info,found.get(0));
+        assertEquals(1, found.size());
+        assertEquals(info, found.get(0));
     }
 
     @Test
-    public void findByPhotoTest(){
+    public void findByPhotoTest() {
         PhotoEntity photo = photoDao.findAll().get(0);
         BuildingInfo info = createBuildingInfo(photo);
         info = bidao.save(info);
@@ -114,12 +117,12 @@ public class BuildingInfoDaoTest {
         info2.setBuildingName("Empire State Building");
         bidao.save(info2);
         List<BuildingInfo> found = bidao.findByPhoto(photo);
-        assertEquals(1,found.size());
-        assertEquals(info,found.get(0));
+        assertEquals(1, found.size());
+        assertEquals(info, found.get(0));
     }
 
     @Test
-    public void findByOsmIdTest(){
+    public void findByOsmIdTest() {
         BuildingInfo info = createBuildingInfo(photoDao.findAll().get(0));
         info = bidao.save(info);
         BuildingInfo info2 = createBuildingInfo(photoDao.findAll().get(1));
@@ -128,12 +131,12 @@ public class BuildingInfoDaoTest {
         info2.setOsmId(145L);
         info2 = bidao.save(info2);
         List<BuildingInfo> found = bidao.findByOsmId(256L);
-        assertEquals(1,found.size());
-        assertEquals(info,found.get(0));
+        assertEquals(1, found.size());
+        assertEquals(info, found.get(0));
     }
 
     @Test
-    public void findByGPSTest(){
+    public void findByGPSTest() {
         BuildingInfo info = createBuildingInfo(photoDao.findAll().get(0));
         info = bidao.save(info);
         BuildingInfo info2 = createBuildingInfo(photoDao.findAll().get(1));
@@ -141,12 +144,12 @@ public class BuildingInfoDaoTest {
         info2.setBuildingName("Empire State Building");
         info2.setOsmId(145L);
         info2 = bidao.save(info2);
-        List<BuildingInfo> found = bidao.findByLatitudeBetweenAndLongitudeBetween(info.getLatitude()-EPSILON,info.getLatitude()+EPSILON,info.getLongitude()-EPSILON, info.getLongitude()+EPSILON);
-        assertEquals(1,found.size());
-        assertEquals(info,found.get(0));
+        List<BuildingInfo> found = bidao.findByLatitudeBetweenAndLongitudeBetween(info.getLatitude() - EPSILON, info.getLatitude() + EPSILON, info.getLongitude() - EPSILON, info.getLongitude() + EPSILON);
+        assertEquals(1, found.size());
+        assertEquals(info, found.get(0));
     }
 
-    public BuildingInfo createBuildingInfo(PhotoEntity photo){
+    public BuildingInfo createBuildingInfo(PhotoEntity photo) {
         BuildingInfo rv = new BuildingInfo();
         rv.setPhoto(photo);
         rv.setDistance(153);

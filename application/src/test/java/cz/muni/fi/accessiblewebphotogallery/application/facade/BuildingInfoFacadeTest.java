@@ -3,10 +3,10 @@ package cz.muni.fi.accessiblewebphotogallery.application.facade;
 import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
 import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.BuildingInfoService;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.BuildingInfoDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.facade.BuildingInfoFacade;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.BuildingInfoDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.PhotoDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.BuildingInfoFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AccountState;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.BuildingInfo;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
@@ -43,7 +43,7 @@ public class BuildingInfoFacadeTest {
 
 
     @BeforeAll
-    public void init(){
+    public void init() {
         infoServiceMock = mock(BuildingInfoService.class);
         infoFacade = new BuildingInfoFacadeImpl(infoServiceMock);
         defaultUser = new UserDto();
@@ -57,17 +57,17 @@ public class BuildingInfoFacadeTest {
         p1.setUploadTime(Instant.now().minus(Duration.ofDays(20)));
         p1.setTitle("Photo 1");
         p1.setDescription("Description 1");
-        p1.setBase64Id("thisisab64id");
+        p1.setId("thisisab64id");
         p2 = new PhotoDto();
         p2.setUploader(defaultUser);
         p2.setUploadTime(Instant.now().minusSeconds(600));
         p2.setTitle("Photo 2");
         p2.setDescription("Description 2");
-        p2.setBase64Id("anotherb64id");
+        p2.setId("anotherb64id");
     }
 
     @Test
-    public void findAllTest(){
+    public void findAllTest() {
         BuildingInfoDto info1 = new BuildingInfoDto();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -96,7 +96,7 @@ public class BuildingInfoFacadeTest {
     }
 
     @Test
-    public void findByPhotoTest(){
+    public void findByPhotoTest() {
         BuildingInfoDto info1 = new BuildingInfoDto();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -124,7 +124,7 @@ public class BuildingInfoFacadeTest {
     }
 
     @Test
-    public void findByBuildingName(){
+    public void findByBuildingName() {
         BuildingInfoDto info1 = new BuildingInfoDto();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -154,7 +154,7 @@ public class BuildingInfoFacadeTest {
     }
 
     @Test
-    public void findByOsmIdTest(){
+    public void findByOsmIdTest() {
         BuildingInfoDto info1 = new BuildingInfoDto();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -182,7 +182,7 @@ public class BuildingInfoFacadeTest {
     }
 
     @Test
-    public void findByGPSTest(){
+    public void findByGPSTest() {
         BuildingInfoDto info1 = new BuildingInfoDto();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -202,15 +202,15 @@ public class BuildingInfoFacadeTest {
 
         List<BuildingInfoDto> infoList = new ArrayList<>();
         infoList.add(info1);
-        when(infoServiceMock.findByGPSPosition(48.35,12.54)).thenReturn(infoList.stream().map(this::buildingInfoDtoToEntity).collect(Collectors.toList()));
+        when(infoServiceMock.findByGPSPosition(48.35, 12.54)).thenReturn(infoList.stream().map(this::buildingInfoDtoToEntity).collect(Collectors.toList()));
 
-        List<BuildingInfoDto> result = infoFacade.findByGPSPosition(48.35,12.54);
+        List<BuildingInfoDto> result = infoFacade.findByGPSPosition(48.35, 12.54);
         assertNotNull(result);
         assertEquals(infoList, result);
     }
 
     @Test
-    public void updateBuildingInfoTest(){
+    public void updateBuildingInfoTest() {
         BuildingInfoDto info1 = new BuildingInfoDto();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
@@ -230,10 +230,15 @@ public class BuildingInfoFacadeTest {
 
         when(infoServiceMock.updateBuildingInfo(buildingInfoDtoToEntity(info2))).thenReturn(buildingInfoDtoToEntity(info2));
         infoFacade.updateBuildingInfo(info2);
-        assertEquals(info1,info2);
+        assertEquals(info1, info2);
     }
 
 
-    private BuildingInfo buildingInfoDtoToEntity(BuildingInfoDto dto){return PhotoGalleryBackendMapper.buildingInfoDtoToEntity(dto);}
-    private PhotoEntity photoDtoToEntity(PhotoDto dto){return PhotoGalleryBackendMapper.photoDtoToEntity(dto);}
+    private BuildingInfo buildingInfoDtoToEntity(BuildingInfoDto dto) {
+        return PhotoGalleryBackendMapper.buildingInfoDtoToEntity(dto);
+    }
+
+    private PhotoEntity photoDtoToEntity(PhotoDto dto) {
+        return PhotoGalleryBackendMapper.photoDtoToEntity(dto);
+    }
 }

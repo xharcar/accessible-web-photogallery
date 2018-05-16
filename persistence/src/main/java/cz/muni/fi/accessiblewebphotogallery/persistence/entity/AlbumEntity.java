@@ -16,8 +16,8 @@ import javax.persistence.*;
 public class AlbumEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 24, unique = true, nullable = false)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "uploader_id", nullable = false)
@@ -26,18 +26,7 @@ public class AlbumEntity {
     @Column(length = 128) // if photos can have 128 characters...
     private String albumName;
 
-    @Column(length = 24, unique = true, nullable = false)
-    private String base64Identifier;
-
     public AlbumEntity() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public UserEntity getAlbumOwner() {
@@ -56,26 +45,26 @@ public class AlbumEntity {
         this.albumName = albumName;
     }
 
-    public String getBase64Identifier() {
-        return base64Identifier;
+    public String getId() {
+        return id;
     }
 
-    public void setBase64Identifier(String base64Identifier) {
-        this.base64Identifier = base64Identifier;
+    public void setId(String Id) {
+        this.id = Id;
     }
 
     @Override
     public boolean equals(Object o) {
-        if(o == null) return false;
+        if (o == null) return false;
         if (this == o) return true;
         if (!(o instanceof AlbumEntity)) return false;
         AlbumEntity that = (AlbumEntity) o;
-        return base64Identifier.equals(that.base64Identifier);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return base64Identifier.hashCode();
+        return id.hashCode();
     }
 
     @Override
@@ -84,7 +73,6 @@ public class AlbumEntity {
                 "id=" + id +
                 ", albumOwner=" + albumOwner +
                 ", albumName='" + albumName + '\'' +
-                ", base64Identifier='" + base64Identifier + '\'' +
                 '}';
     }
 }

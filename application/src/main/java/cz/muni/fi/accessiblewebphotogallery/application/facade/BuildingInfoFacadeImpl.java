@@ -3,14 +3,14 @@ package cz.muni.fi.accessiblewebphotogallery.application.facade;
 import com.google.gson.JsonObject;
 import cz.muni.fi.accessiblewebphotogallery.application.PhotoGalleryBackendMapper;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.BuildingInfoService;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.BuildingInfoDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.facade.BuildingInfoFacade;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.BuildingInfoDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.PhotoDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.BuildingInfoFacade;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.BuildingInfo;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
 
     private BuildingInfoService infoService;
 
-    @Inject
+    @Autowired
     public BuildingInfoFacadeImpl(BuildingInfoService infoService) {
         this.infoService = infoService;
     }
@@ -47,12 +47,12 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
 
     @Override
     public List<BuildingInfoDto> findByGPSPosition(double lat, double lon) {
-        return infoService.findByGPSPosition(lat,lon).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
+        return infoService.findByGPSPosition(lat, lon).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
     }
 
     @Override
     public List<BuildingInfoDto> registerBuildings(Map<JsonObject, JsonObject> jsonMap, JsonObject camPosition, PhotoDto photoDto) {
-        return infoService.registerBuildings(jsonMap,camPosition, photoDtoToEntity(photoDto)).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
+        return infoService.registerBuildings(jsonMap, camPosition, photoDtoToEntity(photoDto)).stream().map(this::buildingInfoToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -70,7 +70,15 @@ public class BuildingInfoFacadeImpl implements BuildingInfoFacade {
         infoService.delete(buildingDtoToEntity(buildingDto));
     }
 
-    private PhotoEntity photoDtoToEntity(PhotoDto dto){return PhotoGalleryBackendMapper.photoDtoToEntity(dto);}
-    private BuildingInfoDto buildingInfoToDto(BuildingInfo info){return PhotoGalleryBackendMapper.buildingInfoToDto(info);}
-    private BuildingInfo buildingDtoToEntity(BuildingInfoDto dto){return PhotoGalleryBackendMapper.buildingInfoDtoToEntity(dto);}
+    private PhotoEntity photoDtoToEntity(PhotoDto dto) {
+        return PhotoGalleryBackendMapper.photoDtoToEntity(dto);
+    }
+
+    private BuildingInfoDto buildingInfoToDto(BuildingInfo info) {
+        return PhotoGalleryBackendMapper.buildingInfoToDto(info);
+    }
+
+    private BuildingInfo buildingDtoToEntity(BuildingInfoDto dto) {
+        return PhotoGalleryBackendMapper.buildingInfoDtoToEntity(dto);
+    }
 }

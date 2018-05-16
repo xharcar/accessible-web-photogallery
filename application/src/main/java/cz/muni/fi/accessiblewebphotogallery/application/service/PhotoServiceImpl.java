@@ -8,21 +8,21 @@ import com.drew.metadata.exif.ExifDirectoryBase;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import cz.muni.fi.accessiblewebphotogallery.application.service.iface.PhotoService;
 import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.application.service.iface.PhotoService;
 import cz.muni.fi.accessiblewebphotogallery.persistence.dao.PhotoDao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import javax.inject.Inject;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -48,7 +48,7 @@ public class PhotoServiceImpl implements PhotoService {
     private Gson jsonConverter;
     private ApplicationConfig applicationConfig;
 
-    @Inject
+    @Autowired
     public PhotoServiceImpl(PhotoDao photoDao, ApplicationConfig applicationConfig) {
         this.photoDao = photoDao;
         enc = Base64.getUrlEncoder();
@@ -61,41 +61,36 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     public PageImpl<PhotoEntity> findByUploadTimeBetween(Instant begin, Instant end, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByUploadTimeBetween(begin, end, pageable);
-        return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
+        return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
     public PageImpl<PhotoEntity> findByUploader(UserEntity uploader, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByUploader(uploader, pageable);
-        return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
+        return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
     public PageImpl<PhotoEntity> findByDescriptionApx(String searchStr, Pageable pageable) {
-        Page<PhotoEntity> page = photoDao.findByDescriptionContainingIgnoreCase(searchStr,pageable);
-        return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
+        Page<PhotoEntity> page = photoDao.findByDescriptionContainingIgnoreCase(searchStr, pageable);
+        return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
     public PageImpl<PhotoEntity> findByTitleApx(String searchStr, Pageable pageable) {
-        Page<PhotoEntity> page = photoDao.findByTitleContainingIgnoreCase(searchStr,pageable);
-        return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
+        Page<PhotoEntity> page = photoDao.findByTitleContainingIgnoreCase(searchStr, pageable);
+        return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
-    public Optional<PhotoEntity> findById(Long id) {
-        return photoDao.findById(id);
-    }
-
-    @Override
-    public Optional<PhotoEntity> findByBase64Id(String b64id) {
-        return photoDao.findByBase64Identifier(b64id);
+    public Optional<PhotoEntity> findById(String b64id) {
+        return photoDao.findById(b64id);
     }
 
     @Override
     public PageImpl<PhotoEntity> findNewestFirst(Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findAllByOrderByUploadTimeDesc(pageable);
-        return new PageImpl<>(page.getContent(),pageable,page.getTotalElements());
+        return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
@@ -106,7 +101,7 @@ public class PhotoServiceImpl implements PhotoService {
         // entity should have uploader, title and description set by now
         Instant uploadTime = Instant.now();
         String photoBase64;
-        if(hasher == null){
+        if (hasher == null) {
             try {
                 hasher = MessageDigest.getInstance("MD5");
                 // we don't need a cryptographically secure hash for base-64 identifiers
@@ -127,9 +122,9 @@ public class PhotoServiceImpl implements PhotoService {
             // do-while loop rather than a call followed by a while-looped call
             photoBase64 = computeBase64(photoFile, metadataFile, extras);
             if (photoBase64 == null) return null;
-        } while (photoDao.findByBase64Identifier(photoBase64).isPresent());
+        } while (photoDao.findById(photoBase64).isPresent());
         entity.setUploadTime(uploadTime);
-        entity.setBase64Identifier(photoBase64);
+        entity.setId(photoBase64);
         Metadata exif = null;
         try {
             exif = ImageMetadataReader.readMetadata(photoFile);
@@ -143,15 +138,11 @@ public class PhotoServiceImpl implements PhotoService {
             String camMake = exifDir.getString(ExifDirectoryBase.TAG_MAKE);
             String camModel = exifDir.getString(ExifDirectoryBase.TAG_MODEL);
             StringBuilder cameraStrBuilder = new StringBuilder();
-            if (camMake == null) {
-                cameraStrBuilder.append("");
-            } else {
+            if (camMake != null) {
                 cameraStrBuilder.append(camMake);
                 cameraStrBuilder.append(" ");
             }
-            if (camModel == null) {
-                cameraStrBuilder.append("");
-            } else {
+            if (camModel != null) {
                 cameraStrBuilder.append(camModel);
             }
             if (!cameraStrBuilder.toString().isEmpty()) {
@@ -167,9 +158,9 @@ public class PhotoServiceImpl implements PhotoService {
             }
             entity.setIso(exifDir.getInteger(ExifDirectoryBase.TAG_ISO_EQUIVALENT));
             Integer flashCode = exifDir.getInteger(ExifDirectoryBase.TAG_FLASH);
-            if(flashCode != null){
+            if (flashCode != null) {
                 entity.setFlash(((flashCode) & 0x01) == 1);
-            }else{
+            } else {
                 entity.setFlash(null);
             }
             entity.setImageWidth(exifDir.getInteger(ExifDirectoryBase.TAG_IMAGE_WIDTH));
@@ -202,13 +193,13 @@ public class PhotoServiceImpl implements PhotoService {
             String jsonString = new String(jsonRaw);
             JsonArray jsonObjArr = jsonConverter.fromJson(jsonString, JsonArray.class);
             JsonObject cameraJsonObj = null;
-            for(int i=0;i<jsonObjArr.size();i++){
+            for (int i = 0; i < jsonObjArr.size(); i++) {
                 JsonObject temp = jsonObjArr.get(i).getAsJsonObject();
-                if(temp.has("cameraposition")){
+                if (temp.has("cameraposition")) {
                     cameraJsonObj = temp.get("cameraposition").getAsJsonObject();
                 }
             }
-            if(cameraJsonObj != null) {
+            if (cameraJsonObj != null) {
                 // if a camera position was found (relies on there being at most one, which is reasonable though)
                 if (cameraJsonObj.has("latitude")) {
                     entity.setCameraLatitude(cameraJsonObj.get("latitude").getAsDouble());
@@ -238,7 +229,7 @@ public class PhotoServiceImpl implements PhotoService {
             log.error("Couldn't create thumbnail: IOException reading original photo. Aborting.");
             return null;
         }
-        thumb.createGraphics().drawImage(origPhoto.getScaledInstance(640,360,Image.SCALE_FAST),0,0,null);
+        thumb.createGraphics().drawImage(origPhoto.getScaledInstance(640, 360, Image.SCALE_FAST), 0, 0, null);
         try {
             ImageIO.write(thumb, "jpg", thumbFile);
         } catch (IOException e) {
@@ -257,20 +248,20 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public boolean clearPhoto(PhotoEntity photo) {
-        String photoBase64Id = photo.getBase64Identifier();
+        String photoId = photo.getId();
         File photoDir = new File(applicationConfig.getPhotoDirectory());
         File[] fileList = photoDir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 // the photo itself, the thumbnail, and the supplementary JSON file if one was uploaded
-                return name.startsWith(photoBase64Id);
+                return name.startsWith(photoId);
             }
         });
-        if(fileList == null){
-            log.error("Retrieving relevant photo files for photo with Base-64 ID: " + photoBase64Id + " failed.");
+        if (fileList == null) {
+            log.error("Retrieving relevant photo files for photo with Base-64 ID: " + photoId + " failed.");
             return false;
         }
-        for(File file : fileList){
+        for (File file : fileList) {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
@@ -296,8 +287,8 @@ public class PhotoServiceImpl implements PhotoService {
         photo.setFlash(null);
         photo.setExposureTime(null);
         PhotoEntity photo2 = updatePhoto(photo);
-        if(!photo2.equals(photo)){
-            log.error("Error nullifying photo.");
+        if (!photo2.equals(photo)) {
+            log.error("Error nulling photo.");
             return false;
         }
         return true;

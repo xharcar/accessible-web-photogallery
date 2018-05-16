@@ -10,12 +10,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.inject.Inject;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private RegistrationTokenDao registrationDao;
     private SecureRandom csprng;
 
-    @Inject
+    @Autowired
     public UserServiceImpl(UserDao userDao, RegistrationTokenDao regDao) {
         this.userDao = userDao;
         this.registrationDao = regDao;
@@ -114,18 +114,18 @@ public class UserServiceImpl implements UserService {
         } else {
             presumedUser = findByLoginName(identifier);
         }
-        if(!presumedUser.isPresent()){
+        if (!presumedUser.isPresent()) {
             log.info("Failed to find user with identifier: " + identifier + ".");
-            return Pair.of(false,Optional.empty());
+            return Pair.of(false, Optional.empty());
         }
-        if(!checkPassword(password,presumedUser.get().getPasswordHash(),presumedUser.get().getPasswordSalt())){
+        if (!checkPassword(password, presumedUser.get().getPasswordHash(), presumedUser.get().getPasswordSalt())) {
             log.info("Failed to authenticate present user with identifier: " + identifier + ".");
             // do NOT log attempted password- #1 way to help guess it if hacked as most fails will be typos
             // or passwords to accounts elsewhere- also unwanted
             return Pair.of(false, Optional.empty());
         }
         log.info("User with identifier " + identifier + " authenticated successfully.");
-        return Pair.of(true,presumedUser);
+        return Pair.of(true, presumedUser);
     }
 
     @Override
@@ -139,9 +139,11 @@ public class UserServiceImpl implements UserService {
         Validate.notNull(email);
         Validate.notNull(token);
         Optional<RegistrationToken> regTokenOpt = registrationDao.findByEmail(email);
-        if(regTokenOpt.isPresent() && token.equals(regTokenOpt.get().getToken())){
+        if (regTokenOpt.isPresent() && token.equals(regTokenOpt.get().getToken())) {
             Optional<UserEntity> userOpt = userDao.findByEmail(email);
-            if(!userOpt.isPresent()) {return false;}
+            if (!userOpt.isPresent()) {
+                return false;
+            }
             UserEntity user = userOpt.get();
             user.setAccountState(AccountState.USER);
             updateUser(user);
@@ -156,56 +158,56 @@ public class UserServiceImpl implements UserService {
         userDao.delete(user);
     }
 
-    private Pair<byte[],byte[]> makeSaltAndHashPass(String password){
+    private Pair<byte[], byte[]> makeSaltAndHashPass(String password) {
         byte[] salt = new byte[HASH_SIZE];
         csprng.nextBytes(salt);
         byte[] hash;
         try {
             hash = pbkdf2(password.toCharArray(), salt, KDF_IT, HASH_SIZE);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e){
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             handlePBKDF2Fail(e);
             return null;
         }
-        return Pair.of(hash,salt);
+        return Pair.of(hash, salt);
     }
 
-    private boolean checkPassword(String password, byte[] expected, byte[] salt){
+    private boolean checkPassword(String password, byte[] expected, byte[] salt) {
         Validate.notNull(password);
         Validate.notNull(expected);
         Validate.notNull(salt);
         byte[] actual;
         try {
-            actual = pbkdf2(password.toCharArray(),salt,KDF_IT,HASH_SIZE);
+            actual = pbkdf2(password.toCharArray(), salt, KDF_IT, HASH_SIZE);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             handlePBKDF2Fail(e);
 
             return false;
         }
-        return slowEquals(expected,actual);
+        return slowEquals(expected, actual);
     }
 
     private byte[] pbkdf2(char[] password, byte[] salt, int iterations, int nbytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
         // note: PBEKeySpec takes bits
-        PBEKeySpec keySpec = new PBEKeySpec(password,salt,iterations,nbytes*8);
+        PBEKeySpec keySpec = new PBEKeySpec(password, salt, iterations, nbytes * 8);
         return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512").generateSecret(keySpec).getEncoded();
     }
 
-    private boolean slowEquals(byte[] a, byte[] b){
+    private boolean slowEquals(byte[] a, byte[] b) {
         int diff;
-        diff = a.length == b.length? 0:65536;
-        for(int i=0;i<a.length && i < b.length;i++){
-            if((a[i] ^ b[i]) != 0){
+        diff = a.length == b.length ? 0 : 65536;
+        for (int i = 0; i < a.length && i < b.length; i++) {
+            if ((a[i] ^ b[i]) != 0) {
                 diff++;
             }
         }
         return diff == 0;
     }
 
-    private void handlePBKDF2Fail(GeneralSecurityException gse){
+    private void handlePBKDF2Fail(GeneralSecurityException gse) {
         log.catching(gse);
-        if(gse instanceof NoSuchAlgorithmException){
+        if (gse instanceof NoSuchAlgorithmException) {
             log.error("PBKDF2 failed- no such algorithm.\n");
-        } else{
+        } else {
             log.error("PBKDF2 failed- invalid key spec.\n");
         }
         log.error(gse.getMessage());

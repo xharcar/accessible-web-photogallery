@@ -15,10 +15,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AlbumServiceTest {
 
-    @Inject
+    @Autowired
     ApplicationConfig cfg;
     private AlbumService albumService;
     @Mock
@@ -66,11 +66,11 @@ public class AlbumServiceTest {
         AlbumEntity a1 = new AlbumEntity();
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Identifier("thisisab64id");
+        a1.setId("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
         a2.setAlbumOwner(defaultUser);
         a2.setAlbumName("Album 2");
-        a2.setBase64Identifier("anotherb64id");
+        a2.setId("anotherb64id");
 
         List<AlbumEntity> albumList = new ArrayList<>();
         albumList.add(a1);
@@ -95,11 +95,11 @@ public class AlbumServiceTest {
         AlbumEntity a1 = new AlbumEntity();
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Identifier("thisisab64id");
+        a1.setId("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
         a2.setAlbumOwner(user2);
         a2.setAlbumName("Album 2");
-        a2.setBase64Identifier("anotherb64id");
+        a2.setId("anotherb64id");
 
         List<AlbumEntity> albumList = new ArrayList<>();
         albumList.add(a1);
@@ -116,12 +116,11 @@ public class AlbumServiceTest {
             @Override
             public AlbumEntity answer(InvocationOnMock invocation) throws Throwable {
                 AlbumEntity rv = invocation.getArgument(0);
-                rv.setId(1L);
                 return rv;
             }
         });
         AlbumEntity entity = albumService.createAlbum(defaultUser, "Album 342");
-        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + entity.getBase64Identifier() + ".txt");
+        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + entity.getId() + ".txt");
         assertNotNull(entity.getId());
         assertTrue(albumFile.exists());
     }
@@ -129,15 +128,13 @@ public class AlbumServiceTest {
     @Test
     public void saveAlbumTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setId(1L);
+        a1.setId("thisisab64id");
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Identifier("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
-        a2.setId(1L);
+        a2.setId("thisisab64id");
         a2.setAlbumOwner(defaultUser);
         a2.setAlbumName("Chernobyl 2018");
-        a2.setBase64Identifier("thisisab64id");
 
         when(albumDaoMock.save(a2)).thenReturn(a2);
         albumService.updateAlbum(a2);
@@ -147,11 +144,10 @@ public class AlbumServiceTest {
     @Test
     public void addPhotoTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setId(1L);
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Identifier("thisisab64id");
-        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Identifier() + ".txt");
+        a1.setId("thisisab64id");
+        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getId() + ".txt");
         try {
             assertTrue(albumFile.createNewFile());
         } catch (IOException e) {
@@ -173,11 +169,10 @@ public class AlbumServiceTest {
     @Test
     public void removePhotoTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setId(1L);
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Identifier("thisisab64id");
-        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Identifier() + ".txt");
+        a1.setId("thisisab64id");
+        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getId() + ".txt");
         String b64 = "photo00b64id";
         if (!albumFile.exists()) {
             try {
@@ -211,11 +206,10 @@ public class AlbumServiceTest {
     @Test
     public void listPhotosTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setId(1L);
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Identifier("thisisab64id");
-        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getBase64Identifier() + ".txt");
+        a1.setId("thisisab64id");
+        File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getId() + ".txt");
         String b64 = "photo00b64id";
         if (!albumFile.exists()) {
             try {
@@ -232,19 +226,19 @@ public class AlbumServiceTest {
     }
 
     @Test
-    public void findByBase64IdTest() {
+    public void findByIdTest() {
         AlbumEntity a1 = new AlbumEntity();
         a1.setAlbumOwner(defaultUser);
         a1.setAlbumName("Album 1");
-        a1.setBase64Identifier("thisisab64id");
+        a1.setId("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
         a2.setAlbumOwner(defaultUser);
         a2.setAlbumName("Album 2");
-        a2.setBase64Identifier("anotherb64id");
+        a2.setId("anotherb64id");
 
-        when(albumDaoMock.findByBase64Identifier("thisisab64id")).thenReturn(Optional.of(a1));
+        when(albumDaoMock.findById("thisisab64id")).thenReturn(Optional.of(a1));
 
-        Optional<AlbumEntity> resOpt = albumService.findByBase64Id("thisisab64id");
+        Optional<AlbumEntity> resOpt = albumService.findById("thisisab64id");
         assertNotNull(resOpt);
         assertTrue(resOpt.isPresent());
         assertEquals(a1, resOpt.get());

@@ -3,10 +3,12 @@ package cz.muni.fi.accessiblewebphotogallery.persistence.dao;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.BuildingInfo;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface BuildingInfoDao extends JpaRepository<BuildingInfo,Long> {
+@Repository
+public interface BuildingInfoDao extends JpaRepository<BuildingInfo, Long> {
 
     // for retrieving building information pertaining to a given photo
     List<BuildingInfo> findByPhoto(PhotoEntity photo);

@@ -8,9 +8,9 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -33,7 +33,7 @@ public class AlbumServiceImpl implements AlbumService {
     private Base64.Encoder enc;
     private MessageDigest hasher;
 
-    @Inject
+    @Autowired
     public AlbumServiceImpl(AlbumDao albumDao, ApplicationConfig config) {
         this.albumDao = albumDao;
         this.config = config;
@@ -59,15 +59,15 @@ public class AlbumServiceImpl implements AlbumService {
         Instant creationTime = Instant.now();
         String base64;
         File albumDir = new File(config.getAlbumDirectory());
-        if(!albumDir.exists()){
+        if (!albumDir.exists()) {
             boolean created = albumDir.mkdirs();
-            if(!created){
+            if (!created) {
                 log.error("Could not create album directory(did not exist). Aborting.");
                 return null;
             }
         }
-        if(hasher == null){
-            try{
+        if (hasher == null) {
+            try {
                 hasher = MessageDigest.getInstance("MD5");
             } catch (NoSuchAlgorithmException e) {
                 log.catching(e);
@@ -79,18 +79,18 @@ public class AlbumServiceImpl implements AlbumService {
         List<ByteBuffer> toHash = new ArrayList<>();
         toHash.add(ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(user.hashCode()));
         toHash.add(ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(creationTime.hashCode()));
-        do{
+        do {
             toHash.add(ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(rng.nextInt()));
             base64 = computeBase64(toHash);
-        }while(albumDao.findByBase64Identifier(base64).isPresent());
+        } while (albumDao.findById(base64).isPresent());
         AlbumEntity toSave = new AlbumEntity();
         toSave.setAlbumName(albumName);
         toSave.setAlbumOwner(user);
-        toSave.setBase64Identifier(base64);
-        File albumFile = new File(albumDir,base64+".txt");
+        toSave.setId(base64);
+        File albumFile = new File(albumDir, base64 + ".txt");
         try {
             boolean created = albumFile.createNewFile();
-            if(!created){
+            if (!created) {
                 log.error("Failed to create album file. Aborting.");
                 return null;
             }
@@ -110,42 +110,42 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public void deleteAlbum(AlbumEntity album) {
-        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Identifier() + ".txt");
+        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getId() + ".txt");
         try {
             Files.delete(albumFile.toPath());
         } catch (IOException e) {
             log.catching(e);
             log.error(e.getMessage());
-            log.error("IOException deleting album file of album:" + album + " . Aborting." );
+            log.error("IOException deleting album file of album:" + album + " . Aborting.");
             return;
         }
         albumDao.delete(album);
     }
 
     @Override
-    public boolean addPhotoToAlbum(AlbumEntity album, String photoBase64Id) {
-        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Identifier() + ".txt");
-        if(!albumFile.exists()){
-            log.error("Attempting to add photo: " + photoBase64Id + " to album:" + album + " failed: album file doesn't seem to exist. Aborting");
+    public boolean addPhotoToAlbum(AlbumEntity album, String photoId) {
+        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getId() + ".txt");
+        if (!albumFile.exists()) {
+            log.error("Attempting to add photo: " + photoId + " to album:" + album + " failed: album file doesn't seem to exist. Aborting");
             return false;
         }
-        photoBase64Id += System.lineSeparator();
+        photoId += System.lineSeparator();
         try {
-            Files.write(albumFile.toPath(),photoBase64Id.getBytes(StandardCharsets.UTF_8), StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.SYNC);
+            Files.write(albumFile.toPath(), photoId.getBytes(StandardCharsets.UTF_8), StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.SYNC);
         } catch (IOException e) {
             log.catching(e);
             log.error(e.getMessage());
-            log.error("Attempting to add photo: "+ photoBase64Id + " to album:" + album + " failed(IOException). Aborting");
+            log.error("Attempting to add photo: " + photoId + " to album:" + album + " failed(IOException). Aborting");
             return false;
         }
         return true;
     }
 
     @Override
-    public boolean removePhotoFromAlbum(AlbumEntity album, String photoBase64Id) {
-        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Identifier() + ".txt");
-        if(!albumFile.exists()){
-            log.error("Attempting to remove photo: " + photoBase64Id + " from album:" + album + " failed: album file doesn't seem to exist. Aborting");
+    public boolean removePhotoFromAlbum(AlbumEntity album, String photoId) {
+        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getId() + ".txt");
+        if (!albumFile.exists()) {
+            log.error("Attempting to remove photo: " + photoId + " from album:" + album + " failed: album file doesn't seem to exist. Aborting");
             return false;
         }
         List<String> photoList;
@@ -154,16 +154,16 @@ public class AlbumServiceImpl implements AlbumService {
         } catch (IOException e) {
             log.catching(e);
             log.error(e.getMessage());
-            log.error("Attempting to remove photo: "+ photoBase64Id + " from album:" + album + " failed reading file(IOException). Aborting");
+            log.error("Attempting to remove photo: " + photoId + " from album:" + album + " failed reading file(IOException). Aborting");
             return false;
         }
-        photoList.remove(photoBase64Id);
+        photoList.remove(photoId);
         try {
-            Files.write(albumFile.toPath(),photoList, StandardCharsets.UTF_8, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
+            Files.write(albumFile.toPath(), photoList, StandardCharsets.UTF_8, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC);
         } catch (IOException e) {
             log.catching(e);
             log.error(e.getMessage());
-            log.error("Attempting to remove photo: "+ photoBase64Id + " from album:" + album + " failed writing file(IOException). Aborting");
+            log.error("Attempting to remove photo: " + photoId + " from album:" + album + " failed writing file(IOException). Aborting");
             return false;
         }
         return true;
@@ -172,8 +172,8 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<String> listPhotosInAlbum(AlbumEntity album) {
         List<String> photoList;
-        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getBase64Identifier() + ".txt");
-        if(!albumFile.exists()){
+        File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getId() + ".txt");
+        if (!albumFile.exists()) {
             log.error("Attempting to list photos from album:" + album + " failed: album file doesn't seem to exist. Aborting");
             return null;
         }
@@ -189,13 +189,13 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Optional<AlbumEntity> findByBase64Id(String base64) {
-        return albumDao.findByBase64Identifier(base64);
+    public Optional<AlbumEntity> findById(String base64) {
+        return albumDao.findById(base64);
     }
 
-    private String computeBase64(List<ByteBuffer> data){
+    private String computeBase64(List<ByteBuffer> data) {
         hasher.reset();
-        for(ByteBuffer buf: data){
+        for (ByteBuffer buf : data) {
             hasher.update(buf.array());
         }
         byte[] hashResult = hasher.digest();

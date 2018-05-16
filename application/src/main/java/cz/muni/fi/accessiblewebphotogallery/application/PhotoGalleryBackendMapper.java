@@ -1,9 +1,9 @@
 package cz.muni.fi.accessiblewebphotogallery.application;
 
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.AlbumDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.BuildingInfoDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.PhotoDto;
-import cz.muni.fi.accessiblewebphotogallery.iface.dto.UserDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.AlbumDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.BuildingInfoDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.PhotoDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.BuildingInfo;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
@@ -13,14 +13,13 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 // So I'm rolling my own single-purpose mapper here
 public class PhotoGalleryBackendMapper {
 
-    public static PhotoDto photoEntityToDto(PhotoEntity entity){
+    public static PhotoDto photoEntityToDto(PhotoEntity entity) {
         PhotoDto rv = new PhotoDto();
         rv.setId(entity.getId());
         rv.setUploader(userEntityToDto(entity.getUploader()));
         rv.setUploadTime(entity.getUploadTime());
         rv.setTitle(entity.getTitle());
         rv.setDescription(entity.getDescription());
-        rv.setBase64Id(entity.getBase64Identifier());
         rv.setCameraLatitude(entity.getCameraLatitude());
         rv.setCameraLongitude(entity.getCameraLongitude());
         rv.setCameraAzimuth(entity.getCameraAzimuth());
@@ -36,14 +35,13 @@ public class PhotoGalleryBackendMapper {
         return rv;
     }
 
-    public static PhotoEntity photoDtoToEntity(PhotoDto dto){
+    public static PhotoEntity photoDtoToEntity(PhotoDto dto) {
         PhotoEntity rv = new PhotoEntity();
         rv.setId(dto.getId());
         rv.setUploader(userDtoToEntity(dto.getUploader()));
         rv.setUploadTime(dto.getUploadTime());
         rv.setTitle(dto.getTitle());
         rv.setDescription(dto.getDescription());
-        rv.setBase64Identifier(dto.getBase64Id());
         rv.setCameraLatitude(dto.getCameraLatitude());
         rv.setCameraLongitude(dto.getCameraLongitude());
         rv.setCameraAzimuth(dto.getCameraAzimuth());
@@ -59,7 +57,7 @@ public class PhotoGalleryBackendMapper {
         return rv;
     }
 
-    public static UserDto userEntityToDto(UserEntity entity){
+    public static UserDto userEntityToDto(UserEntity entity) {
         UserDto rv = new UserDto();
         rv.setId(entity.getId());
         rv.setLoginName(entity.getLoginName());
@@ -72,7 +70,7 @@ public class PhotoGalleryBackendMapper {
         return rv;
     }
 
-    public static UserEntity userDtoToEntity(UserDto dto){
+    public static UserEntity userDtoToEntity(UserDto dto) {
         UserEntity rv = new UserEntity();
         rv.setId(dto.getId());
         rv.setLoginName(dto.getLoginName());
@@ -100,7 +98,7 @@ public class PhotoGalleryBackendMapper {
         return rv;
     }
 
-    public static BuildingInfo buildingInfoDtoToEntity(BuildingInfoDto dto){
+    public static BuildingInfo buildingInfoDtoToEntity(BuildingInfoDto dto) {
         BuildingInfo rv = new BuildingInfo();
         rv.setId(dto.getId());
         rv.setPhoto(photoDtoToEntity(dto.getPhoto()));
@@ -115,21 +113,21 @@ public class PhotoGalleryBackendMapper {
         return rv;
     }
 
-    public static AlbumDto albumEntityToDto(AlbumEntity entity){
+    public static AlbumDto albumEntityToDto(AlbumEntity entity) {
         AlbumDto rv = new AlbumDto();
         rv.setId(entity.getId());
         rv.setAlbumOwner(userEntityToDto(entity.getAlbumOwner()));
         rv.setAlbumName(entity.getAlbumName());
-        rv.setBase64Id(entity.getBase64Identifier());
+        rv.setId(entity.getId());
         return rv;
     }
 
-    public static AlbumEntity albumDtoToEntity(AlbumDto dto){
+    public static AlbumEntity albumDtoToEntity(AlbumDto dto) {
         AlbumEntity rv = new AlbumEntity();
         rv.setId(dto.getId());
         rv.setAlbumOwner(userDtoToEntity(dto.getAlbumOwner()));
         rv.setAlbumName(dto.getAlbumName());
-        rv.setBase64Identifier(dto.getBase64Id());
+        rv.setId(dto.getId());
         return rv;
     }
 

@@ -11,12 +11,14 @@ public interface BuildingInfoService {
 
     /**
      * Retrieves all building records
+     *
      * @return List containing all building records in the DB
      */
     List<BuildingInfo> findAll();
 
     /**
      * Retrieves building records by photo
+     *
      * @param photo Photo to search
      * @return List of BuildingInfo instances belonging to photo
      */
@@ -24,6 +26,7 @@ public interface BuildingInfoService {
 
     /**
      * Retrieves building records by building name, ignoring case
+     *
      * @param searchStr (partial) building name to search
      * @return List of BuildingInfo instances whose buildingNames match searchStr
      */
@@ -31,6 +34,7 @@ public interface BuildingInfoService {
 
     /**
      * Retrieves buildings by OSM ID
+     *
      * @param osmId OSM ID to search
      * @return List of BuildingInfo instances whose OSM ID == osmId
      */
@@ -38,6 +42,7 @@ public interface BuildingInfoService {
 
     /**
      * Retrieves buildings at given coordinates or close enough to be certain it's the same building
+     *
      * @param lat Latitude to search
      * @param lon Longitude to search
      * @return List of BuildingInfo instances within (implementation-defined) limits close to {lat;lon}
@@ -46,17 +51,19 @@ public interface BuildingInfoService {
 
     /**
      * Registers buildings in a photo
+     *
      * @param buildingMap Map containing JsonObjects retrieved from the supplementary JSON file as keys, and their
      *                    equivalents retrieved from Nominatim (or other source) as values
-     * @param camData JsonObject containing information about the position of the camera, retrieved from the
-     *                supplementary JSON file
-     * @param photo PhotoEntity to which the building entries belong
+     * @param camData     JsonObject containing information about the position of the camera, retrieved from the
+     *                    supplementary JSON file
+     * @param photo       PhotoEntity to which the building entries belong
      * @return List of BuildingInfo instances as saved, with all the available data written
      */
-    List<BuildingInfo> registerBuildings(Map<JsonObject,JsonObject> buildingMap, JsonObject camData, PhotoEntity photo);
+    List<BuildingInfo> registerBuildings(Map<JsonObject, JsonObject> buildingMap, JsonObject camData, PhotoEntity photo);
 
     /**
      * Updates a BuildingInfo instance, eg. when a user wants to edit its focus text
+     *
      * @param buildingInfo BuildinghInfo to update
      * @return BuildingInfo as saved
      */
@@ -67,6 +74,7 @@ public interface BuildingInfoService {
 
     /**
      * Deletes a building entry from the DB
+     *
      * @param buildingInfo building entry to delete
      */
     void delete(BuildingInfo buildingInfo);

@@ -14,24 +14,8 @@ import java.util.Objects;
 public class PhotoEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity uploader;
-
-    @Column(nullable = false)
-    private Instant uploadTime;
-
-    @Column(nullable = false, length = 128) // 128 characters should be enough for a title (YouTube has 100)
-    private String title;
-
-    @Column(nullable = false, length = 2048) // 2048 characters should be plenty for a nice description
-    private String description;
-
     @Column(nullable = false, length = 12, unique = true)
-    private String base64Identifier;
+    private String id;
     /* Base-64 identifier Mk.3
         1) Register upload Instant
         2) Into a List of ByteBuffers, put:
@@ -45,6 +29,19 @@ public class PhotoEntity {
         8) Take the 9 least significant bytes and convert them to Base64(URL-safe)
         9) If the resulting String is already present in the photos table, goto 3; else assign it as identifier
      */
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    private UserEntity uploader;
+
+    @Column(nullable = false, updatable = false)
+    private Instant uploadTime;
+
+    @Column(nullable = false, length = 128) // 128 characters should be enough for a title (YouTube has 100)
+    private String title;
+
+    @Column(nullable = false, length = 2048) // 2048 characters should be plenty for a nice description
+    private String description;
 
     // camera info - nullable for when no JSON metadata file is uploaded
     @Column(nullable = true, precision = 10)
@@ -85,13 +82,14 @@ public class PhotoEntity {
     private Double exposureTime;
     // </EXIF>
 
-    public PhotoEntity() {}
+    public PhotoEntity() {
+    }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -125,14 +123,6 @@ public class PhotoEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getBase64Identifier() {
-        return base64Identifier;
-    }
-
-    public void setBase64Identifier(String base64Identifier) {
-        this.base64Identifier = base64Identifier;
     }
 
     public Double getCameraLatitude() {
@@ -237,13 +227,13 @@ public class PhotoEntity {
         if (o == null) return false;
         if (!(o instanceof PhotoEntity)) return false;
         PhotoEntity that = (PhotoEntity) o;
-        return Objects.equals(base64Identifier, that.base64Identifier);
+        return Objects.equals(id, that.id);
         // no other element needed due to aforementioned b64ID generation strategy
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(base64Identifier);
+        return Objects.hash(id);
     }
 
     @Override
@@ -252,7 +242,7 @@ public class PhotoEntity {
                 "id=" + id +
                 ", uploader=" + uploader +
                 ", uploadTime=" + uploadTime +
-                ", imageHash=" + Objects.toString(base64Identifier) +
+                ", imageHash=" + Objects.toString(id) +
                 ", cameraLatitude=" + cameraLatitude +
                 ", cameraLongitude=" + cameraLongitude +
                 ", cameraAzimuth=" + cameraAzimuth +

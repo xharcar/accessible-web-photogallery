@@ -5,11 +5,13 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.Optional;
 
-public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
+@Repository
+public interface PhotoDao extends JpaRepository<PhotoEntity, Long> {
 
     /* Methods declared here are to be used to find photos by exact data, unless otherwise specified;
     Generally:
@@ -38,7 +40,7 @@ public interface PhotoDao extends JpaRepository<PhotoEntity,Long> {
     Page<PhotoEntity> findByTitleContainingIgnoreCase(String searchString, Pageable pageable);
 
     // check whether a base-64 id exists when saving new uploads
-    Optional<PhotoEntity> findByBase64Identifier(String b64id);
+    Optional<PhotoEntity> findById(String b64id);
 
     // sorted by upload time so most recent can be displayed first for browsing
     Page<PhotoEntity> findAllByOrderByUploadTimeDesc(Pageable pageable);
