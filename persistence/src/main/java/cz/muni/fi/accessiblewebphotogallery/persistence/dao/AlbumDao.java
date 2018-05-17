@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface AlbumDao extends JpaRepository<AlbumEntity, String> {
 
-    List<AlbumEntity> findByAlbumOwner(UserEntity albumOwner);
+    List<AlbumEntity> findByOwner(UserEntity owner);
 
     Optional<AlbumEntity> findById(String id);
 

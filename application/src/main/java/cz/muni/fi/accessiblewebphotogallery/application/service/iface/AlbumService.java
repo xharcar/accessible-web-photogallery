@@ -21,7 +21,7 @@ public interface AlbumService {
      * @param owner user to look up
      * @return List containig all album entries created by owner
      */
-    List<AlbumEntity> findByAlbumOwner(UserEntity owner);
+    List<AlbumEntity> findByOwner(UserEntity owner);
 
     /**
      * Creates a new album entry

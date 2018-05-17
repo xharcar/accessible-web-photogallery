@@ -6,7 +6,7 @@ public class AlbumDto {
 
     private String id;
 
-    private UserDto albumOwner;
+    private UserDto owner;
 
     private String albumName;
 
@@ -15,12 +15,12 @@ public class AlbumDto {
     public AlbumDto() {
     }
 
-    public UserDto getAlbumOwner() {
-        return albumOwner;
+    public UserDto getOwner() {
+        return owner;
     }
 
-    public void setAlbumOwner(UserDto albumOwner) {
-        this.albumOwner = albumOwner;
+    public void setOwner(UserDto owner) {
+        this.owner = owner;
     }
 
     public String getAlbumName() {
@@ -57,7 +57,7 @@ public class AlbumDto {
     public String toString() {
         return "AlbumDto{" +
                 "id=" + id +
-                ", albumOwner=" + albumOwner +
+                ", owner=" + owner +
                 ", albumName='" + albumName + '\'' +
                 ", Id='" + Id + '\'' +
                 '}';

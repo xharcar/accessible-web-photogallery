@@ -64,12 +64,12 @@ public class AlbumServiceTest {
     @Test
     public void findAllTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setAlbumOwner(defaultUser);
-        a1.setAlbumName("Album 1");
+        a1.setOwner(defaultUser);
+        a1.setName("Album 1");
         a1.setId("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
-        a2.setAlbumOwner(defaultUser);
-        a2.setAlbumName("Album 2");
+        a2.setOwner(defaultUser);
+        a2.setName("Album 2");
         a2.setId("anotherb64id");
 
         List<AlbumEntity> albumList = new ArrayList<>();
@@ -93,19 +93,19 @@ public class AlbumServiceTest {
         user2.setPasswordHash(dummysalt1);
         user2.setPasswordSalt(dummyhash1);
         AlbumEntity a1 = new AlbumEntity();
-        a1.setAlbumOwner(defaultUser);
-        a1.setAlbumName("Album 1");
+        a1.setOwner(defaultUser);
+        a1.setName("Album 1");
         a1.setId("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
-        a2.setAlbumOwner(user2);
-        a2.setAlbumName("Album 2");
+        a2.setOwner(user2);
+        a2.setName("Album 2");
         a2.setId("anotherb64id");
 
         List<AlbumEntity> albumList = new ArrayList<>();
         albumList.add(a1);
-        when(albumDaoMock.findByAlbumOwner(defaultUser)).thenReturn(albumList);
+        when(albumDaoMock.findByOwner(defaultUser)).thenReturn(albumList);
 
-        List<AlbumEntity> result = albumService.findByAlbumOwner(defaultUser);
+        List<AlbumEntity> result = albumService.findByOwner(defaultUser);
         assertNotNull(result);
         assertEquals(albumList, result);
     }
@@ -129,12 +129,12 @@ public class AlbumServiceTest {
     public void saveAlbumTest() {
         AlbumEntity a1 = new AlbumEntity();
         a1.setId("thisisab64id");
-        a1.setAlbumOwner(defaultUser);
-        a1.setAlbumName("Album 1");
+        a1.setOwner(defaultUser);
+        a1.setName("Album 1");
         AlbumEntity a2 = new AlbumEntity();
         a2.setId("thisisab64id");
-        a2.setAlbumOwner(defaultUser);
-        a2.setAlbumName("Chernobyl 2018");
+        a2.setOwner(defaultUser);
+        a2.setName("Chernobyl 2018");
 
         when(albumDaoMock.save(a2)).thenReturn(a2);
         albumService.updateAlbum(a2);
@@ -144,8 +144,8 @@ public class AlbumServiceTest {
     @Test
     public void addPhotoTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setAlbumOwner(defaultUser);
-        a1.setAlbumName("Album 1");
+        a1.setOwner(defaultUser);
+        a1.setName("Album 1");
         a1.setId("thisisab64id");
         File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getId() + ".txt");
         try {
@@ -169,8 +169,8 @@ public class AlbumServiceTest {
     @Test
     public void removePhotoTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setAlbumOwner(defaultUser);
-        a1.setAlbumName("Album 1");
+        a1.setOwner(defaultUser);
+        a1.setName("Album 1");
         a1.setId("thisisab64id");
         File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getId() + ".txt");
         String b64 = "photo00b64id";
@@ -206,8 +206,8 @@ public class AlbumServiceTest {
     @Test
     public void listPhotosTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setAlbumOwner(defaultUser);
-        a1.setAlbumName("Album 1");
+        a1.setOwner(defaultUser);
+        a1.setName("Album 1");
         a1.setId("thisisab64id");
         File albumFile = new File(cfg.getAlbumDirectory() + File.separator + a1.getId() + ".txt");
         String b64 = "photo00b64id";
@@ -228,12 +228,12 @@ public class AlbumServiceTest {
     @Test
     public void findByIdTest() {
         AlbumEntity a1 = new AlbumEntity();
-        a1.setAlbumOwner(defaultUser);
-        a1.setAlbumName("Album 1");
+        a1.setOwner(defaultUser);
+        a1.setName("Album 1");
         a1.setId("thisisab64id");
         AlbumEntity a2 = new AlbumEntity();
-        a2.setAlbumOwner(defaultUser);
-        a2.setAlbumName("Album 2");
+        a2.setOwner(defaultUser);
+        a2.setName("Album 2");
         a2.setId("anotherb64id");
 
         when(albumDaoMock.findById("thisisab64id")).thenReturn(Optional.of(a1));

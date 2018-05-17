@@ -278,7 +278,7 @@ public class BuildingInfoServiceTest {
             @Override
             public BuildingInfo answer(InvocationOnMock invocation) throws Throwable {
                 BuildingInfo info = invocation.getArgument(0);
-                info.setId(1L); // for this test, there will be only one
+                info.setId("thisisab64id16ch"); // for this test, there will be only one
                 return info;
             }
         });

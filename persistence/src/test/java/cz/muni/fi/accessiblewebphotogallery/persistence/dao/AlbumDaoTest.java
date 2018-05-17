@@ -69,13 +69,13 @@ public class AlbumDaoTest {
     }
 
     @Test
-    public void findByAlbumOwnerTest() {
+    public void findByownerTest() {
         UserEntity user = userDao.findAll().get(0);
         AlbumEntity album = createAlbum(user, "ASDF Album", "thisisab64id");
         album = albumDao.save(album);
         AlbumEntity album2 = createAlbum(userDao.findAll().get(1), "ASDF Album", "anotherb64id");
         album2 = albumDao.save(album2);
-        List<AlbumEntity> found = albumDao.findByAlbumOwner(user);
+        List<AlbumEntity> found = albumDao.findByOwner(user);
         assertEquals(1, found.size());
         assertEquals(album, found.get(0));
     }
@@ -104,8 +104,8 @@ public class AlbumDaoTest {
 
     public static AlbumEntity createAlbum(UserEntity owner, String name, String base64) {
         AlbumEntity rv = new AlbumEntity();
-        rv.setAlbumName(name);
-        rv.setAlbumOwner(owner);
+        rv.setName(name);
+        rv.setOwner(owner);
         rv.setId(base64);
         return rv;
     }

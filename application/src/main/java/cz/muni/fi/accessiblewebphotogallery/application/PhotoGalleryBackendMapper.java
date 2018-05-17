@@ -116,8 +116,8 @@ public class PhotoGalleryBackendMapper {
     public static AlbumDto albumEntityToDto(AlbumEntity entity) {
         AlbumDto rv = new AlbumDto();
         rv.setId(entity.getId());
-        rv.setAlbumOwner(userEntityToDto(entity.getAlbumOwner()));
-        rv.setAlbumName(entity.getAlbumName());
+        rv.setOwner(userEntityToDto(entity.getOwner()));
+        rv.setAlbumName(entity.getName());
         rv.setId(entity.getId());
         return rv;
     }
@@ -125,8 +125,8 @@ public class PhotoGalleryBackendMapper {
     public static AlbumEntity albumDtoToEntity(AlbumDto dto) {
         AlbumEntity rv = new AlbumEntity();
         rv.setId(dto.getId());
-        rv.setAlbumOwner(userDtoToEntity(dto.getAlbumOwner()));
-        rv.setAlbumName(dto.getAlbumName());
+        rv.setOwner(userDtoToEntity(dto.getOwner()));
+        rv.setName(dto.getAlbumName());
         rv.setId(dto.getId());
         return rv;
     }

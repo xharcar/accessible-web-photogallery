@@ -10,7 +10,7 @@ public interface AlbumFacade {
 
     List<AlbumDto> findAll();
 
-    List<AlbumDto> findByAlbumOwner(UserDto owner);
+    List<AlbumDto> findByOwner(UserDto owner);
 
     AlbumDto createAlbum(UserDto user, String albumName);
 

@@ -6,7 +6,7 @@ public class BuildingInfoDto {
 
     private double EPSILON = 0.0000025;// see BuildingInfoServiceImpl
 
-    private Long id;
+    private String id;
 
     private PhotoDto photo;
 
@@ -29,11 +29,11 @@ public class BuildingInfoDto {
     public BuildingInfoDto() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

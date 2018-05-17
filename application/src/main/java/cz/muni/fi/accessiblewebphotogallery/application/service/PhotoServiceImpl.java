@@ -109,7 +109,7 @@ public class PhotoServiceImpl implements PhotoService {
                 // this should never occur, but I know better than that...
                 log.catching(nsae);
                 log.error(nsae.getMessage());
-                log.error("Could not obtain an MD5 MessageDigest instance.");
+                log.error("PhotoService could not obtain an MD5 MessageDigest instance.");
                 return null;
             }
         }
@@ -335,7 +335,7 @@ public class PhotoServiceImpl implements PhotoService {
             }
         }
         byte[] fullHash = hasher.digest();
-        byte[] dbHash = Arrays.copyOfRange(fullHash, 7, 16);
+        byte[] dbHash = Arrays.copyOfRange(fullHash, 11, 20);
         return enc.encodeToString(dbHash);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BuildingInfoDao extends JpaRepository<BuildingInfo, Long> {
+public interface BuildingInfoDao extends JpaRepository<BuildingInfo, String> {
 
     // for retrieving building information pertaining to a given photo
     List<BuildingInfo> findByPhoto(PhotoEntity photo);

@@ -16,11 +16,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "BUILDINGINFO")
 public class BuildingInfo {
-    private double EPSILON = 0.0000025;// see BuildingInfoServiceImpl
+    private static final double EPSILON = 0.0000025;// see BuildingInfoServiceImpl
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 16,unique = true,nullable = false,updatable = false)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "photo_id", nullable = false)
@@ -65,11 +65,11 @@ public class BuildingInfo {
     public BuildingInfo() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

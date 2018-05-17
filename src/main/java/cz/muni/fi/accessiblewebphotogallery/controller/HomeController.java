@@ -19,8 +19,8 @@ public class HomeController {
 
     @RequestMapping({"/","/home","/index","/hello","/dummy"})
     public String home(Model model){
-        model.addAttribute("msg","Poshol nahui");
-        model.addAttribute("ttl","Suka blyat");
+        model.addAttribute("msg","Sample Text");
+        model.addAttribute("ttl","Minimum demo page");
         model.addAttribute("lenna", "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/220px-Lenna_%28test_image%29.png");
         List<UserEntity> userEntityList = userDao.findAll();
         System.out.println("Users found: \n" + userEntityList);
@@ -156,7 +156,7 @@ public class HomeController {
 //            if (!loggedInUserOpt.isPresent()) {
 //                throw new IllegalStateException("User with identifier:" + loggedInUserIdent + " not found.");
 //            }
-//            model.addAttribute("userAlbums", albumFacade.findByAlbumOwner(loggedInUserOpt.get()));
+//            model.addAttribute("userAlbums", albumFacade.findByOwner(loggedInUserOpt.get()));
 //        }
 //        return "detail";
 //    }

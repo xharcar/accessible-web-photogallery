@@ -16,33 +16,33 @@ import javax.persistence.*;
 public class AlbumEntity {
 
     @Id
-    @Column(length = 24, unique = true, nullable = false)
+    @Column(length = 16, unique = true, nullable = false)
     private String id;
 
     @ManyToOne
     @JoinColumn(name = "uploader_id", nullable = false)
-    private UserEntity albumOwner;
+    private UserEntity owner;
 
     @Column(length = 128) // if photos can have 128 characters...
-    private String albumName;
+    private String name;
 
     public AlbumEntity() {
     }
 
-    public UserEntity getAlbumOwner() {
-        return albumOwner;
+    public UserEntity getOwner() {
+        return owner;
     }
 
-    public void setAlbumOwner(UserEntity albumOwner) {
-        this.albumOwner = albumOwner;
+    public void setOwner(UserEntity owner) {
+        this.owner = owner;
     }
 
-    public String getAlbumName() {
-        return albumName;
+    public String getName() {
+        return name;
     }
 
-    public void setAlbumName(String albumName) {
-        this.albumName = albumName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getId() {
@@ -71,8 +71,8 @@ public class AlbumEntity {
     public String toString() {
         return "AlbumEntity{" +
                 "id=" + id +
-                ", albumOwner=" + albumOwner +
-                ", albumName='" + albumName + '\'' +
+                ", owner=" + owner +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

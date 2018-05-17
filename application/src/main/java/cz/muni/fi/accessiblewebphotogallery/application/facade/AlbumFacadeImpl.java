@@ -30,8 +30,8 @@ public class AlbumFacadeImpl implements AlbumFacade {
     }
 
     @Override
-    public List<AlbumDto> findByAlbumOwner(UserDto owner) {
-        return albumService.findByAlbumOwner(userDtoToEntity(owner)).stream().map(this::albumToDto).collect(Collectors.toList());
+    public List<AlbumDto> findByOwner(UserDto owner) {
+        return albumService.findByOwner(userDtoToEntity(owner)).stream().map(this::albumToDto).collect(Collectors.toList());
     }
 
     @Override

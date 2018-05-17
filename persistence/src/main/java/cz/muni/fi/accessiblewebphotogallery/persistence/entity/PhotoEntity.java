@@ -229,6 +229,8 @@ public class PhotoEntity {
         PhotoEntity that = (PhotoEntity) o;
         return Objects.equals(id, that.id);
         // no other element needed due to aforementioned b64ID generation strategy
+        // since switching ID this goes against the principle of business equals, but... it just _works_
+
     }
 
     @Override
@@ -239,17 +241,18 @@ public class PhotoEntity {
     @Override
     public String toString() {
         return "PhotoEntity{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", uploader=" + uploader +
                 ", uploadTime=" + uploadTime +
-                ", imageHash=" + Objects.toString(id) +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
                 ", cameraLatitude=" + cameraLatitude +
                 ", cameraLongitude=" + cameraLongitude +
                 ", cameraAzimuth=" + cameraAzimuth +
                 ", positionAccuracy=" + positionAccuracy +
-                ", cameraHorizontalFOV=" + cameraFOV +
+                ", cameraFOV=" + cameraFOV +
                 ", datetimeTaken=" + datetimeTaken +
-                ", cameraModel='" + cameraModel +
+                ", cameraModel='" + cameraModel + '\'' +
                 ", imageWidth=" + imageWidth +
                 ", imageHeight=" + imageHeight +
                 ", iso=" + iso +

@@ -14,10 +14,11 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 @Service
 public class BuildingInfoServiceImpl implements BuildingInfoService {
@@ -25,7 +26,10 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
 
     private static final Logger log = LogManager.getLogger(BuildingInfoServiceImpl.class);
     private BuildingInfoDao infoDao;
-    private double EPSILON = 0.0000025;
+    private static final double EPSILON = 0.0000025;
+    private MessageDigest hasher;
+    private Base64.Encoder enc;
+    private Random rng;
     // 7 digits of precision in OSM GPS coordinates(https://wiki.openstreetmap.org/wiki/Node) allows ~6mm precision;
     // looking up GPS coordinates within 5e-6 degrees(30 cm) of the given coordinates
     // is therefore still meaningful in case of eg. rounding errors; 30 cm won't be enough to retrieve another
@@ -34,6 +38,9 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     @Autowired
     public BuildingInfoServiceImpl(BuildingInfoDao infoDao) {
         this.infoDao = infoDao;
+        enc = Base64.getUrlEncoder();
+        rng = new Random();
+        hasher = null;
     }
 
     @Override
@@ -64,6 +71,16 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     @Override
     public List<BuildingInfo> registerBuildings(Map<JsonObject, JsonObject> buildingMap, JsonObject camData, PhotoEntity photo) {
         Validate.notNull(camData);
+        if (hasher == null) {
+            try {
+                hasher = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException nsae) {
+                log.catching(nsae);
+                log.error(nsae.getMessage());
+                log.error("BuildingInfoService could not obtain an MD5 MessageDigest instance.");
+                return null;
+            }
+        }
         List<BuildingInfo> rv = new ArrayList<>();
         Pair<Double, Double> cameraGPS = Pair.of(camData.get("latitude").getAsDouble(), camData.get("longitude").getAsDouble());
         double azimuth = camData.get("azimuth").getAsDouble();
@@ -76,21 +93,22 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
         int photoRightBound = new BigInteger(String.valueOf(azimuthInt + (hFOVInt / 2))).mod(threeSixty).intValue();
         // prefer Nominatim data, as based on given samples, AssistiveCamera data may be inaccurate
         for (JsonObject k : buildingMap.keySet()) {
+            List<ByteBuffer> hashData = new ArrayList<>();
             JsonObject v = buildingMap.get(k);
             BuildingInfo newInfo = new BuildingInfo();
             newInfo.setPhoto(photo);
+            hashData.add(ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(photo.hashCode()));
             if (v != null && v.has("osm_id")) {
                 newInfo.setOsmId(v.get("osm_id").getAsLong());
             } else {
                 newInfo.setOsmId(-1L);
             }
-
+            hashData.add(ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong(newInfo.getOsmId()));
             if (k.has("distance")) {
                 newInfo.setDistance(k.get("distance").getAsInt());
             } else {
                 newInfo.setDistance(-1);
             }
-
             if (v != null && v.has("display_name")) {
                 String s = v.get("display_name").getAsString();
                 newInfo.setBuildingName(s);
@@ -103,7 +121,6 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
                 newInfo.setBuildingName(null);
                 newInfo.setFocusText(null);
             }
-
             if (v != null && v.has("lat")) {
                 newInfo.setLatitude(v.get("lat").getAsDouble());
             } else if (k.has("latitude")) {
@@ -111,7 +128,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
             } else {
                 newInfo.setLatitude(0);
             }
-
+            hashData.add(ByteBuffer.allocate(8).putDouble(newInfo.getLatitude()));
             if (v != null && v.has("lon")) {
                 newInfo.setLongitude(v.get("lon").getAsDouble());
             } else if (k.has("longitude")) {
@@ -119,7 +136,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
             } else {
                 newInfo.setLongitude(0);
             }
-
+            hashData.add(ByteBuffer.allocate(8).putDouble(newInfo.getLongitude()));
             if (v == null || !v.has("boundingbox")) {
                 newInfo.setPhotoMinX(-1);
                 newInfo.setPhotoMaxX(-1);
@@ -174,6 +191,12 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
                     leftBoundInPhoto = (int) Math.round(bearingPhotoEnd * photo.getImageWidth());
                 }
                 newInfo.setPhotoMaxX(leftBoundInPhoto);
+                String base64;
+                do{
+                    hashData.add(ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(rng.nextInt()));
+                    base64 = computeBase64(hashData);
+                }while (infoDao.findById(base64).isPresent());
+                newInfo.setId(base64);
                 rv.add(infoDao.save(newInfo));
             }
         }
@@ -230,11 +253,21 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     }
 
     private boolean isPastLeftBound(int bearing, int leftBound) {
-        return leftBound - bearing >= 0 || bearing > 180 && leftBound < 180;
+        return leftBound - bearing >= 0 || (bearing > 180 && leftBound < 180);
     }
 
     private boolean isPastRightBound(int bearing, int rightBound) {
-        return bearing - rightBound >= 0 || bearing < 180 && rightBound > 180;
+        return bearing - rightBound >= 0 || (bearing < 180 && rightBound > 180);
+    }
+
+    private String computeBase64(List<ByteBuffer> data) {
+        hasher.reset();
+        for (ByteBuffer buf : data) {
+            hasher.update(buf.array());
+        }
+        byte[] hashResult = hasher.digest();
+        byte[] dbHash = Arrays.copyOfRange(hashResult, 8, 20);
+        return enc.encodeToString(dbHash);
     }
 
 }

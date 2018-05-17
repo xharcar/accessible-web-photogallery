@@ -48,8 +48,8 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumEntity> findByAlbumOwner(UserEntity owner) {
-        return albumDao.findByAlbumOwner(owner);
+    public List<AlbumEntity> findByOwner(UserEntity owner) {
+        return albumDao.findByOwner(owner);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class AlbumServiceImpl implements AlbumService {
             } catch (NoSuchAlgorithmException e) {
                 log.catching(e);
                 log.error(e.getMessage());
-                log.error("Could not obtain a MessageDigest instance. Aborting.");
+                log.error("AlbumService could not obtain a MessageDigest instance. Aborting.");
                 return null;
             }
         }
@@ -84,8 +84,8 @@ public class AlbumServiceImpl implements AlbumService {
             base64 = computeBase64(toHash);
         } while (albumDao.findById(base64).isPresent());
         AlbumEntity toSave = new AlbumEntity();
-        toSave.setAlbumName(albumName);
-        toSave.setAlbumOwner(user);
+        toSave.setName(albumName);
+        toSave.setOwner(user);
         toSave.setId(base64);
         File albumFile = new File(albumDir, base64 + ".txt");
         try {
@@ -199,7 +199,7 @@ public class AlbumServiceImpl implements AlbumService {
             hasher.update(buf.array());
         }
         byte[] hashResult = hasher.digest();
-        byte[] dbHash = Arrays.copyOfRange(hashResult, 1, 16);
+        byte[] dbHash = Arrays.copyOfRange(hashResult, 8, 20);
         return enc.encodeToString(dbHash);
     }
 }

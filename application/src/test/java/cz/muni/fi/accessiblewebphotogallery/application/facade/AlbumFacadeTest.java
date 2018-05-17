@@ -54,11 +54,11 @@ public class AlbumFacadeTest {
     @Test
     public void findAllTest() {
         AlbumDto a1 = new AlbumDto();
-        a1.setAlbumOwner(defaultUser);
+        a1.setOwner(defaultUser);
         a1.setAlbumName("Album 1");
         a1.setId("thisisab64id");
         AlbumDto a2 = new AlbumDto();
-        a2.setAlbumOwner(defaultUser);
+        a2.setOwner(defaultUser);
         a2.setAlbumName("Album 2");
         a2.setId("anotherb64id");
 
@@ -74,7 +74,7 @@ public class AlbumFacadeTest {
     }
 
     @Test
-    public void findByAlbumOwnerTest() {
+    public void findByownerTest() {
         UserDto u2 = new UserDto();
         u2.setEmail("skmtm@email.org");
         u2.setScreenName("Sakamoto Mio");
@@ -82,24 +82,24 @@ public class AlbumFacadeTest {
         u2.setLoginName("skmtm");
         u2.setBio("Consectetuer adipiscing elit.");
         AlbumDto a1 = new AlbumDto();
-        a1.setAlbumOwner(defaultUser);
+        a1.setOwner(defaultUser);
         a1.setAlbumName("Album 1");
         a1.setId("thisisab64id");
         AlbumDto a2 = new AlbumDto();
-        a2.setAlbumOwner(defaultUser);
+        a2.setOwner(defaultUser);
         a2.setAlbumName("Album 2");
         a2.setId("anotherb64id");
         AlbumDto a3 = new AlbumDto();
-        a3.setAlbumOwner(u2);
+        a3.setOwner(u2);
         a3.setAlbumName("Album 3");
         a3.setId("b64idnumber3");
 
         List<AlbumDto> albumList = new ArrayList<>();
         albumList.add(a1);
         albumList.add(a2);
-        when(albumServiceMock.findByAlbumOwner(userDtoToEntity(defaultUser))).thenReturn(albumList.stream().map(this::albumDtoToEntity).collect(Collectors.toList()));
+        when(albumServiceMock.findByOwner(userDtoToEntity(defaultUser))).thenReturn(albumList.stream().map(this::albumDtoToEntity).collect(Collectors.toList()));
 
-        List<AlbumDto> result = albumFacade.findByAlbumOwner(defaultUser);
+        List<AlbumDto> result = albumFacade.findByOwner(defaultUser);
 
         assertNotNull(result);
         assertEquals(albumList, result);
