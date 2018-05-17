@@ -26,14 +26,14 @@ public class BuildingInfo {
     @JoinColumn(name = "photo_id", nullable = false)
     private PhotoEntity photo;
 
-    @Column(nullable = false)
+    @Column(name = "osm_id", nullable = false)
     private Long osmId = -1L; // -1L serves as "unknown/not found"
     // OSM uses 64-bit (presumably signed) integers for IDs
 
     @Column(nullable = false)
     private int distance;
 
-    @Column(nullable = true, length = 192)
+    @Column(name = "building_name", nullable = true, length = 192)
     // According to Guinness World Records, the longest place name is the official Thai name for Bangkok,
     // transcribed into Latin script, at 176~187 incl. spaces - therefore 192 characters should do
     // (as long as nobody breaks it- to whom it may concern: please don't)
@@ -45,21 +45,21 @@ public class BuildingInfo {
     However, if the info is unavailable for whatever reason,
     Null Island (GPS coordinates {0.0;0.0} will have to do...
     */
-    @Column(nullable = false, precision = 7)// according to OSM wiki, 7 digits of precision are used
+    @Column(nullable = false, precision = 10)// according to OSM wiki, 7 digits of precision are used
     private double latitude;
 
-    @Column(nullable = false, precision = 7)
+    @Column(nullable = false, precision = 10)
     private double longitude;
 
     //minX, maxX - approximate horizontal bounds of a building in the photo
-    @Column(nullable = false)
-    private int photoMinX;
+    @Column(name = "photo_left", nullable = false)
+    private int leftBoundInPhoto;
 
-    @Column(nullable = false)
+    @Column(name = "photo_right", nullable = false)
     private int photoMaxX;
 
     // text to be displayed on mouseover/focus
-    @Column(nullable = true, length = 384)
+    @Column(name = "focus_text", nullable = true, length = 384)
     private String focusText;
 
     public BuildingInfo() {
@@ -121,12 +121,12 @@ public class BuildingInfo {
         this.longitude = longitude;
     }
 
-    public int getPhotoMinX() {
-        return photoMinX;
+    public int getLeftBoundInPhoto() {
+        return leftBoundInPhoto;
     }
 
-    public void setPhotoMinX(int photoMinX) {
-        this.photoMinX = photoMinX;
+    public void setLeftBoundInPhoto(int leftBoundInPhoto) {
+        this.leftBoundInPhoto = leftBoundInPhoto;
     }
 
     public int getPhotoMaxX() {
@@ -175,7 +175,7 @@ public class BuildingInfo {
                 ", buildingName='" + buildingName + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", photoMinX=" + photoMinX +
+                ", leftBoundInPhoto=" + leftBoundInPhoto +
                 ", photoMaxX=" + photoMaxX +
                 '}';
     }

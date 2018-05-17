@@ -92,7 +92,7 @@ public class PhotoGalleryBackendMapper {
         rv.setBuildingName(entity.getBuildingName());
         rv.setLatitude(entity.getLatitude());
         rv.setLongitude(entity.getLongitude());
-        rv.setPhotoMinX(entity.getPhotoMinX());
+        rv.setPhotoMinX(entity.getLeftBoundInPhoto());
         rv.setPhotoMaxX(entity.getPhotoMaxX());
         rv.setFocusText(entity.getFocusText());
         return rv;
@@ -107,7 +107,7 @@ public class PhotoGalleryBackendMapper {
         rv.setBuildingName(dto.getBuildingName());
         rv.setLatitude(dto.getLatitude());
         rv.setLongitude(dto.getLongitude());
-        rv.setPhotoMinX(dto.getPhotoMinX());
+        rv.setLeftBoundInPhoto(dto.getPhotoMinX());
         rv.setPhotoMaxX(dto.getPhotoMaxX());
         rv.setFocusText(dto.getFocusText());
         return rv;

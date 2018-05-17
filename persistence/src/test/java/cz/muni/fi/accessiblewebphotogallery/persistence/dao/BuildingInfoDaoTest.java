@@ -157,7 +157,7 @@ public class BuildingInfoDaoTest {
         rv.setLatitude(33.98327415);
         rv.setLongitude(49.32108745);
         rv.setPhotoMaxX(1024);
-        rv.setPhotoMinX(32);
+        rv.setLeftBoundInPhoto(32);
         rv.setOsmId(256L);
         return rv;
     }

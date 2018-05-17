@@ -86,7 +86,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
-        info1.setPhotoMinX(0);
+        info1.setLeftBoundInPhoto(0);
         info1.setPhotoMaxX(460);
         info1.setDistance(125);
         info1.setLatitude(48.35);
@@ -94,7 +94,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info2 = new BuildingInfo();
         info2.setOsmId(2L);
         info2.setPhoto(p2);
-        info2.setPhotoMinX(134);
+        info2.setLeftBoundInPhoto(134);
         info2.setPhotoMaxX(1045);
         info2.setDistance(210);
         info2.setLatitude(32.81);
@@ -115,7 +115,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
-        info1.setPhotoMinX(0);
+        info1.setLeftBoundInPhoto(0);
         info1.setPhotoMaxX(460);
         info1.setDistance(125);
         info1.setLatitude(48.35);
@@ -123,7 +123,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info2 = new BuildingInfo();
         info2.setOsmId(2L);
         info2.setPhoto(p2);
-        info2.setPhotoMinX(134);
+        info2.setLeftBoundInPhoto(134);
         info2.setPhotoMaxX(1045);
         info2.setDistance(210);
         info2.setLatitude(32.81);
@@ -143,7 +143,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
-        info1.setPhotoMinX(0);
+        info1.setLeftBoundInPhoto(0);
         info1.setPhotoMaxX(460);
         info1.setDistance(125);
         info1.setLatitude(48.35);
@@ -152,7 +152,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info2 = new BuildingInfo();
         info2.setOsmId(2L);
         info2.setPhoto(p2);
-        info2.setPhotoMinX(134);
+        info2.setLeftBoundInPhoto(134);
         info2.setPhotoMaxX(1045);
         info2.setDistance(210);
         info2.setLatitude(32.81);
@@ -172,7 +172,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
-        info1.setPhotoMinX(0);
+        info1.setLeftBoundInPhoto(0);
         info1.setPhotoMaxX(460);
         info1.setDistance(125);
         info1.setLatitude(48.35);
@@ -180,7 +180,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info2 = new BuildingInfo();
         info2.setOsmId(2L);
         info2.setPhoto(p2);
-        info2.setPhotoMinX(134);
+        info2.setLeftBoundInPhoto(134);
         info2.setPhotoMaxX(1045);
         info2.setDistance(210);
         info2.setLatitude(32.81);
@@ -200,7 +200,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
-        info1.setPhotoMinX(0);
+        info1.setLeftBoundInPhoto(0);
         info1.setPhotoMaxX(460);
         info1.setDistance(125);
         info1.setLatitude(48.35);
@@ -208,7 +208,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info2 = new BuildingInfo();
         info2.setOsmId(2L);
         info2.setPhoto(p2);
-        info2.setPhotoMinX(134);
+        info2.setLeftBoundInPhoto(134);
         info2.setPhotoMaxX(1045);
         info2.setDistance(210);
         info2.setLatitude(32.81);
@@ -296,7 +296,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info1 = new BuildingInfo();
         info1.setOsmId(1L);
         info1.setPhoto(p1);
-        info1.setPhotoMinX(0);
+        info1.setLeftBoundInPhoto(0);
         info1.setPhotoMaxX(460);
         info1.setDistance(125);
         info1.setLatitude(48.35);
@@ -304,7 +304,7 @@ public class BuildingInfoServiceTest {
         BuildingInfo info2 = new BuildingInfo();
         info2.setOsmId(1L);
         info2.setPhoto(p1);
-        info2.setPhotoMinX(134);
+        info2.setLeftBoundInPhoto(134);
         info2.setPhotoMaxX(1045);
         info2.setDistance(210);
         info2.setLatitude(48.35);

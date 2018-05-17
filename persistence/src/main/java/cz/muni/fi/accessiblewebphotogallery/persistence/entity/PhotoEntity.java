@@ -31,45 +31,45 @@ public class PhotoEntity {
      */
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @JoinColumn(name = "uploader_id", nullable = false, updatable = false)
     private UserEntity uploader;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "upload_time",nullable = false, updatable = false)
     private Instant uploadTime;
 
     @Column(nullable = false, length = 128) // 128 characters should be enough for a title (YouTube has 100)
     private String title;
 
-    @Column(nullable = false, length = 2048) // 2048 characters should be plenty for a nice description
+    @Column(length = 2048) // 2048 characters should be plenty for a nice description
     private String description;
 
     // camera info - nullable for when no JSON metadata file is uploaded
-    @Column(nullable = true, precision = 10)
+    @Column(name = "cam_lat", nullable = true, precision = 10)
     private Double cameraLatitude;
 
-    @Column(nullable = true, precision = 10)
+    @Column(name = "cam_lon", nullable = true, precision = 10)
     private Double cameraLongitude;
 
-    @Column(nullable = true, precision = 1)
+    @Column(name = "cam_az", nullable = true, precision = 4)
     private Double cameraAzimuth;
 
-    @Column(nullable = true, precision = 1)
+    @Column(name = "pos_acc", nullable = true, precision = 4)
     private Double positionAccuracy;
 
-    @Column(nullable = true, precision = 2)
+    @Column(name = "cam_fov", nullable = true, precision = 5)
     private Double cameraFOV;
 
     // Some basic EXIF metadata- all non-mandatory- will be considered null for storage purposes if not present
-    @Column(nullable = true)
+    @Column(name = "taken", nullable = true)
     private LocalDateTime datetimeTaken; // EXIF has up to minute precision
 
-    @Column(nullable = true, length = 96)
+    @Column(name = "cam_model", nullable = true, length = 96)
     private String cameraModel;
 
-    @Column(nullable = true)
+    @Column(name = "width", nullable = true)
     private Integer imageWidth;
 
-    @Column(nullable = true)
+    @Column(name = "height", nullable = true)
     private Integer imageHeight;
 
     @Column(nullable = true)
@@ -78,7 +78,7 @@ public class PhotoEntity {
     @Column(nullable = true)
     private Boolean flash;
 
-    @Column(nullable = true)
+    @Column(name = "exp_time", nullable = true, precision = 5)
     private Double exposureTime;
     // </EXIF>
 

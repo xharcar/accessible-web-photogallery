@@ -20,7 +20,7 @@ public class AlbumEntity {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "uploader_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private UserEntity owner;
 
     @Column(length = 128) // if photos can have 128 characters...

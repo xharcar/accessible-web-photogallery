@@ -138,7 +138,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
             }
             hashData.add(ByteBuffer.allocate(8).putDouble(newInfo.getLongitude()));
             if (v == null || !v.has("boundingbox")) {
-                newInfo.setPhotoMinX(-1);
+                newInfo.setLeftBoundInPhoto(-1);
                 newInfo.setPhotoMaxX(-1);
                 rv.add(infoDao.save(newInfo));
             } else {
@@ -180,7 +180,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
                     // how far, in ratio, into the photo the building 'starts'
                     leftBoundInPhoto = (int) Math.round(bearingPhotoStart * photo.getImageWidth());
                 }
-                newInfo.setPhotoMinX(leftBoundInPhoto);
+                newInfo.setLeftBoundInPhoto(leftBoundInPhoto);
                 if (isPastRightBound(bearings[2], photoRightBound)) {
                     rightBoundInPhoto = photo.getImageWidth();
                 } else {
