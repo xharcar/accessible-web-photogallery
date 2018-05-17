@@ -1,31 +1,30 @@
 package cz.muni.fi.accessiblewebphotogallery.application;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Objects;
 
 @Component
 @Configuration
+@EnableConfigurationProperties
 @ComponentScan(basePackages = {"cz.muni.fi.accessiblewebphotogallery.application.service","cz.muni.fi.accessiblewebphotogallery.persistence"})
 @PropertySource("/application.properties")
 @ConfigurationProperties
 public class ApplicationConfig {
-/*
-File placement- the idea is for this to be able to change depending on OS and user preference
-default is (user home directory)/photogallery as {root}, {root}/photos for photos and metadata files
-(one directory per photo with dir name == photo base64id (see PhotoEntity.java)),
-{root}/albums/(album Base-64 ID).txt for albums;
-if empty, assumed default
-*/
-    private String rootDBDirectorySetting = "default";
-    private String photoDirectorySetting = "default";
-    private String albumDirectorySetting = "default";
+
+    @Autowired
+    private Environment environment;
 
     public String getRootDBDirectory() {
+        String rootDBDirectorySetting = Objects.requireNonNull(environment.getProperty("rootdir"));
         if (rootDBDirectorySetting.equalsIgnoreCase("default")
                 || rootDBDirectorySetting.isEmpty()) {
             return System.getProperty("user.home");
@@ -34,6 +33,7 @@ if empty, assumed default
     }
 
     public String getPhotoDirectory() {
+        String photoDirectorySetting = Objects.requireNonNull(environment.getProperty("photodir"));
         if (photoDirectorySetting.equalsIgnoreCase("default")
                 || photoDirectorySetting.isEmpty()) {
             return getRootDBDirectory() + File.separator + "photos";
@@ -42,6 +42,7 @@ if empty, assumed default
     }
 
     public String getAlbumDirectory() {
+        String albumDirectorySetting = Objects.requireNonNull(environment.getProperty("albumdir"));
         if (albumDirectorySetting.equalsIgnoreCase("default")
                 || albumDirectorySetting.isEmpty()) {
             return getRootDBDirectory() + File.separator + "albums";

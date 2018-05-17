@@ -34,10 +34,6 @@ public class DatabaseConfig {
     private Environment environment;
 
 
-    private final String dialect = "org.hibernate.dialect.PostgreSQLDialect";
-    private final String hbm2ddlAuto = "create-drop";
-
-
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean rv = new LocalContainerEntityManagerFactoryBean();
