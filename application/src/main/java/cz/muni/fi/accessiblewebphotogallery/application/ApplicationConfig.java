@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.Objects;
 
 @Component
 @Configuration
@@ -24,27 +23,27 @@ public class ApplicationConfig {
     private Environment environment;
 
     public String getRootDBDirectory() {
-        String rootDBDirectorySetting = Objects.requireNonNull(environment.getProperty("rootdir"));
-        if (rootDBDirectorySetting.equalsIgnoreCase("default")
-                || rootDBDirectorySetting.isEmpty()) {
+        String rootDBDirectorySetting = environment.getProperty("rootdir");
+        if (rootDBDirectorySetting == null || rootDBDirectorySetting.isEmpty()
+                || rootDBDirectorySetting.equalsIgnoreCase("default")) {
             return System.getProperty("user.home");
         }
         return rootDBDirectorySetting;
     }
 
     public String getPhotoDirectory() {
-        String photoDirectorySetting = Objects.requireNonNull(environment.getProperty("photodir"));
-        if (photoDirectorySetting.equalsIgnoreCase("default")
-                || photoDirectorySetting.isEmpty()) {
+        String photoDirectorySetting = environment.getProperty("photodir");
+        if (photoDirectorySetting == null || photoDirectorySetting.isEmpty()
+                || photoDirectorySetting.equalsIgnoreCase("default")) {
             return getRootDBDirectory() + File.separator + "photos";
         }
         return photoDirectorySetting;
     }
 
     public String getAlbumDirectory() {
-        String albumDirectorySetting = Objects.requireNonNull(environment.getProperty("albumdir"));
-        if (albumDirectorySetting.equalsIgnoreCase("default")
-                || albumDirectorySetting.isEmpty()) {
+        String albumDirectorySetting = environment.getProperty("albumdir");
+        if (albumDirectorySetting == null || albumDirectorySetting.isEmpty()
+                || albumDirectorySetting.equalsIgnoreCase("default")) {
             return getRootDBDirectory() + File.separator + "albums";
         }
         return albumDirectorySetting;

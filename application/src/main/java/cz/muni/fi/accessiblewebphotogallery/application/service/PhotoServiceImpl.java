@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -59,41 +60,76 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageImpl<PhotoEntity> findByUploadTimeBetween(Instant begin, Instant end, Pageable pageable) {
-        Page<PhotoEntity> page = photoDao.findByUploadTimeBetween(begin, end, pageable);
+        Page<PhotoEntity> page = photoDao.findByUploadTimeBetweenOrderByUploadTimeDesc(begin, end, pageable);
         return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageImpl<PhotoEntity> findByUploader(UserEntity uploader, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByUploader(uploader, pageable);
         return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageImpl<PhotoEntity> findByDescriptionApx(String searchStr, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByDescriptionContainingIgnoreCase(searchStr, pageable);
         return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageImpl<PhotoEntity> findByTitleApx(String searchStr, Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findByTitleContainingIgnoreCase(searchStr, pageable);
         return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<PhotoEntity> findById(String b64id) {
         return photoDao.findById(b64id);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<PhotoEntity> findMultipleById(List<String> idList) {
+        List<PhotoEntity> rv = new ArrayList<>();
+        for(String b64:idList){
+            Optional<PhotoEntity> opt = findById(b64);
+            if(opt.isPresent()) rv.add(opt.get());
+        }
+        return rv;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public PageImpl<PhotoEntity> findNewestFirst(Pageable pageable) {
         Page<PhotoEntity> page = photoDao.findAllByOrderByUploadTimeDesc(pageable);
         return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Optional<PhotoEntity> findNextUploaded(PhotoEntity photo) {
+        Instant until = Instant.now();
+        Instant from = photo.getUploadTime().plusNanos(1);
+        // no finer temporal resolution exists in Java for now, if this doesn't do it, nothing will
+        return photoDao.findFirstByUploadTimeBetweenOrderByUploadTimeAsc(from,until);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<PhotoEntity> findPreviouslyUploaded(PhotoEntity photo) {
+        Instant from = Instant.EPOCH;
+        Instant until = photo.getUploadTime().minusNanos(1);
+        return photoDao.findFirstByUploadTimeBetweenOrderByUploadTimeDesc(from,until);
+    }
+
+    @Override
+    @Transactional
     public PhotoEntity registerPhoto(PhotoEntity entity, File photoFile, File metadataFile) {
         Validate.notNull(entity);
         Validate.notNull(photoFile);
@@ -242,11 +278,13 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
+    @Transactional
     public PhotoEntity updatePhoto(PhotoEntity photo) {
         return photoDao.save(photo);
     }
 
     @Override
+    @Transactional
     public boolean clearPhoto(PhotoEntity photo) {
         String photoId = photo.getId();
         File photoDir = new File(applicationConfig.getPhotoDirectory());
@@ -295,6 +333,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
+    @Transactional
     public void deletePhoto(PhotoEntity photo) {
         photoDao.delete(photo);
     }

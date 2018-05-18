@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cz.muni.fi</groupId>
-    <artifactId>accessible-web-photogallery</artifactId>
+    <artifactId>accessiblewebphotogallery</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>accessible-web-photogallery</name>
+    <name>accessiblewebphotogallery</name>
     <description>Demo project for Spring Boot</description>
 
     <parent>

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -61,6 +62,14 @@ public interface PhotoService {
     Optional<PhotoEntity> findById(String b64id);
 
     /**
+     * Convenience method for retrieving multiple photos at the same time
+     * (should be optimizable into one query in theory)
+     * @param idList List of photo identifiers we're looking for
+     * @return List containing all the photos that were found with identifiers contained in idList
+     */
+    List<PhotoEntity> findMultipleById(List<String> idList);
+
+    /**
      * Retrieves all photos, sorted by upload time descending
      *
      * @param pageable Pageable instance containing the required pagination information
@@ -68,6 +77,20 @@ public interface PhotoService {
      * (ie. most recent first)
      */
     PageImpl<PhotoEntity> findNewestFirst(Pageable pageable);
+
+    /**
+     * Retrieves the photo uploaded after the given one
+     * @param photo photo whose upload successor we want
+     * @return Optional with photo uploaded right after photo, or empty if none such exists (ie. photo is the latest)
+     */
+    Optional<PhotoEntity> findNextUploaded(PhotoEntity photo);
+
+    /**
+     * Retrieves the photo uploaded before the given one
+     * @param photo photo whose upload predecessor we want
+     * @return Optional with photo uploaded right before photo, or empty if none such exists (ie. photo is the first upload)
+     */
+    Optional<PhotoEntity> findPreviouslyUploaded(PhotoEntity photo);
 
     /**
      * Registers a PhotoEntity in the DB

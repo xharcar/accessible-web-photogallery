@@ -8,8 +8,6 @@ public class BuildingInfoDto {
 
     private String id;
 
-    private PhotoDto photo;
-
     private Long osmId;
 
     private Integer distance;
@@ -35,14 +33,6 @@ public class BuildingInfoDto {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public PhotoDto getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(PhotoDto photo) {
-        this.photo = photo;
     }
 
     public Long getOsmId() {
@@ -129,7 +119,6 @@ public class BuildingInfoDto {
     public String toString() {
         return "BuildingInfoDto{" +
                 "id=" + id +
-                ", photo=" + photo +
                 ", distance=" + distance +
                 ", buildingName='" + buildingName + '\'' +
                 ", latitude=" + latitude +

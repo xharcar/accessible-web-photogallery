@@ -1,7 +1,10 @@
 package cz.muni.fi.accessiblewebphotogallery.controller;
 
-import cz.muni.fi.accessiblewebphotogallery.persistence.dao.UserDao;
-import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
+import cz.muni.fi.accessiblewebphotogallery.application.ApplicationConfig;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.AlbumFacade;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.PhotoFacade;
+import cz.muni.fi.accessiblewebphotogallery.facade.facade.UserFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,33 +17,25 @@ import java.util.List;
 public class HomeController {
 
     @Autowired
-    private UserDao userDao;
-
+    private UserFacade userFacade;
+    @Autowired
+    private PhotoFacade photoFacade;
+    @Autowired
+    private AlbumFacade albumFacade;
+    @Autowired
+    private ApplicationConfig applicationConfig;
 
     @RequestMapping({"/","/home","/index","/hello","/dummy"})
     public String home(Model model){
         model.addAttribute("msg","Sample Text");
         model.addAttribute("ttl","Minimum demo page");
         model.addAttribute("lenna", "https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/220px-Lenna_%28test_image%29.png");
-        List<UserEntity> userEntityList = userDao.findAll();
+        List<UserDto> userEntityList = userFacade.findAll();
         System.out.println("Users found: \n" + userEntityList);
         model.addAttribute("users", userEntityList);
         return "dummy";
     }
 
-
-
-
-//    @Autowired
-//    private UserFacade userFacade;
-//    @Autowired
-//    private PhotoFacade photoFacade;
-//    @Autowired
-//    private BuildingInfoFacade buildingFacade;
-//    @Autowired
-//    private AlbumFacade albumFacade;
-//    @Autowired
-//    private ApplicationConfig applicationConfig;
 
 //    private static final Logger log = LogManager.getLogger(HomeController.class);
 //
@@ -74,7 +69,7 @@ public class HomeController {
 //
 //    @RequestMapping("/browse")
 //    public String browse(Model model, @RequestParam(name = "page", defaultValue = "1") Integer pageNr) {
-//        PageImpl<PhotoDto> photoDtoPage = photoFacade.findNewestFirst(PageRequest.of(pageNr - 1, 10));
+//        PageImpl<PhotoDto> photoDtoPage = photoFacade.findNewestPhotosFirst(PageRequest.of(pageNr - 1, 10));
 //        PageImpl<PhotoPto> photoPtoPage = new PageImpl<>(photoDtoPage.getContent().stream().map(PhotoGalleryFrontendMapper::photoDtoToPto).collect(Collectors.toList()), photoDtoPage.getPageable(), photoDtoPage.getTotalElements());
 //        List<String> Ids = new ArrayList<>();
 //        for (int i = 0; i < photoDtoPage.getContent().size(); i++) {
@@ -92,12 +87,12 @@ public class HomeController {
 //
 //    @RequestMapping("/browse/user/{userId}")
 //    public String browseByUser(Model model, @PathVariable("userId") Long userId, @RequestParam(name = "page", defaultValue = "1") Integer pageNr) {
-//        Optional<UserDto> uploaderOpt = userFacade.findById(userId);
+//        Optional<UserDto> uploaderOpt = userFacade.findAlbumById(userId);
 //        if (!uploaderOpt.isPresent()) {
 //            throw new IllegalStateException("User with ID " + userId + " supposed to exist but not found.");
 //        }
 //        PageRequest pageRq = PageRequest.of(pageNr - 1, 10);
-//        PageImpl<PhotoDto> photoDtoPage = photoFacade.findByUploader(uploaderOpt.get(), pageRq);
+//        PageImpl<PhotoDto> photoDtoPage = photoFacade.findPhotosByUploader(uploaderOpt.get(), pageRq);
 //        PageImpl<PhotoPto> photoPtoPage = new PageImpl<>(photoDtoPage.getContent().stream().map(PhotoGalleryFrontendMapper::photoDtoToPto).collect(Collectors.toList()), pageRq, photoDtoPage.getTotalElements());
 //        List<String> thumbnailPathList = new ArrayList<>();
 //        File photoDir = new File(applicationConfig.getPhotoDirectory());
@@ -111,7 +106,7 @@ public class HomeController {
 //
 //    @RequestMapping("/detail/{base64}")
 //    public String photoDetail(@PathVariable("base64") String Id, Model model) {
-//        Optional<PhotoDto> photoDtoOpt = photoFacade.findById(Id);
+//        Optional<PhotoDto> photoDtoOpt = photoFacade.findAlbumById(Id);
 //        if (!photoDtoOpt.isPresent()) {
 //            throw new IllegalArgumentException("Photo with Base-64 ID " + Id + " not found.");
 //        }
@@ -130,9 +125,9 @@ public class HomeController {
 ////            throw new Exception("File list supposed to contain just photo file contains more, not supposed to happen.");
 ////        } // might use this for extended error control if necessary but doesn't seem so at the moment
 //        String photoFilePath = fileList[0].getAbsolutePath();
-//        List<BuildingInfoDto> buildingDtos = buildingFacade.findByPhoto(photoDtoOpt.get());
-//        Optional<PhotoDto> nextPhotoChronoOpt = photoFacade.findById(photoDtoOpt.get().getId() + 1);
-//        Optional<PhotoDto> prevPhotoChronoOpt = photoFacade.findById(photoDtoOpt.get().getId() - 1);
+//        List<BuildingInfoDto> buildingDtos = buildingFacade.findBuildingsInPhoto(photoDtoOpt.get());
+//        Optional<PhotoDto> nextPhotoChronoOpt = photoFacade.findAlbumById(photoDtoOpt.get().getId() + 1);
+//        Optional<PhotoDto> prevPhotoChronoOpt = photoFacade.findAlbumById(photoDtoOpt.get().getId() - 1);
 //        if (!nextPhotoChronoOpt.isPresent()) {
 //            throw new IllegalStateException("Next chronological photo entry does not exist.");
 //            // may not work, need to check
@@ -156,7 +151,7 @@ public class HomeController {
 //            if (!loggedInUserOpt.isPresent()) {
 //                throw new IllegalStateException("User with identifier:" + loggedInUserIdent + " not found.");
 //            }
-//            model.addAttribute("userAlbums", albumFacade.findByOwner(loggedInUserOpt.get()));
+//            model.addAttribute("userAlbums", albumFacade.findAlbumsByOwner(loggedInUserOpt.get()));
 //        }
 //        return "detail";
 //    }
@@ -164,7 +159,7 @@ public class HomeController {
 //
 //    @RequestMapping("/album/{base64Album}/{albumIndex}/{base64Photo}")
 //    public String photoDetailInAlbum(@PathVariable("base64Photo") String photoId, @PathVariable("base64Album") String albumId, @PathVariable("albumIndex") Integer albumIndex, Model model) {
-//        Optional<PhotoDto> photoDtoOpt = photoFacade.findById(photoId);
+//        Optional<PhotoDto> photoDtoOpt = photoFacade.findAlbumById(photoId);
 //        if (!photoDtoOpt.isPresent()) {
 //            throw new IllegalArgumentException("Photo with Base-64 ID " + photoId + " not found.");
 //        }
@@ -179,7 +174,7 @@ public class HomeController {
 //        if (fileList == null) {
 //            throw new NullPointerException("Photo File instance couldn't be created - file list is null.");
 //        }
-//        Optional<AlbumDto> albumDtoOpt = albumFacade.findById(albumId);
+//        Optional<AlbumDto> albumDtoOpt = albumFacade.findAlbumById(albumId);
 //        if (!albumDtoOpt.isPresent()) {
 //            throw new IllegalArgumentException("Album with base-64 ID " + albumId + " not found.");
 //        }
@@ -199,7 +194,7 @@ public class HomeController {
 //        } else {
 //            nextIndex = albumIndex + 1;
 //        }
-//        List<BuildingInfoPto> buildingInfoPtos = buildingFacade.findByPhoto(photoDtoOpt.get()).stream().map(PhotoGalleryFrontendMapper::buildingDtoToPto).collect(Collectors.toList());
+//        List<BuildingInfoPto> buildingInfoPtos = buildingFacade.findBuildingsInPhoto(photoDtoOpt.get()).stream().map(PhotoGalleryFrontendMapper::buildingDtoToPto).collect(Collectors.toList());
 //        String albumPrevLink = "/album/" + albumId + "/" + prevIndex + "/" + albumPhotoList.get(prevIndex);
 //        String albumNextLink = "/album/" + albumId + "/" + nextIndex + "/" + albumPhotoList.get(nextIndex);
 //        model.addAttribute("photoPath", fileList[0].getAbsolutePath());
@@ -246,13 +241,13 @@ public class HomeController {
 //
 //    @RequestMapping(value = "/edit/{base64}", method = RequestMethod.GET)
 //    public String editPhotoGet(@PathVariable String base64, Model model) {
-//        Optional<PhotoDto> photoOpt = photoFacade.findById(base64);
+//        Optional<PhotoDto> photoOpt = photoFacade.findAlbumById(base64);
 //        if (!photoOpt.isPresent()) {
 //            log.error("Failed to retrieve photo entry with base64 ID: " + base64 + ", that is supposed to exist.");
 //            return "redirect:/browse?page=1"; // or somewhere else, I don't know...
 //            // (well, the photo entry doesn't seem to exist, better go somewhere valid, I guess...)
 //        }
-//        List<BuildingInfoDto> buildingInfoDtoList = buildingFacade.findByPhoto(photoOpt.get());
+//        List<BuildingInfoDto> buildingInfoDtoList = buildingFacade.findBuildingsInPhoto(photoOpt.get());
 //        model.addAttribute("photoPto", PhotoGalleryFrontendMapper.photoDtoToPto(photoOpt.get()));
 //        model.addAttribute("buildingList", buildingInfoDtoList.stream().map(PhotoGalleryFrontendMapper::buildingDtoToPto).collect(Collectors.toList()));
 //        model.addAttribute("selfLink", "/detail/" + base64); //for a 'clear photo' button, which then redirects back to the detail of this photo
@@ -266,11 +261,11 @@ public class HomeController {
 //            model.addAttribute("failureMessage", "Invalid input.");
 //            return "/edit/" + base64;
 //        }
-//        Optional<UserDto> uploaderOpt = userFacade.findById(photoPto.getUploader().getId());
+//        Optional<UserDto> uploaderOpt = userFacade.findAlbumById(photoPto.getUploader().getId());
 //        if (!uploaderOpt.isPresent()) {
 //            throw new IllegalStateException("Uploader for photo with base64 ID: " + base64 + " not found.");
 //        }
-//        Optional<PhotoDto> photoDtoOpt = photoFacade.findById(base64);
+//        Optional<PhotoDto> photoDtoOpt = photoFacade.findAlbumById(base64);
 //        if (!photoDtoOpt.isPresent()) {
 //            throw new IllegalStateException("Photo with base64 ID: " + base64 + "not found.");
 //        }

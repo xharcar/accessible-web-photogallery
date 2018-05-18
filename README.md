@@ -1,4 +1,4 @@
-# accessible-web-photogallery
+# accessiblewebphotogallery
 Master's thesis Java application, "Accessible web photogallery".
 
 General notes:

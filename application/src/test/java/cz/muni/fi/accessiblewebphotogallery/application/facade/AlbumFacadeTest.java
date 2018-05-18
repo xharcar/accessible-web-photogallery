@@ -67,7 +67,7 @@ public class AlbumFacadeTest {
         albumList.add(a2);
         when(albumServiceMock.findAll()).thenReturn(albumList.stream().map(this::albumDtoToEntity).collect(Collectors.toList()));
 
-        List<AlbumDto> result = albumFacade.findAll();
+        List<AlbumDto> result = albumFacade.findAllAlbums();
 
         assertNotNull(result);
         assertEquals(albumList, result);
@@ -99,7 +99,7 @@ public class AlbumFacadeTest {
         albumList.add(a2);
         when(albumServiceMock.findByOwner(userDtoToEntity(defaultUser))).thenReturn(albumList.stream().map(this::albumDtoToEntity).collect(Collectors.toList()));
 
-        List<AlbumDto> result = albumFacade.findByOwner(defaultUser);
+        List<AlbumDto> result = albumFacade.findAlbumsByOwner(defaultUser);
 
         assertNotNull(result);
         assertEquals(albumList, result);

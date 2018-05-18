@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,16 +44,19 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AlbumEntity> findAll() {
         return albumDao.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AlbumEntity> findByOwner(UserEntity owner) {
         return albumDao.findByOwner(owner);
     }
 
     @Override
+    @Transactional
     public AlbumEntity createAlbum(UserEntity user, String albumName) {
         Validate.notNull(user);
         Validate.notNull(albumName);
@@ -104,11 +108,19 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public AlbumEntity updateAlbum(AlbumEntity album) {
         return albumDao.save(album);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Optional<AlbumEntity> findById(String base64) {
+        return albumDao.findById(base64);
+    }
+
+    @Override
+    @Transactional
     public void deleteAlbum(AlbumEntity album) {
         File albumFile = new File(config.getAlbumDirectory() + File.separator + album.getId() + ".txt");
         try {
@@ -186,11 +198,6 @@ public class AlbumServiceImpl implements AlbumService {
             return null;
         }
         return photoList;
-    }
-
-    @Override
-    public Optional<AlbumEntity> findById(String base64) {
-        return albumDao.findById(base64);
     }
 
     private String computeBase64(List<ByteBuffer> data) {

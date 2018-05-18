@@ -28,7 +28,7 @@
 //
 //    @RequestMapping("/building")
 //    public String findPhotosByBuilding(Model model, @RequestParam(name = "osmId") Long osmId) {
-//        List<BuildingInfoDto> buildingDtoList = buildingFacade.findByOsmId(osmId);
+//        List<BuildingInfoDto> buildingDtoList = buildingFacade.findBuildingsByOsmId(osmId);
 //        List<PhotoDto> photoDtoList = new ArrayList<>();
 //        for (BuildingInfoDto x : buildingDtoList) {
 //            photoDtoList.add(x.getPhoto());
@@ -46,7 +46,7 @@
 //
 //    @RequestMapping("/building")
 //    public String findPhotosByBuildingName(Model model, @RequestParam(name = "buildingName") String buildingName) {
-//        List<BuildingInfoDto> buildingDtoList = buildingFacade.findByBuildingNameApx(buildingName);
+//        List<BuildingInfoDto> buildingDtoList = buildingFacade.findBuildingsByNameApx(buildingName);
 //        List<PhotoDto> photoDtoList = new ArrayList<>();
 //        for (BuildingInfoDto x : buildingDtoList) {
 //            photoDtoList.add(x.getPhoto());

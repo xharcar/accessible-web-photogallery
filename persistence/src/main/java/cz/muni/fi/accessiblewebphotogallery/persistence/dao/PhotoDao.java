@@ -24,7 +24,16 @@ public interface PhotoDao extends JpaRepository<PhotoEntity, Long> {
     // can test "after X" with "between X and now" and "before X" with "between epoch and X"
     // line of thinking: this doesn't lower the required number of DB accesses when searching,
     // and one more comparison or two is not a big deal (couple cycles)
-    Page<PhotoEntity> findByUploadTimeBetween(Instant begin, Instant end, Pageable pageable);
+    Page<PhotoEntity> findByUploadTimeBetweenOrderByUploadTimeDesc(Instant begin, Instant end, Pageable pageable);
+
+
+    // "find the latest-uploaded photo in this upload time range, if one exists"
+    // used for querying the previous photo in upload order in sequential browsing
+    Optional<PhotoEntity> findFirstByUploadTimeBetweenOrderByUploadTimeDesc(Instant begin, Instant end);
+
+    // "find the earliest-uploaded photo in this upload time range, if one exists"
+    // for querying the next photo in upload order in sequential browsing
+    Optional<PhotoEntity> findFirstByUploadTimeBetweenOrderByUploadTimeAsc(Instant begin, Instant end);
 
     Page<PhotoEntity> findByUploader(UserEntity uploader, Pageable pageable);
 

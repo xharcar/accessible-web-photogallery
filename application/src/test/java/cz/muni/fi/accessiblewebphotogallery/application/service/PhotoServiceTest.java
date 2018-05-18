@@ -87,7 +87,7 @@ public class PhotoServiceTest {
         PageImpl<PhotoEntity> expectedPage = new PageImpl<>(photoList, defaultPageRq, 1);
 
         PageImpl<PhotoEntity> returnPage = new PageImpl<>(photoList, defaultPageRq, 1);
-        when(photoDaoMock.findByUploadTimeBetween(timeZero.minus(Duration.ofDays(30)), timeZero.minus(Duration.ofDays(16)), defaultPageRq))
+        when(photoDaoMock.findByUploadTimeBetweenOrderByUploadTimeDesc(timeZero.minus(Duration.ofDays(30)), timeZero.minus(Duration.ofDays(16)), defaultPageRq))
                 .thenReturn(returnPage);
         PageImpl<PhotoEntity> result = photoService.findByUploadTimeBetween(timeZero.minus(Duration.ofDays(30)), timeZero.minus(Duration.ofDays(16)), defaultPageRq);
         assertNotNull(result);

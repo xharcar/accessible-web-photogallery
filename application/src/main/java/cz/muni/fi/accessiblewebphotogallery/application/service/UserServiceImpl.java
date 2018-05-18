@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -59,52 +60,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserEntity> findAll() {
         return userDao.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<UserEntity> findById(Long id) {
         return userDao.findById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<UserEntity> findByEmail(String email) {
         return userDao.findByEmail(email);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<UserEntity> findByLoginName(String loginName) {
         return userDao.findByLoginName(loginName);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserEntity> findByScreenNameApx(String apxName) {
         return userDao.findByScreenNameContainingIgnoreCase(apxName);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isAdmin(UserEntity user) {
         Optional<UserEntity> userOpt = userDao.findByEmail(user.getEmail());
         return userOpt.isPresent() && userOpt.get().getAccountState().equals(AccountState.ADMINISTRATOR);
     }
 
     @Override
-    public Pair<UserEntity, String> registerUser(UserEntity user, String password) {
-        Pair<byte[], byte[]> hashAndSalt = makeSaltAndHashPass(password);
-        if (hashAndSalt == null) {
-            return null;
-        }
-        user.setPasswordHash(hashAndSalt.getFirst());
-        user.setPasswordSalt(hashAndSalt.getSecond());
-        user = userDao.save(user);
-        String token = RandomStringUtils.randomAlphanumeric(32);
-        registrationDao.save(new RegistrationToken(user.getEmail(), token));
-        log.info("New user with login name " + user.getLoginName() + " and email " + user.getEmail() + " registered successfully.");
-        return Pair.of(user, token);
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public Pair<Boolean, Optional<UserEntity>> authenticateUser(String identifier, String password) {
         Validate.notNull(identifier);
         Validate.notNull(password);
@@ -129,12 +122,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public Pair<UserEntity, String> registerUser(UserEntity user, String password) {
+        Pair<byte[], byte[]> hashAndSalt = makeSaltAndHashPass(password);
+        if (hashAndSalt == null) {
+            return null;
+        }
+        user.setPasswordHash(hashAndSalt.getFirst());
+        user.setPasswordSalt(hashAndSalt.getSecond());
+        user = userDao.save(user);
+        String token = RandomStringUtils.randomAlphanumeric(32);
+        registrationDao.save(new RegistrationToken(user.getEmail(), token));
+        log.info("New user with login name " + user.getLoginName() + " and email " + user.getEmail() + " registered successfully.");
+        return Pair.of(user, token);
+    }
+
+    @Override
+    @Transactional
     public UserEntity updateUser(UserEntity user) {
         Validate.notNull(user.getId()); // must exist
         return userDao.save(user);
     }
 
     @Override
+    @Transactional
     public boolean confirmUserRegistration(String email, String token) {
         Validate.notNull(email);
         Validate.notNull(token);
@@ -154,6 +165,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(UserEntity user) {
         userDao.delete(user);
     }

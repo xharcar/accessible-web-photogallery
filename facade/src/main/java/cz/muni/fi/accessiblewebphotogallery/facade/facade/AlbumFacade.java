@@ -4,13 +4,12 @@ import cz.muni.fi.accessiblewebphotogallery.facade.dto.AlbumDto;
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface AlbumFacade {
+public interface AlbumFacade{
 
-    List<AlbumDto> findAll();
+    List<AlbumDto> findAllAlbums();
 
-    List<AlbumDto> findByOwner(UserDto owner);
+    List<AlbumDto> findAlbumsByOwner(UserDto owner);
 
     AlbumDto createAlbum(UserDto user, String albumName);
 
@@ -22,8 +21,5 @@ public interface AlbumFacade {
 
     boolean removePhotoFromAlbum(AlbumDto albumDto, String photoB64Id);
 
-    List<String> listPhotosInAlbum(AlbumDto albumDto);// returns b64 IDs
-
-    Optional<AlbumDto> findById(String base64);
 
 }

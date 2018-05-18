@@ -2,10 +2,12 @@ package cz.muni.fi.accessiblewebphotogallery.facade.dto;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class PhotoDto {
 
+    private String id;
 
     private UserDto uploader;
 
@@ -14,8 +16,6 @@ public class PhotoDto {
     private String title;
 
     private String description;
-
-    private String id;
 
     private Double cameraLatitude;
 
@@ -40,6 +40,8 @@ public class PhotoDto {
     private Boolean flash;
 
     private Double exposureTime;
+
+    private List<BuildingInfoDto> buildingList;
 
     public PhotoDto() {
     }
@@ -180,6 +182,14 @@ public class PhotoDto {
         this.exposureTime = exposureTime;
     }
 
+    public List<BuildingInfoDto> getBuildingList() {
+        return buildingList;
+    }
+
+    public void setBuildingList(List<BuildingInfoDto> buildingList) {
+        this.buildingList = buildingList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
@@ -197,8 +207,7 @@ public class PhotoDto {
     @Override
     public String toString() {
         return "PhotoDto{" +
-                "id=" + id +
-                ", uploader=" + uploader +
+                "uploader=" + uploader +
                 ", uploadTime=" + uploadTime +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
@@ -215,6 +224,7 @@ public class PhotoDto {
                 ", iso=" + iso +
                 ", flash=" + flash +
                 ", exposureTime=" + exposureTime +
+                ", buildingList=" + buildingList +
                 '}';
     }
 }

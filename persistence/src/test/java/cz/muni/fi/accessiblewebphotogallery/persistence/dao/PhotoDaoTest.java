@@ -125,7 +125,7 @@ public class PhotoDaoTest {
         p2.setId("anotherb64id");
         photo = photoDao.save(photo);
         photoDao.save(p2);
-        List<PhotoEntity> found = photoDao.findByUploadTimeBetween(time0, time2, PageRequest.of(0, 5)).getContent();
+        List<PhotoEntity> found = photoDao.findByUploadTimeBetweenOrderByUploadTimeDesc(time0, time2, PageRequest.of(0, 5)).getContent();
         assertEquals(1, found.size());
         assertEquals(photo, found.get(0));
     }

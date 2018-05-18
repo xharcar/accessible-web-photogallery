@@ -1,5 +1,6 @@
 package cz.muni.fi.accessiblewebphotogallery.application.service;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.BuildingInfoService;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -30,6 +32,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     private MessageDigest hasher;
     private Base64.Encoder enc;
     private Random rng;
+    private Gson jsonConverter;
     // 7 digits of precision in OSM GPS coordinates(https://wiki.openstreetmap.org/wiki/Node) allows ~6mm precision;
     // looking up GPS coordinates within 5e-6 degrees(30 cm) of the given coordinates
     // is therefore still meaningful in case of eg. rounding errors; 30 cm won't be enough to retrieve another
@@ -41,34 +44,41 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
         enc = Base64.getUrlEncoder();
         rng = new Random();
         hasher = null;
+        jsonConverter = new Gson();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BuildingInfo> findAll() {
         return infoDao.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BuildingInfo> findByPhoto(PhotoEntity photo) {
         return infoDao.findByPhoto(photo);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BuildingInfo> findByBuildingNameApx(String searchStr) {
         return infoDao.findByBuildingNameContainingIgnoreCase(searchStr);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BuildingInfo> findByOsmId(Long osmId) {
         return infoDao.findByOsmId(osmId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BuildingInfo> findByGPSPosition(double lat, double lon) {
         return infoDao.findByLatitudeBetweenAndLongitudeBetween(lat - EPSILON, lat + EPSILON, lon - EPSILON, lon + EPSILON);
     }
 
     @Override
+    @Transactional
     public List<BuildingInfo> registerBuildings(Map<JsonObject, JsonObject> buildingMap, JsonObject camData, PhotoEntity photo) {
         Validate.notNull(camData);
         if (hasher == null) {
@@ -203,6 +213,24 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
         return rv;
     }
 
+    @Override
+    @Transactional
+    public BuildingInfo updateBuildingInfo(BuildingInfo buildingInfo) {
+        return infoDao.save(buildingInfo);
+    }
+
+    @Override
+    @Transactional
+    public List<BuildingInfo> updateBuildings(List<BuildingInfo> buildingList) {
+        return infoDao.saveAll(buildingList);
+    }
+
+    @Override
+    @Transactional
+    public void delete(BuildingInfo buildingInfo) {
+        infoDao.delete(buildingInfo);
+    }
+
     private int findMinIndex(double[] data) {
         double z = Double.MAX_VALUE;
         int rv = -1;
@@ -210,21 +238,6 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
             if (data[i] < z) rv = i;
         }
         return rv;
-    }
-
-    @Override
-    public BuildingInfo updateBuildingInfo(BuildingInfo buildingInfo) {
-        return infoDao.save(buildingInfo);
-    }
-
-    @Override
-    public List<BuildingInfo> updateBuildings(List<BuildingInfo> buildingList) {
-        return infoDao.saveAll(buildingList);
-    }
-
-    @Override
-    public void delete(BuildingInfo buildingInfo) {
-        infoDao.delete(buildingInfo);
     }
 
     private double computeDistance(Pair<Double, Double> start, Pair<Double, Double> end) {

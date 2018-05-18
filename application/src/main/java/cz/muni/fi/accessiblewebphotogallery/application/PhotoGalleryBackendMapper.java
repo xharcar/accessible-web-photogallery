@@ -8,12 +8,16 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.BuildingInfo;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 import cz.muni.fi.accessiblewebphotogallery.persistence.entity.UserEntity;
+import org.springframework.data.util.Pair;
 
-// Dozer mappers don;t know what an Instant is, and upon attempting to use a compatibility library, parsing errors are being thrown
+import java.util.List;
+import java.util.stream.Collectors;
+
+// Dozer mappers don't know what an Instant is, and upon attempting to use a compatibility library, parsing errors are being thrown
 // So I'm rolling my own single-purpose mapper here
 public class PhotoGalleryBackendMapper {
 
-    public static PhotoDto photoEntityToDto(PhotoEntity entity) {
+    public static PhotoDto photoEntityPlusBuildingsToDto(PhotoEntity entity, List<BuildingInfo> buildingList) {
         PhotoDto rv = new PhotoDto();
         rv.setId(entity.getId());
         rv.setUploader(userEntityToDto(entity.getUploader()));
@@ -32,29 +36,31 @@ public class PhotoGalleryBackendMapper {
         rv.setIso(entity.getIso());
         rv.setFlash(entity.getFlash());
         rv.setExposureTime(entity.getExposureTime());
+        rv.setBuildingList(buildingList.stream().map(PhotoGalleryBackendMapper::buildingInfoToDto).collect(Collectors.toList()));
         return rv;
     }
 
-    public static PhotoEntity photoDtoToEntity(PhotoDto dto) {
-        PhotoEntity rv = new PhotoEntity();
-        rv.setId(dto.getId());
-        rv.setUploader(userDtoToEntity(dto.getUploader()));
-        rv.setUploadTime(dto.getUploadTime());
-        rv.setTitle(dto.getTitle());
-        rv.setDescription(dto.getDescription());
-        rv.setCameraLatitude(dto.getCameraLatitude());
-        rv.setCameraLongitude(dto.getCameraLongitude());
-        rv.setCameraAzimuth(dto.getCameraAzimuth());
-        rv.setPositionAccuracy(dto.getPositionAccuracy());
-        rv.setCameraFOV(dto.getCameraFOV());
-        rv.setDatetimeTaken(dto.getDatetimeTaken());
-        rv.setCameraModel(dto.getCameraModel());
-        rv.setImageWidth(dto.getImageWidth());
-        rv.setImageHeight(dto.getImageHeight());
-        rv.setIso(dto.getIso());
-        rv.setFlash(dto.getFlash());
-        rv.setExposureTime(dto.getExposureTime());
-        return rv;
+    public static Pair<PhotoEntity,List<BuildingInfo>> photoDtoToEntityPlusBuildings(PhotoDto dto) {
+        PhotoEntity rv1 = new PhotoEntity();
+        rv1.setId(dto.getId());
+        rv1.setUploader(userDtoToEntity(dto.getUploader()));
+        rv1.setUploadTime(dto.getUploadTime());
+        rv1.setTitle(dto.getTitle());
+        rv1.setDescription(dto.getDescription());
+        rv1.setCameraLatitude(dto.getCameraLatitude());
+        rv1.setCameraLongitude(dto.getCameraLongitude());
+        rv1.setCameraAzimuth(dto.getCameraAzimuth());
+        rv1.setPositionAccuracy(dto.getPositionAccuracy());
+        rv1.setCameraFOV(dto.getCameraFOV());
+        rv1.setDatetimeTaken(dto.getDatetimeTaken());
+        rv1.setCameraModel(dto.getCameraModel());
+        rv1.setImageWidth(dto.getImageWidth());
+        rv1.setImageHeight(dto.getImageHeight());
+        rv1.setIso(dto.getIso());
+        rv1.setFlash(dto.getFlash());
+        rv1.setExposureTime(dto.getExposureTime());
+        List<BuildingInfo> rv2 = dto.getBuildingList().stream().map(PhotoGalleryBackendMapper::buildingInfoDtoToEntity).collect(Collectors.toList());
+        return Pair.of(rv1,rv2);
     }
 
     public static UserDto userEntityToDto(UserEntity entity) {
@@ -86,7 +92,6 @@ public class PhotoGalleryBackendMapper {
     public static BuildingInfoDto buildingInfoToDto(BuildingInfo entity) {
         BuildingInfoDto rv = new BuildingInfoDto();
         rv.setId(entity.getId());
-        rv.setPhoto(photoEntityToDto(entity.getPhoto()));
         rv.setOsmId(entity.getOsmId());
         rv.setDistance(entity.getDistance());
         rv.setBuildingName(entity.getBuildingName());
@@ -101,7 +106,6 @@ public class PhotoGalleryBackendMapper {
     public static BuildingInfo buildingInfoDtoToEntity(BuildingInfoDto dto) {
         BuildingInfo rv = new BuildingInfo();
         rv.setId(dto.getId());
-        rv.setPhoto(photoDtoToEntity(dto.getPhoto()));
         rv.setOsmId(dto.getOsmId());
         rv.setDistance(dto.getDistance());
         rv.setBuildingName(dto.getBuildingName());
