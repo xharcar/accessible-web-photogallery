@@ -1,5 +1,7 @@
 package cz.muni.fi.accessiblewebphotogallery.application;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,6 +23,10 @@ public class ApplicationConfig {
 
     @Autowired
     private Environment environment;
+    private static final Logger log = LogManager.getLogger(ApplicationConfig.class);
+
+    private static final int DEFAULT_THUMB_WIDTH = 640;
+    private static final int DEFAULT_THUMB_HEIGHT = 360;
 
     public String getRootDBDirectory() {
         String rootDBDirectorySetting = environment.getProperty("rootdir");
@@ -47,5 +53,31 @@ public class ApplicationConfig {
             return getRootDBDirectory() + File.separator + "albums";
         }
         return albumDirectorySetting;
+    }
+
+    public int getThumbnailWidth(){
+        String thumbWidthString = environment.getProperty("thumbnail-width");
+        int width;
+        try {
+            width = Integer.parseInt(thumbWidthString);
+        }catch (NumberFormatException nfe){
+            log.catching(nfe);
+            log.error("NumberFormatException in ApplicationConfig.getThumbnailWidth()- returning default value.");
+            return DEFAULT_THUMB_WIDTH;
+        }
+        return width;
+    }
+
+    public int getThumbnailHeight() {
+        String thumbHeightString = environment.getProperty("thumbnail-height");
+        int height;
+        try {
+            height = Integer.parseInt(thumbHeightString);
+        }catch (NumberFormatException nfe){
+            log.catching(nfe);
+            log.error("NumberFormatException in ApplicationConfig.getThumbnailHeight()- returning default value.");
+            return DEFAULT_THUMB_HEIGHT;
+        }
+        return height;
     }
 }

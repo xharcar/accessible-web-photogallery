@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -254,7 +254,7 @@ public class PhotoServiceImpl implements PhotoService {
                 }
             }
         }
-        BufferedImage thumb = new BufferedImage(640, 360, BufferedImage.TYPE_INT_RGB);
+        BufferedImage thumb = new BufferedImage(applicationConfig.getThumbnailWidth(), applicationConfig.getThumbnailHeight(), BufferedImage.TYPE_INT_RGB);
         File thumbFile = new File(photoFile.getParentFile().getAbsolutePath() + File.separator + photoBase64 + "_thumb.jpg");
         BufferedImage origPhoto;
         try {
