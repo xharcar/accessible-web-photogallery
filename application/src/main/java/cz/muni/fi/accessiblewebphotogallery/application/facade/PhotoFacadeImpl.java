@@ -7,6 +7,7 @@ import cz.muni.fi.accessiblewebphotogallery.application.service.iface.AlbumServi
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.BuildingInfoService;
 import cz.muni.fi.accessiblewebphotogallery.application.service.iface.PhotoService;
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.AlbumDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.BuildingInfoDto;
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.PhotoDto;
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.facade.facade.PhotoFacade;
@@ -22,10 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PhotoFacadeImpl implements PhotoFacade {
@@ -119,9 +117,30 @@ public class PhotoFacadeImpl implements PhotoFacade {
     @Override
     public List<PhotoDto> findPhotosByBuildingNameApx(String buildingNameApx) {
         List<BuildingInfo> buildingList = buildingService.findByBuildingNameApx(buildingNameApx);
+        Set<PhotoDto> rvSet = new HashSet<>();
+        for(BuildingInfo bi : buildingList){ // no duplicit entries, please
+            rvSet.add(PhotoGalleryBackendMapper.photoEntityPlusBuildingsToDto(bi.getPhoto(),buildingService.findByPhoto(bi.getPhoto())));
+        }
+        return new ArrayList<>(rvSet);
+    }
+
+    @Override
+    public List<PhotoDto> findPhotosByBuilding(String buildingId) {
+        Optional<BuildingInfo> infoOptional = buildingService.findById(buildingId);
+        if(!infoOptional.isPresent()){
+            return new ArrayList<>();
+        }
+        return findPhotosByBuilding(PhotoGalleryBackendMapper.buildingInfoToDto(infoOptional.get()));
+    }
+
+    @Override
+    public List<PhotoDto> findPhotosByBuilding(BuildingInfoDto building) {
+        List<BuildingInfo> buildingsByOSMId = buildingService.findByOsmId(building.getOsmId());
+        List<BuildingInfo> buildingsByGPS = buildingService.findByGPSPosition(building.getLatitude(),building.getLongitude());
+        buildingsByGPS.retainAll(buildingsByOSMId);
         List<PhotoDto> rv = new ArrayList<>();
-        for(BuildingInfo bi : buildingList){
-            rv.add(PhotoGalleryBackendMapper.photoEntityPlusBuildingsToDto(bi.getPhoto(),buildingService.findByPhoto(bi.getPhoto())));
+        for(BuildingInfo b : buildingsByGPS){
+            rv.add(PhotoGalleryBackendMapper.photoEntityPlusBuildingsToDto(b.getPhoto(),buildingService.findByPhoto(b.getPhoto())));
         }
         return rv;
     }

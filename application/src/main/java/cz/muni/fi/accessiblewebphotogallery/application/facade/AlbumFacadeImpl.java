@@ -5,10 +5,12 @@ import cz.muni.fi.accessiblewebphotogallery.application.service.iface.AlbumServi
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.AlbumDto;
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
 import cz.muni.fi.accessiblewebphotogallery.facade.facade.AlbumFacade;
+import cz.muni.fi.accessiblewebphotogallery.persistence.entity.AlbumEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +26,15 @@ public class AlbumFacadeImpl implements AlbumFacade {
     @Override
     public List<AlbumDto> findAllAlbums() {
         return albumService.findAll().stream().map(PhotoGalleryBackendMapper::albumEntityToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<AlbumDto> findAlbumById(String id) {
+        Optional<AlbumEntity> albumEntityOptional = albumService.findById(id);
+        if(!albumEntityOptional.isPresent()){
+            return Optional.empty();
+        }
+        return Optional.of(PhotoGalleryBackendMapper.albumEntityToDto(albumEntityOptional.get()));
     }
 
     @Override
@@ -55,6 +66,11 @@ public class AlbumFacadeImpl implements AlbumFacade {
     @Override
     public void deleteAlbum(AlbumDto albumDto) {
         albumService.deleteAlbum(PhotoGalleryBackendMapper.albumDtoToEntity(albumDto));
+    }
+
+    @Override
+    public List<String> listPhotosInAlbum(AlbumDto dto) {
+        return albumService.listPhotosInAlbum(PhotoGalleryBackendMapper.albumDtoToEntity(dto));
     }
 
 

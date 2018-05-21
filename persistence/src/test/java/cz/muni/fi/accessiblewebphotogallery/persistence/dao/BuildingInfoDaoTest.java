@@ -156,7 +156,7 @@ public class BuildingInfoDaoTest {
         rv.setBuildingName("Fakulta informatiky Masarykovy univerzity");
         rv.setLatitude(33.98327415);
         rv.setLongitude(49.32108745);
-        rv.setPhotoMaxX(1024);
+        rv.setRightBoundInPhoto(1024);
         rv.setLeftBoundInPhoto(32);
         rv.setOsmId(256L);
         return rv;

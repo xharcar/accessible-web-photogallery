@@ -6,6 +6,7 @@ import cz.muni.fi.accessiblewebphotogallery.persistence.entity.PhotoEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface BuildingInfoService {
 
@@ -15,6 +16,13 @@ public interface BuildingInfoService {
      * @return List containing all building records in the DB
      */
     List<BuildingInfo> findAll();
+
+    /**
+     * Retrieves a building by its DB ID
+     * @param id B ID we're looking for
+     * @return empty if not found, else Optional with BuildingInfo with the correct ID
+     */
+    Optional<BuildingInfo> findById(String id);
 
     /**
      * Retrieves building records by photo

@@ -7,7 +7,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.util.Pair;
 
 import java.util.Arrays;
@@ -20,6 +22,13 @@ public class AccessibleWebPhotogalleryApplication {
     }
 
     @Bean
+    public MessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("classpath:locale");
+        return messageSource;
+    }
+
+    @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return new CommandLineRunner() {
             @Override
@@ -29,17 +38,6 @@ public class AccessibleWebPhotogalleryApplication {
                 for (String bean : beans) {
                     System.out.println(bean);
                 }
-
-                /*UserEntity u1 = new UserEntity();
-                u1.setAccountState(AccountState.ADMINISTRATOR);
-                u1.setBio("Administrator of this site");
-                u1.setEmail("422714@mail.muni.cz");
-                u1.setLoginName("root");
-                u1.setScreenName("Administrator");
-                u1.setPasswordHash(new byte[]{0x53,0x42});
-                u1.setPasswordSalt(new byte[]{(byte) 0xFC,0x19});
-                u1 = ctx.getBean(UserDao.class).save(u1);
-                System.out.println(u1);*/
                 UserDto dto = new UserDto();
                 UserFacade ufacade = ctx.getBean(UserFacade.class);
                 dto.setAccountState(AccountState.ADMINISTRATOR);
@@ -47,10 +45,14 @@ public class AccessibleWebPhotogalleryApplication {
                 dto.setEmail("422714@mail.muni.cz");
                 dto.setLoginName("root");
                 dto.setScreenName("Administrator");
-                Pair<UserDto,String> reg = ufacade.registerUser(dto,"rootpassword635");
+                Pair<UserDto,String> reg = ufacade.registerUser(dto,"rootpassword");
                 if(reg == null) throw new RuntimeException("Failed to register administrator");
                 System.out.println(reg);
                 ufacade.confirmUserRegistration("422714@mail.muni.cz",reg.getSecond());
+                UserDto adminReal = reg.getFirst();
+                System.out.println(adminReal);
+                adminReal = ufacade.updateUser(adminReal);
+                System.out.println(adminReal);
             }
         };
     }

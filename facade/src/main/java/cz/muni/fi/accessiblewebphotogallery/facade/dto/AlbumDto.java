@@ -10,9 +10,15 @@ public class AlbumDto {
 
     private String albumName;
 
-    private String Id;
-
     public AlbumDto() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public UserDto getOwner() {
@@ -31,26 +37,18 @@ public class AlbumDto {
         this.albumName = albumName;
     }
 
-    public String getId() {
-        return Id;
-    }
-
-    public void setId(String Id) {
-        this.Id = Id;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
         if (this == o) return true;
         if (!(o instanceof AlbumDto)) return false;
         AlbumDto albumDto = (AlbumDto) o;
-        return Id.equals(albumDto.getId());
+        return id.equals(albumDto.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(id);
     }
 
     @Override
@@ -59,7 +57,6 @@ public class AlbumDto {
                 "id=" + id +
                 ", owner=" + owner +
                 ", albumName='" + albumName + '\'' +
-                ", Id='" + Id + '\'' +
                 '}';
     }
 }

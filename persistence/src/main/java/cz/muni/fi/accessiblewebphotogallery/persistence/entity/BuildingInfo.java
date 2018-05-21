@@ -16,7 +16,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "BUILDINGINFO")
 public class BuildingInfo {
-    private static final double EPSILON = 0.0000025;// see BuildingInfoServiceImpl
+    private static final double EPSILON = 0.0001;// see BuildingInfoServiceImpl
 
     @Id
     @Column(length = 16,unique = true,nullable = false,updatable = false)
@@ -33,10 +33,11 @@ public class BuildingInfo {
     @Column(nullable = false)
     private int distance;
 
-    @Column(name = "building_name", nullable = true, length = 192)
+    @Column(name = "building_name", nullable = true, length = 384)
     // According to Guinness World Records, the longest place name is the official Thai name for Bangkok,
     // transcribed into Latin script, at 176~187 incl. spaces - therefore 192 characters should do
     // (as long as nobody breaks it- to whom it may concern: please don't)
+    // plus 192 for the address, which seems to be included in Nominatim building display names...
     private String buildingName;
 
     /*
@@ -56,7 +57,7 @@ public class BuildingInfo {
     private int leftBoundInPhoto;
 
     @Column(name = "photo_right", nullable = false)
-    private int photoMaxX;
+    private int rightBoundInPhoto;
 
     // text to be displayed on mouseover/focus
     @Column(name = "focus_text", nullable = true, length = 384)
@@ -129,12 +130,12 @@ public class BuildingInfo {
         this.leftBoundInPhoto = leftBoundInPhoto;
     }
 
-    public int getPhotoMaxX() {
-        return photoMaxX;
+    public int getRightBoundInPhoto() {
+        return rightBoundInPhoto;
     }
 
-    public void setPhotoMaxX(int photoMaxX) {
-        this.photoMaxX = photoMaxX;
+    public void setRightBoundInPhoto(int rightBoundInPhoto) {
+        this.rightBoundInPhoto = rightBoundInPhoto;
     }
 
     public String getFocusText() {
@@ -176,7 +177,7 @@ public class BuildingInfo {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", leftBoundInPhoto=" + leftBoundInPhoto +
-                ", photoMaxX=" + photoMaxX +
+                ", rightBoundInPhoto=" + rightBoundInPhoto +
                 '}';
     }
 }

@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>facade</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Accessible web photogallery, facade layer</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

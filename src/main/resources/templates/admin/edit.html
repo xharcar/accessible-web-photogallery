@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit a photo</title>
+</head>
+<body>
+<div class="form-wrapper">
+    <!--/*@thymesVar id="photoProxy" type="cz.muni.fi.accessiblewebphotogallery.proxy.PhotoProxy"*/-->
+    <form action="/admin/edit/" method="post" th:object="${photoProxy}">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <div class="col-md-4">
+                <input class="form-control" type="text" id="title" th:field="*{title}">
+                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="alert alert-danger" role="alert">
+                    err_title
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <div class="col-md-4">
+                <textarea class="form-control" type="text" id="description" th:field="*{description}">
+                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="alert alert-danger" role="alert">
+                    err_title
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <!--/*@thymesVar id="backLink" type="java.lang.String"*/-->
+        <button th:href="@{backLink}" class="btn btn-default">Cancel</button>
+        <p>
+            &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors
+            <br>
+            <a href="/about">About</a>
+            <br>
+        </p>
+    </form>
+
+
+</div>
+</body>
+</html>
+<style>
+    body {
+        position: relative;
+    }
+
+    #form-wrapper {
+        width: 640px;
+        height: 640px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: 240px;
+        margin-left: -120px;
+    }
+    .divider{
+        width:2.5em;
+        height:auto;
+        display:inline-block;
+    }
+</style>

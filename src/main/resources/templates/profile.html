@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+<div id="form-wrapper">
+    <h1>Your profile</h1>
+    <!--/*@thymesVar id="userProxy" type="cz.muni.fi.accessiblewebphotogallery.proxy.UserProxy"*/-->
+    <form th:action="@{profile}" method="post" th:object="${userProxy}">
+        <table class="table table-nonfluid table-bordered table-striped table-hover">
+            <tr>
+                <th>Login Name</th>
+                <!--/*@thymesVar id="userProxy" type="cz.muni.fi.accessiblewebphotogallery.proxy.UserProxy"*/-->
+                <td th:text="${userProxy.loginName}"></td>
+            </tr>
+            <tr>
+                <th>Screen name</th>
+                <td th:text="${userProxy.screenName}"
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td th:text="${userProxy.email}"></td>
+            </tr>
+            <tr>
+                <th>Account state</th>
+                <td th:text="${userProxy.accountState}"></td>
+            </tr>
+        </table>
+        <p> <a href="/">Home</a> </p>
+
+    </form>
+</div>
+</body>
+</html>
+<style>
+    body {
+        position: relative;
+    }
+
+    #form-wrapper {
+        width: 400px; /* Set this to your convenience */
+        height: 400px; /* Set this to your convenience */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: 240px;
+        margin-left: -120px;
+    }
+    .divider{
+        width:2.5em;
+        height:auto;
+        display:inline-block;
+    }
+</style>

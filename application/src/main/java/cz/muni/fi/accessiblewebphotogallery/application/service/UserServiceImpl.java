@@ -124,6 +124,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Pair<UserEntity, String> registerUser(UserEntity user, String password) {
+        log.info("Registering user " + user);
         Pair<byte[], byte[]> hashAndSalt = makeSaltAndHashPass(password);
         if (hashAndSalt == null) {
             return null;
@@ -133,7 +134,7 @@ public class UserServiceImpl implements UserService {
         user = userDao.save(user);
         String token = RandomStringUtils.randomAlphanumeric(32);
         registrationDao.save(new RegistrationToken(user.getEmail(), token));
-        log.info("New user with login name " + user.getLoginName() + " and email " + user.getEmail() + " registered successfully.");
+        log.info("New user " + user + " registered successfully.");
         return Pair.of(user, token);
     }
 
@@ -192,7 +193,6 @@ public class UserServiceImpl implements UserService {
             actual = pbkdf2(password.toCharArray(), salt, KDF_IT, HASH_SIZE);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             handlePBKDF2Fail(e);
-
             return false;
         }
         return slowEquals(expected, actual);

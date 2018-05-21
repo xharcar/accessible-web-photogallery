@@ -78,6 +78,7 @@ public class UserFacadeImpl implements UserFacade {
     @Override
     @Transactional
     public Pair<UserDto, String> registerUser(UserDto user, String password) {
+        System.out.println("Registering user" + user);
         Pair<UserDto, String> rv = null;
         Pair<UserEntity, String> prelim = userService.registerUser(userDtoToEntity(user), password);
         if (prelim != null) {

@@ -9,10 +9,13 @@
 <b th:text="${msg}"></b>
 <p th:text="'Toto je Lenna'"></p>
 <b th:text="'Users'"></b>
-<img th:src="${lenna}"/>
+<img th:src="${lenna}" alt="an image of Lena Soderberg"/>
+<!--/*@thymesVar id="users" type=""*/-->
 <p th:each="user : ${users}">
     <b th:text="${user}"></b>
 </p>
+<!--/*@thymesVar id="loggedInUser" type="java.lang.String"*/-->
+<b th:text="${loggedInUser}"
 
 </body>
 </html>

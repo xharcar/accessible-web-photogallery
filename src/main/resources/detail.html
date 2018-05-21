@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Photo detail</title>
+</head>
+<body>
+    <!--/*@thymesVar id="photoProxy" type="cz.muni.fi.accessiblewebphotogallery.proxy.PhotoProxy"*/-->
+    <div id="form-wrapper" th:object="${photoProxy}">
+        <h1 th:text="${photoProxy.title}"></h1>
+        <!--/*@thymesVar id="photoFilePath" type="java.lang.String"*/-->
+        <img th:src="${photoFilePath}" th:alt="${photoProxy.title}">
+        <table class="table table-nonfluid table-bordered tale-striped table-hover">
+            <tr>
+                <th>Photo Description</th>
+                <td th:text="${photoProxy.description}"></td>
+            </tr>
+            <tr>
+                <th>Uploaded by</th>
+                <div th:if="${photoProxy.uploader.screenName.isEmpty()}">
+                    <td th:text="${photoProxy.uploader.loginName}"></td>
+                </div>
+                <div th:unless="${photoProxy.uploader.screenName.isEmpty()}">
+                    <td th:text="${photoProxy.uploader.screenName}"></td>
+                </div>
+            </tr>
+            <tr>
+                <th>Uploaded on</th>
+                <td th:text="${photoProxy.uploadTime.toString()}"></td>
+            </tr>
+            <tr>
+                <th>Taken on</th>
+                <td th:text="${photoProxy.datetimeTaken.toString()}"></td>
+            </tr>
+            <tr>
+                <th>Camera model</th>
+                <td th:text="${photoProxy.cameraModel}"></td>
+            </tr>
+            <tr>
+                <th>Latitude</th>
+                <td th:text="${photoProxy.cameraLatitude}"></td>
+            </tr>
+            <tr>
+                <th>Longitude</th>
+                <td th:text="${photoProxy.cameraLongitude}"></td>
+            </tr>
+            <tr>
+                <th>Camera FOV</th>
+                <td th:text="${photoProxy.cameraFOV}"></td>
+            </tr>
+            <tr>
+                <th>Camera Azimuth</th>
+                <td th:text="${photoProxy.cameraAzimuth}"></td>
+            </tr>
+            <tr>
+                <th>ISO value</th>
+                <td th:text="${photoProxy.iso}"></td>
+            </tr>
+        </table>
+        <div th:each="building : ${photoProxy.buildingList}">
+            <table class="table table-nonfluid table-bordered tale-striped table-hover">
+                <tr>
+                    <th>OpenStreetMap ID</th>
+                    <td th:text="${building.osmId}"></td>
+                </tr>
+                <tr>
+                    <th>Building name</th>
+                    <td th:text="${building.buildingName}"></td>
+                </tr>
+                <tr>
+                    <th>Distance from camera</th>
+                    <td th:text="${building.distance}"></td>
+                </tr>
+                <tr>
+                    <th>Latitude</th>
+                    <td th:text="${building.latitude}"></td>
+                </tr>
+                <tr>
+                    <th>Longitude</th>
+                    <td th:text="${building.longitude}"></td>
+                </tr>
+            </table>
+        </div>
+            <div class="col-md-4">
+                <!--/*@thymesVar id="prevLink" type="java.lang.String"*/-->
+                <button class="btn btn-default" th:href="@{prevLink}">Previous</button>
+                <!--/*@thymesVar id="nextLink" type="java.lang.String"*/-->
+                <button class="btn btn-default" th:href="@{nextLink}">Next</button>
+            </div>
+            <button class="btn btn-default" th:href="@{/}">Home</button>
+        <p>
+            &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors
+            <br>
+            <a href="/about">About</a>
+            <br>
+        </p>
+    </div>
+</body>
+</html>
+<style>
+    #form-wrapper {
+        width: 1280px; /* Set this to your convenience */
+        height: 640px; /* Set this to your convenience */
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        margin-top: 240px;
+        margin-left: -120px;
+    }
+</style>

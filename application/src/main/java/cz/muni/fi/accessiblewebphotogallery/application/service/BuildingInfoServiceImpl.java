@@ -28,15 +28,14 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
 
     private static final Logger log = LogManager.getLogger(BuildingInfoServiceImpl.class);
     private BuildingInfoDao infoDao;
-    private static final double EPSILON = 0.0000025;
+    private static final double EPSILON = 0.0001;
     private MessageDigest hasher;
     private Base64.Encoder enc;
     private Random rng;
     private Gson jsonConverter;
     // 7 digits of precision in OSM GPS coordinates(https://wiki.openstreetmap.org/wiki/Node) allows ~6mm precision;
-    // looking up GPS coordinates within 5e-6 degrees(30 cm) of the given coordinates
-    // is therefore still meaningful in case of eg. rounding errors; 30 cm won't be enough to retrieve another
-    // building in a lookup, but it will be enough to find the same building if a rounding error 'shifts' it by a little
+    // after that new Nominatim result, 4 are left, meaning ~5.566 m... oh well not like the average building is smaller
+    // than that, right...
 
     @Autowired
     public BuildingInfoServiceImpl(BuildingInfoDao infoDao) {
@@ -51,6 +50,11 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
     @Transactional(readOnly = true)
     public List<BuildingInfo> findAll() {
         return infoDao.findAll();
+    }
+
+    @Override
+    public Optional<BuildingInfo> findById(String id) {
+        return infoDao.findById(id);
     }
 
     @Override
@@ -119,18 +123,6 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
             } else {
                 newInfo.setDistance(-1);
             }
-            if (v != null && v.has("display_name")) {
-                String s = v.get("display_name").getAsString();
-                newInfo.setBuildingName(s);
-                newInfo.setFocusText(s);
-            } else if (k.has("name")) {
-                String s = k.get("name").getAsString();
-                newInfo.setBuildingName(s);
-                newInfo.setFocusText(s);
-            } else {
-                newInfo.setBuildingName(null);
-                newInfo.setFocusText(null);
-            }
             if (v != null && v.has("lat")) {
                 newInfo.setLatitude(v.get("lat").getAsDouble());
             } else if (k.has("latitude")) {
@@ -146,10 +138,22 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
             } else {
                 newInfo.setLongitude(0);
             }
+            if (v != null && v.has("display_name")) {
+                String s = v.get("display_name").getAsString();
+                newInfo.setBuildingName(s);
+                newInfo.setFocusText(s);
+            } else if (k.has("name")) {
+                String s = k.get("name").getAsString();
+                newInfo.setBuildingName(s);
+                newInfo.setFocusText(s);
+            } else {
+                newInfo.setBuildingName(null);
+                newInfo.setFocusText("Unknown building at latitude " + newInfo.getLatitude() + " and logitude: " + newInfo.getLongitude());
+            }
             hashData.add(ByteBuffer.allocate(8).putDouble(newInfo.getLongitude()));
             if (v == null || !v.has("boundingbox")) {
                 newInfo.setLeftBoundInPhoto(-1);
-                newInfo.setPhotoMaxX(-1);
+                newInfo.setRightBoundInPhoto(-1);
                 rv.add(infoDao.save(newInfo));
             } else {
                 JsonArray coords = v.get("boundingbox").getAsJsonArray();
@@ -170,7 +174,7 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
                 for (int i = 0; i < 3; i++) {
                     int idx = findMinIndex(bBoxDists);
                     threeClosest.add(boundingBox.get(idx));
-                    bBoxDists[i] = Double.MAX_VALUE;
+                    bBoxDists[idx] = Double.MAX_VALUE;
                 }
                 int[] bearings = new int[3];
                 for (int i = 0; i < 3; i++) {
@@ -197,10 +201,10 @@ public class BuildingInfoServiceImpl implements BuildingInfoService {
                     int bearingDiff1 = Math.abs(photoRightBound - bearings[2]);
                     int bearingDiff2 = Math.min(bearingDiff1, 360 - bearingDiff1);
                     double bearingPhotoEnd = bearingDiff2 / photo.getCameraFOV();
-                    // how far, in ratio, into the photo the building 'end'
-                    leftBoundInPhoto = (int) Math.round(bearingPhotoEnd * photo.getImageWidth());
+                    // how far, in ratio, into the photo the building 'ends' (from the right, so we subtract that much from the end)
+                    rightBoundInPhoto = (int) Math.round(bearingPhotoEnd - (bearingPhotoEnd * photo.getImageWidth()));
                 }
-                newInfo.setPhotoMaxX(leftBoundInPhoto);
+                newInfo.setRightBoundInPhoto(rightBoundInPhoto);
                 String base64;
                 do{
                     hashData.add(ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(rng.nextInt()));

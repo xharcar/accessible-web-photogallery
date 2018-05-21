@@ -2,6 +2,7 @@ package cz.muni.fi.accessiblewebphotogallery.facade.facade;
 
 import com.google.gson.JsonObject;
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.AlbumDto;
+import cz.muni.fi.accessiblewebphotogallery.facade.dto.BuildingInfoDto;
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.PhotoDto;
 import cz.muni.fi.accessiblewebphotogallery.facade.dto.UserDto;
 import org.springframework.data.domain.PageImpl;
@@ -30,6 +31,10 @@ public interface PhotoFacade {
     List<PhotoDto> findPhotosInAlbum(AlbumDto albumDto);
 
     List<PhotoDto> findPhotosByBuildingNameApx(String buildingNameApx);
+
+    List<PhotoDto> findPhotosByBuilding(String buildingId);
+
+    List<PhotoDto> findPhotosByBuilding(BuildingInfoDto building);
 
     PhotoDto findNextPhotoInAlbum(AlbumDto albumDto, PhotoDto photoDto);
 
